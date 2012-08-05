@@ -30,16 +30,16 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
 	// ----------------------------------------------- Constantes
 	
-	/** Nombre del thread del motor de física */
+	/** Nombre del thread del motor de fï¿½sica */
 	public static final String PHYSICS_THREAD_NAME = "physicsThread";
 	
 	/** Nombre del thread del game loop	 */
-	public static final String LOG_SRC = "physics";
+	public static final String LOG_SRC = GameWorld.LOG_SRC + ".physics";
 	
 	
 	// ------------------------------------------------ Variables
 	
-	/** Hilo con el motor de físicas */
+	/** Hilo con el motor de fï¿½sicas */
 	private Thread physicsThread;
 	
 //    private AABB worldAABB;
@@ -47,34 +47,34 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     private Vector2 gravity;
    
 	/**
-	 *  Cuerpos marcados para eliminación.
-	 *  En el próximo frame estos cuerpos serán destruídos y eliminados del juego.
+	 *  Cuerpos marcados para eliminaciï¿½n.
+	 *  En el prï¿½ximo frame estos cuerpos serï¿½n destruï¿½dos y eliminados del juego.
 	 */
 	private Vector<Body> markedForDestructionBodies;
 	
 	
 	/**
-	 * 	Relación entre la velocidad a la que avanza en tiempo real y la velocidad
-	 *  a la que avanza el tiempo en la simulación física
+	 * 	Relaciï¿½n entre la velocidad a la que avanza en tiempo real y la velocidad
+	 *  a la que avanza el tiempo en la simulaciï¿½n fï¿½sica
 	 */
 	private float physicalSimulationRatio;
 	
 	/**
-	 *  Tiempo transcurrido en el mundo físico
+	 *  Tiempo transcurrido en el mundo fï¿½sico
 	 */
 	private double currentPhysicsMillis;
 	
 	/**
-	 *  Número de pasos físicos realizados
+	 *  Nï¿½mero de pasos fï¿½sicos realizados
 	 */
 	private long stepCount;
 	
 	/**
-	 *  Timestamp del anterior frame en el mundo físico.
+	 *  Timestamp del anterior frame en el mundo fï¿½sico.
 	 */
 	private long prevPhysicsTimeStamp;
     
-    //---------------------------------------------------- Inicialización estática
+    //---------------------------------------------------- Inicializaciï¿½n estï¿½tica
     
     static {
     	Log.i(LOG_SRC, "Attempting to load gdx native library");
@@ -116,26 +116,26 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     
     
     /**
-     * @return los ms que el mundo físico ha avanzado
+     * @return los ms que el mundo fï¿½sico ha avanzado
      */
     public double currentPhysicsMillis() {
     	return this.currentPhysicsMillis;
     }
     
     /**
-     * @return número de pasos físicos realizados
+     * @return nï¿½mero de pasos fï¿½sicos realizados
      */
     public long getStepCount() {
     	return this.stepCount;
     }
 	
     
-    // ------------------------------------------------------ Métodos de GameWorld
+    // ------------------------------------------------------ Mï¿½todos de GameWorld
     
 
 	
 	protected void drawDebugInfo(Canvas canvas, Paint debugPaint) {
-		// se pinta ratio de simulación y FPS actuales
+		// se pinta ratio de simulaciï¿½n y FPS actuales
 		debugPaint.setTextAlign(Align.RIGHT);
 		
 		String actorCount;
@@ -196,13 +196,13 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 	}
 	
 	/**
-	 * Código ejecutado para procesar la lógica del juego en cada frame
-	 * @param gameTimeStep    tiempo de juego que duró el frame anterior, en ms
-	 * @param physicsTimeStep tiempo avanzado en el mundo físico
+	 * Cï¿½digo ejecutado para procesar la lï¿½gica del juego en cada frame
+	 * @param gameTimeStep    tiempo de juego que durï¿½ el frame anterior, en ms
+	 * @param physicsTimeStep tiempo avanzado en el mundo fï¿½sico
 	 */
 	public abstract void processFrame(float gameTimeStep, float physicsTimeStep);
 
-    //  Métodos relativos a unidades lógicas / pantalla
+    //  Mï¿½todos relativos a unidades lï¿½gicas / pantalla
     
 	@Override
     public void dispose() {
@@ -219,7 +219,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 		box2dWorld.dispose();
 	}
 	
-	// ---------------------------------------------------------- Métodos propios
+	// ---------------------------------------------------------- Mï¿½todos propios
 
 	/**
 	 * @return the physicalSimulationRatio
@@ -229,7 +229,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 	}
 	
 	/**
-	 *  Realiza un paso en la física 
+	 *  Realiza un paso en la fï¿½sica 
 	 * @param timeStep, en ms
 	 */
 	private void physicalStep(float timeStep) {
@@ -335,7 +335,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 		}
 	}	
 
-	// ----------------------------------------------- Métodos de ContactListener
+	// ----------------------------------------------- Mï¿½todos de ContactListener
 
 
 	@Override
@@ -459,7 +459,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
 
 	/**
-	 * Runnable del hilo de físicas
+	 * Runnable del hilo de fï¿½sicas
 	 * @author GaRRaPeTa
 	 */
 	class PhysicsThreadRunnable implements Runnable {
