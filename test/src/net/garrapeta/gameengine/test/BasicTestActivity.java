@@ -1,6 +1,7 @@
 package net.garrapeta.gameengine.test;
 
 import net.garrapeta.gameengine.GameView;
+import net.garrapeta.gameengine.GameWorld;
 import net.garrapeta.gameengine.box2d.Box2DWorld;
 import net.garrapeta.gameengine.box2d.actor.Box2DCircleActor;
 import net.garrapeta.gameengine.box2d.actor.Box2DEdgeActor;
@@ -15,7 +16,7 @@ import android.view.WindowManager;
 
 public class BasicTestActivity extends Activity {
 
-    private static final String LOG_SRC = "GameEngineTest";
+    private static final String LOG_SRC = GameWorld.LOG_SRC_GAME_ENGINE + ".Test";
     private static final int FPS = 60;
 
     private BasicTestBox2DWorld mWorld;
@@ -32,8 +33,6 @@ public class BasicTestActivity extends Activity {
         setContentView(R.layout.basic_test);
         mGameView = (GameView) findViewById(R.id.game_surface);
         mWorld = new BasicTestBox2DWorld(this, mGameView);
-        mWorld.setFPS(FPS);
-        mWorld.setDrawDebugInfo(true);
     }
 
     /**
@@ -41,45 +40,30 @@ public class BasicTestActivity extends Activity {
      */
     class BasicTestBox2DWorld extends Box2DWorld {
 
+        private static final float WORLD_HEIGHT = 10f;
+
         public BasicTestBox2DWorld(Activity activity, GameView gameView) {
             super(activity, gameView);
+            setTimeFactor(1);
+            setGravityY(-9.8f);
+            setFPS(FPS);
+            setDrawDebugInfo(true);
+            viewport.setWorldHeight(WORLD_HEIGHT);
         }
 
         @Override
-        public void processFrame(float gameTimeStep, float physicsTimeStep) {
-
-        }
-
-        @Override
-        public synchronized void surfaceChanged(float width, float height) {
-            super.surfaceChanged(width, height);
-            
-            Log.i(BasicTestActivity.LOG_SRC, "surfaceChanged " + this);
-
-            mWorld.create();
+        public void onGameViewSizeChanged(int width, int height) {
+            Log.i(BasicTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
             mWorld.startLooping();
             mWorld.play();
         }
-        
-        
-
+ 
         @Override
-        public void onTouchEvent(MotionEvent event) {
-            super.onTouchEvent(event);
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                PointF worldPos = viewport.screenToWorld(event.getX(), event.getY());
-                createCircleActor(worldPos);
-            }
-        }
+        public void onGameWorldSizeChanged() {
+            Log.i(BasicTestActivity.LOG_SRC, "onGameWorldSizeChanged " + this);
 
-        private void create() {
+            RectF vb = viewport.getWorldBoundaries();
 
-            Log.i(BasicTestActivity.LOG_SRC,"create " + this);
-            this.setTimeFactor(1);
-
-            this.viewport.setViewportHeightInWorldUnits(14);
-            RectF vb = viewport.getBoundaries();
-            this.setGravityY(-9.8f);
 
             float margin = 0.5f;
             float left   = vb.left + margin;
@@ -116,10 +100,26 @@ public class BasicTestActivity extends Activity {
                                         false));
 
         }
+
+        @Override
+        public void processFrame(float gameTimeStep, float physicsTimeStep) {
+
+        }
+
+        @Override
+        public void onTouchEvent(MotionEvent event) {
+            super.onTouchEvent(event);
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                PointF worldPos = viewport.screenToWorld(event.getX(), event.getY());
+                createCircleActor(worldPos);
+            }
+        }
+
+
         
         
         private void createCircleActor(PointF worldPos) {
-            float radius = 0.3f;
+            float radius = 0.5f;
             Box2DCircleActor actor = new Box2DCircleActor(this, worldPos, radius, true);
             addActor(actor);
         }

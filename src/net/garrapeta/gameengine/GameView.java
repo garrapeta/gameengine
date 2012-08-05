@@ -15,6 +15,10 @@ import android.view.SurfaceView;
  */
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	
+    // ----------------------------------------------------------------- Constants
+    
+    public static final String LOG_SRC = GameWorld.LOG_SRC_GAME_ENGINE + ".gameView";
+    
 	// ----------------------------------------------------------------- Variables
 	/**
 	 *  Holder del la SurfaceView
@@ -43,7 +47,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		requestFocus();
 	}
 
-	// ----------------------------------------------------------- Métodos propios
+	// ----------------------------------------------------------- Mï¿½todos propios
 	
 	/**
 	 * @param gameWorld
@@ -97,19 +101,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		((Activity)getContext()).runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Log.i(GameWorld.LOG_SRC, "GameView.setSyncDrawing (" + syncDrawing +")");
+				Log.i(LOG_SRC, "setSyncDrawing (" + syncDrawing +")");
 				setWillNotDraw(syncDrawing);
 			}}
 		);
 
 	}
 	
-	// ------------------------------------------------------------ Métodos de View
+	// ------------------------------------------------------------ Mï¿½todos de View
 	
 	@Override
 	public void onDraw(Canvas canvas) {
 		if (world != null) {
-			// Esta comprobación de nulidad sirve para evitar NullPointerExceptions
+			// Esta comprobaciï¿½n de nulidad sirve para evitar NullPointerExceptions
 			// en el visualizador de eclipse cuando se abre un Layout con una GameView
 			world.drawFrame(canvas);
 		}
@@ -126,23 +130,22 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		return true;
 	}
 	
-	// ------------------------------------------ Métodos de SurfaceHolder.Callback
+	// ------------------------------------------ Mï¿½todos de SurfaceHolder.Callback
 	
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        Log.i(LOG_SRC, "surfaceCreated (" + getWidth() + ", " + getHeight() +")");
+    }
 
 	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		Log.i(GameWorld.LOG_SRC, "GameView.surfaceChanged (" + width + ", " + height +")");
-		world.surfaceChanged(width, height);
-	}
-
-	@Override
-	public void surfaceCreated(SurfaceHolder holder) {
-		Log.i(GameWorld.LOG_SRC, "GameView.surfaceCreated (" + getWidth() + ", " + getHeight() +")");
+	public final void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+		Log.i(LOG_SRC, "surfaceChanged (" + width + ", " + height +")");
+		world.gameViewSizeChanged(width, height);
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		Log.i(GameWorld.LOG_SRC, "GameView.surfaceDestroyed");
+		Log.i(LOG_SRC, "surfaceDestroyed");
 	}
 
 }
