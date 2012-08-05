@@ -36,7 +36,8 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 	/** Nombre del thread del game loop	 */
 	public static final String LOG_SRC = GameWorld.LOG_SRC + ".physics";
 	
-	
+    /** Default phisical steps per second */
+    private static final float DEFAULT_PSPS = 60f; // (recomendado: 60Hertz)
 	// ------------------------------------------------ Variables
 	
 	/** Hilo con el motor de f�sicas */
@@ -74,6 +75,12 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 	 */
 	private long prevPhysicsTimeStamp;
     
+	
+    /** Target physical steps per second (frequency) */
+    private float mFsps; //
+
+    /** Target ms per physical step (period) */
+    private float mMpfs;
     //---------------------------------------------------- Inicializaci�n est�tica
     
     static {
@@ -111,9 +118,15 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 		box2dWorld = new World(gravity, doSleep);
 		box2dWorld.setContactListener(this);
 		
+		setFSPS(DEFAULT_PSPS);
 		physicsThread = new Thread(new PhysicsThreadRunnable(), PHYSICS_THREAD_NAME);
     }
-    
+
+
+    public void setFSPS(float fsps) {
+        mFsps = fsps;
+        mMpfs = 1000f / mFsps;
+    }
     
     /**
      * @return los ms que el mundo f�sico ha avanzado
@@ -467,17 +480,15 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 		@Override
 		public void run() {
 			Log.i(LOG_SRC, "Physics thread started. Thread: " + Thread.currentThread().getName());
-
-			float physicsTimeStep = 1000f / 60.0f; // 30 Hertz (recomendado: 60Hertz)
 			
 			while(running) {
 				long prevTimeStamp = System.currentTimeMillis();
 				
 				if (playing) {
-					physicalStep(physicsTimeStep);
+					physicalStep(mMpfs);
 				}
 				
-				float waitTime = physicsTimeStep / timeFactor;
+				float waitTime = mMpfs / timeFactor;
 				long diff = (long) (waitTime) - (System.currentTimeMillis() - prevTimeStamp); 
 				if (diff > 0) {
 					try {
@@ -490,7 +501,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 				if (playing) {
 					long elapsed = System.currentTimeMillis() - prevTimeStamp;
 					Log.d(LOG_SRC, "Physics time step. Elapsed " + elapsed + " real ms") ;
-					physicalSimulationRatio = physicsTimeStep / elapsed;
+					physicalSimulationRatio = mMpfs / elapsed;
 				}
 			}
 			
