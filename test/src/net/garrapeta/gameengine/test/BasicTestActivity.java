@@ -44,7 +44,6 @@ public class BasicTestActivity extends Activity {
 
         public BasicTestBox2DWorld(Activity activity, GameView gameView) {
             super(activity, gameView);
-            setTimeFactor(1);
             setGravityY(-9.8f);
             setFPS(FPS);
             setDrawDebugInfo(true);
@@ -102,7 +101,7 @@ public class BasicTestActivity extends Activity {
         }
 
         @Override
-        public void processFrame(float gameTimeStep, float physicsTimeStep) {
+        public void processFrame(float gameTimeStep) {
 
         }
 

@@ -49,9 +49,6 @@ public class Viewport {
     /** Height of the game world, in world units. */
     private float mWorldHeight;
 
-    public float mOffsetX;
-    public float mOffsetY;
-
     /** Visible world boundaries */
     private RectF mWorldBoundaries = new RectF();
 

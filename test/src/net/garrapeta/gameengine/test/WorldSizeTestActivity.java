@@ -167,7 +167,6 @@ public class WorldSizeTestActivity extends Activity {
         @Override
         public void onGameViewSizeChanged(int width, int height) {
             Log.i(WorldSizeTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
-            setTimeFactor(1);
             setGravityY(-9.8f);
             mWorld.startLooping();
             mWorld.play();
@@ -217,7 +216,7 @@ public class WorldSizeTestActivity extends Activity {
         }
 
         @Override
-        public void processFrame(float gameTimeStep, float physicsTimeStep) {
+        public void processFrame(float gameTimeStep) {
 
         }
 

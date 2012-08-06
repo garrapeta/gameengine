@@ -7,9 +7,6 @@ import net.garrapeta.gameengine.Actor;
 import net.garrapeta.gameengine.GameView;
 import net.garrapeta.gameengine.GameWorld;
 import android.app.Activity;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Paint.Align;
 import android.graphics.PointF;
 import android.util.Log;
 
@@ -54,27 +51,20 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 	private Vector<Body> markedForDestructionBodies;
 	
 	
-	/**
-	 * 	Relaci�n entre la velocidad a la que avanza en tiempo real y la velocidad
-	 *  a la que avanza el tiempo en la simulaci�n f�sica
-	 */
-	private float physicalSimulationRatio;
 	
 	/**
 	 *  Tiempo transcurrido en el mundo f�sico
 	 */
 	private double currentPhysicsMillis;
-	
+
+    /** Milisegundos que dur� el �ltimo frame */
+    private float mLastPhysicStepTime;
+    
 	/**
 	 *  N�mero de pasos f�sicos realizados
 	 */
 	private long stepCount;
 	
-	/**
-	 *  Timestamp del anterior frame en el mundo f�sico.
-	 */
-	private long prevPhysicsTimeStamp;
-    
 	
     /** Target physical steps per second (frequency) */
     private float mFsps; //
@@ -147,28 +137,22 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     
 
 	
-	protected void drawDebugInfo(Canvas canvas, Paint debugPaint) {
-		// se pinta ratio de simulaci�n y FPS actuales
-		debugPaint.setTextAlign(Align.RIGHT);
+    
+    protected synchronized String getDebugString() {
 		
 		String actorCount;
-		synchronized (this) {
-			actorCount = String.valueOf(actors.size());
-		}
+		actorCount = String.valueOf(actors.size());
+
 		
 		String bodyCount;
-		synchronized (this) {
-			bodyCount = String.valueOf(box2dWorld.getBodyCount());
-		}
+		bodyCount = String.valueOf(box2dWorld.getBodyCount());
 		
-		String aux      = String.valueOf(physicalSimulationRatio);
-		String ratioStr = aux.substring(0, Math.min(aux.length(), 4));
-		
-		aux      		= String.valueOf((1000 / frameTime));
-		String fpsStr   = aux.substring(0, Math.min(aux.length(), 4));
-		canvas.drawText(actorCount + " actors " +bodyCount + " bodies " + ratioStr + " ratio " + fpsStr +" FPS" , view.getWidth(), view.getHeight() - 20, debugPaint);
+
+		String fpsStr = String.valueOf((int) (1000 / mLastPhysicStepTime));
+		return actorCount + " actors " +bodyCount + " bodies " +  fpsStr + " Hz " + super.getDebugString();
 	}
-	
+
+    
     @Override
 	public void startLooping() {
     	super.startLooping();
@@ -201,19 +185,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 		markedForDestructionBodies.removeAllElements();
 	}
 
-	@Override
-	public final void processFrame(float gameTimeStep) {
-		long now = System.currentTimeMillis();
-		processFrame(gameTimeStep, now - prevPhysicsTimeStamp);
-		prevPhysicsTimeStamp = now;
-	}
-	
-	/**
-	 * C�digo ejecutado para procesar la l�gica del juego en cada frame
-	 * @param gameTimeStep    tiempo de juego que dur� el frame anterior, en ms
-	 * @param physicsTimeStep tiempo avanzado en el mundo f�sico
-	 */
-	public abstract void processFrame(float gameTimeStep, float physicsTimeStep);
+
 
     //  M�todos relativos a unidades l�gicas / pantalla
     
@@ -234,12 +206,6 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 	
 	// ---------------------------------------------------------- M�todos propios
 
-	/**
-	 * @return the physicalSimulationRatio
-	 */
-	public float getPhysicalSimulationRatio() {
-		return physicalSimulationRatio;
-	}
 	
 	/**
 	 *  Realiza un paso en la f�sica 
@@ -248,7 +214,6 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 	private void physicalStep(float timeStep) {
 		stepCount ++;
 		currentPhysicsMillis += timeStep;
-		Log.v(LOG_SRC, "Physical step. TimeStep: " + timeStep + " Elapsed time: " + currentPhysicsMillis + " Step count: " + stepCount);
 		synchronized (this) {
 			box2dWorld.step(timeStep / 1000, 2, 1);
 		}
@@ -481,28 +446,30 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 		public void run() {
 			Log.i(LOG_SRC, "Physics thread started. Thread: " + Thread.currentThread().getName());
 			
+			long prevTimeStamp = System.currentTimeMillis();
+			 
 			while(running) {
-				long prevTimeStamp = System.currentTimeMillis();
-				
 				if (playing) {
 					physicalStep(mMpfs);
 				}
 				
-				float waitTime = mMpfs / timeFactor;
-				long diff = (long) (waitTime) - (System.currentTimeMillis() - prevTimeStamp); 
+				long currentTimeStamp = System.currentTimeMillis();
+				long elapsed = currentTimeStamp - prevTimeStamp;
+                Log.v(LOG_SRC, "Physical simulation frame. Desired: " + mMpfs +  " Actual: " + elapsed);
+
+                long diff = (long) (mMpfs - elapsed);
 				if (diff > 0) {
 					try {
 						Thread.sleep(diff);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					
 				}
-				if (playing) {
-					long elapsed = System.currentTimeMillis() - prevTimeStamp;
-					Log.d(LOG_SRC, "Physics time step. Elapsed " + elapsed + " real ms") ;
-					physicalSimulationRatio = mMpfs / elapsed;
-				}
+				mLastPhysicStepTime = System.currentTimeMillis() - prevTimeStamp;
+                prevTimeStamp = currentTimeStamp;
+                
+                Thread.yield();
+
 			}
 			
 			synchronized (physicsThread) {

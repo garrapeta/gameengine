@@ -161,7 +161,7 @@ public class TimingTestActivity extends Activity {
         }
 
         @Override
-        public void processFrame(float gameTimeStep, float physicsTimeStep) {
+        public void processFrame(float gameTimeStep) {
             if (mBox2DActor != null) {
                 if (mBox2DActor.getBodies().get(0).getWorldCenter().x >= viewport.getWorldBoundaries().right - (mRadius * 2)) {
                     removeActor(mBox2DActor);

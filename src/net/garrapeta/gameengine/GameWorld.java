@@ -23,9 +23,6 @@ public abstract class GameWorld {
     /** Frames por segundo por defecto */
     private static final float DEFAULT_FPS = 33;
 
-    /** Factor de aceleraci�n de tiempo por defecto */
-    private static final float DEFAULT_TIME_FACTOR = 1;
-
     /** Source trazas de log */
     public static final String LOG_SRC_GAME_ENGINE = "game";
 
@@ -65,13 +62,7 @@ public abstract class GameWorld {
     private float mspf;
 
     /** Milisegundos que dur� el �ltimo frame */
-    protected float frameTime;
-
-    /**
-     * Factor de aceleraci�n de tiempo. Sirve para crear "efecto bala" y
-     * "fastforward"
-     */
-    protected float timeFactor;
+    private float mLastGameLoopFrameTime;
 
     /** Si el game loop est� corriendo */
     protected boolean running;
@@ -83,7 +74,7 @@ public abstract class GameWorld {
     protected Paint debugPaint;
 
     /** Ms que el mundo del juego a avanzado */
-    private long currentGameMillis;
+    private long mCurrentGameMillis;
 
     /** Si pintar la info de FPS, etc **/
     private boolean drawDebugInfo = false;
@@ -98,14 +89,12 @@ public abstract class GameWorld {
         this.activity = activity;
         viewport = new Viewport(this);
 
-        currentGameMillis = 0;
+        mCurrentGameMillis = 0;
 
         actors = new Vector<Actor>();
         markedForRemovalActors = new Vector<Actor>();
 
         setFPS(DEFAULT_FPS);
-
-        setTimeFactor(DEFAULT_TIME_FACTOR);
 
         debugPaint = new Paint();
         debugPaint.setColor(Color.RED);
@@ -158,26 +147,12 @@ public abstract class GameWorld {
         return mspf;
     }
 
-    /**
-     * @return the frameTime
-     */
-    public float getFrameTime() {
-        return frameTime;
-    }
-
-    public float getTimeFactor() {
-        return timeFactor;
-    }
-
-    public void setTimeFactor(float timeFactor) {
-        this.timeFactor = timeFactor;
-    }
 
     /**
      * @return los ms que el del juego ha avanzado
      */
     public long currentGameMillis() {
-        return currentGameMillis;
+        return mCurrentGameMillis;
     }
 
     /**
@@ -370,16 +345,8 @@ public abstract class GameWorld {
         // pintado del fondo
         drawBackground(canvas);
 
-        canvas.save();
-        float tx = viewport.worldUnitsToPixels(viewport.mOffsetX);
-        float ty = viewport.worldUnitsToPixels(viewport.mOffsetY);
-
-        canvas.translate(tx, ty);
-
         // pintado del mundo
         drawWorld(canvas);
-
-        canvas.restore();
 
         // pintado de debug
         if (drawDebugInfo) {
@@ -428,12 +395,17 @@ public abstract class GameWorld {
      * @param canvas
      * @param debugPaint
      */
-    protected void drawDebugInfo(Canvas canvas, Paint debugPaint) {
+    private final void drawDebugInfo(Canvas canvas, Paint debugPaint) {
         // se pintan los FPS actuales
         debugPaint.setTextAlign(Align.RIGHT);
-        canvas.drawText((1000 / frameTime) + " FPS", view.getWidth(), 20, debugPaint);
+        canvas.drawText(getDebugString(), view.getWidth(), view.getHeight() - 20, debugPaint);
     }
 
+    protected String getDebugString() {
+        return (int) (1000 / mLastGameLoopFrameTime) + " FPS";
+    }
+
+    
     /**
      * Finaliza el mundo
      */
@@ -535,32 +507,35 @@ public abstract class GameWorld {
 
         @Override
         public void run() {
-            Log.i(LOG_SRC, "Game loop started. Thread: " + Thread.currentThread().getName());
+            Log.i(LOG_SRC, "Game loop thread started. Thread: " + Thread.currentThread().getName());
+
+            long prevTimeStamp = System.currentTimeMillis();
 
             while (running) {
-                long prevTimeStamp = System.currentTimeMillis();
+                
 
                 if (playing) {
+                    
                     synchronized (GameWorld.this) {
                         // tareas de antes de procesar el frame
                         preProcessFrame();
-
-                        // procesamiento del frame
-                        float gameTimeStep = frameTime * timeFactor;
-                        processFrame(gameTimeStep);
-
-                        // l�gica de los actores
+                        // procesamiento del frame                       
+                        processFrame(mspf);
+                        // logica de los actores
                         int size = actors.size();
                         for (int i = 0; i < size; i++) {
-                            actors.get(i).doLogic(gameTimeStep);
+                            actors.get(i).doLogic(mspf);
                         }
-                        currentGameMillis += gameTimeStep;
                         // pintado
                         view.draw();
                     }
                 }
 
-                long diff = (long) mspf - (System.currentTimeMillis() - prevTimeStamp);
+                long currentTimeStamp = System.currentTimeMillis();
+                long elapsed = currentTimeStamp - prevTimeStamp;
+                Log.v(LOG_SRC, "Game loop frame. Desired: " + mspf +  " Actual: " + elapsed);
+
+                long diff = (long) (mspf - elapsed);
                 if (diff > 0) {
                     try {
                         Thread.sleep(diff);
@@ -569,12 +544,10 @@ public abstract class GameWorld {
                     }
 
                 }
-                frameTime = System.currentTimeMillis() - prevTimeStamp;
-
-                if (playing) {
-                    Log.v(LOG_SRC, "Frame time step: " + frameTime + " FPS:" + (1000 / frameTime));
-                }
-
+                mLastGameLoopFrameTime = System.currentTimeMillis() - prevTimeStamp;
+                mCurrentGameMillis += mLastGameLoopFrameTime;
+                prevTimeStamp = currentTimeStamp;
+                
                 Thread.yield();
             }
 
@@ -582,13 +555,9 @@ public abstract class GameWorld {
                 loopThread.notify();
             }
 
-            Log.i(LOG_SRC, "Game loop ended");
+            Log.i(LOG_SRC, "Game loop thread ended");
         }
 
     }
-
-
-
-
 
 }
