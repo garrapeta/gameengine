@@ -13,28 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-
 package com.badlogic.gdx.physics.box2d.joints;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.JointDef;
 
-/** Mouse joint definition. This requires a world target point, tuning parameters, and the time step. */
-public class MouseJointDef extends JointDef {
-	public MouseJointDef () {
-		type = JointType.MouseJoint;
+/** Rope joint definition. This requires two body anchor points and a maximum lengths. Note: by default the connected objects will
+ * not collide. see collideConnected in b2JointDef.
+ * @author mzechner */
+public class RopeJointDef extends JointDef {
+	public RopeJointDef () {
+		type = JointType.RopeJoint;
 	}
 
-	/** The initial world target point. This is assumed to coincide with the body anchor initially. */
-	public final Vector2 target = new Vector2();
+	/** The local anchor point relative to bodyA's origin. **/
+	public final Vector2 localAnchorA = new Vector2(-1, 0);
 
-	/** The maximum constraint force that can be exerted to move the candidate body. Usually you will express as some multiple of
-	 * the weight (multiplier * mass * gravity). */
-	public float maxForce = 0;
+	/** The local anchor point relative to bodyB's origin. **/
+	public final Vector2 localAnchorB = new Vector2(1, 0);
 
-	/** The response speed. */
-	public float frequencyHz = 5.0f;
-
-	/** The damping ratio. 0 = no damping, 1 = critical damping. */
-	public float dampingRatio = 0.7f;
+	/** The maximum length of the rope. Warning: this must be larger than b2_linearSlop or the joint will have no effect. */
+	public float maxLength = 0;
 }

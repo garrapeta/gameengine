@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+
 package com.badlogic.gdx.physics.box2d;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.JointDef.JointType;
 
 public abstract class Joint {
+	/*JNI
+#include <Box2D/Box2D.h> 
+	 */
 	/** the address of the joint **/
 	protected long addr;
 
@@ -34,18 +38,14 @@ public abstract class Joint {
 	/** joint edge b **/
 	protected JointEdge jointEdgeB;
 
-	/**
-	 * Constructs a new joint
-	 * @param addr the address of the joint
-	 */
+	/** Constructs a new joint
+	 * @param addr the address of the joint */
 	protected Joint (World world, long addr) {
 		this.world = world;
 		this.addr = addr;
 	}
 
-	/**
-	 * Get the type of the concrete joint.
-	 */
+	/** Get the type of the concrete joint. */
 	public JointType getType () {
 		int type = jniGetType(addr);
 		if (type > 0 && type < JointType.valueTypes.length)
@@ -54,29 +54,32 @@ public abstract class Joint {
 			return JointType.Unknown;
 	}
 
-	private native int jniGetType (long addr);
+	private native int jniGetType (long addr); /*
+		b2Joint* joint = (b2Joint*)addr;
+		return joint->GetType();
+	*/
 
-	/**
-	 * Get the first body attached to this joint.
-	 */
+	/** Get the first body attached to this joint. */
 	public Body getBodyA () {
 		return world.bodies.get(jniGetBodyA(addr));
 	}
 
-	private native long jniGetBodyA (long addr);
+	private native long jniGetBodyA (long addr); /*
+		b2Joint* joint = (b2Joint*)addr;
+		return (jlong)joint->GetBodyA();
+	*/
 
-	/**
-	 * Get the second body attached to this joint.
-	 */
+	/** Get the second body attached to this joint. */
 	public Body getBodyB () {
 		return world.bodies.get(jniGetBodyB(addr));
 	}
 
-	private native long jniGetBodyB (long addr);
+	private native long jniGetBodyB (long addr); /*
+		b2Joint* joint = (b2Joint*)addr;
+		return (jlong)joint->GetBodyB();
+	*/
 
-	/**
-	 * Get the anchor point on bodyA in world coordinates.
-	 */
+	/** Get the anchor point on bodyA in world coordinates. */
 	private final Vector2 anchorA = new Vector2();
 
 	public Vector2 getAnchorA () {
@@ -86,11 +89,14 @@ public abstract class Joint {
 		return anchorA;
 	}
 
-	private native void jniGetAnchorA (long addr, float[] anchorA);
+	private native void jniGetAnchorA (long addr, float[] anchorA); /*
+		b2Joint* joint = (b2Joint*)addr;
+		b2Vec2 a = joint->GetAnchorA();
+		anchorA[0] = a.x;
+		anchorA[1] = a.y;
+	*/
 
-	/**
-	 * Get the anchor point on bodyB in world coordinates.
-	 */
+	/** Get the anchor point on bodyB in world coordinates. */
 	private final Vector2 anchorB = new Vector2();
 
 	public Vector2 getAnchorB () {
@@ -100,11 +106,14 @@ public abstract class Joint {
 		return anchorB;
 	}
 
-	private native void jniGetAnchorB (long addr, float[] anchorB);
+	private native void jniGetAnchorB (long addr, float[] anchorB); /*
+		b2Joint* joint = (b2Joint*)addr;
+		b2Vec2 a = joint->GetAnchorB();
+		anchorB[0] = a.x;
+		anchorB[1] = a.y;
+	*/
 
-	/**
-	 * Get the reaction force on body2 at the joint anchor in Newtons.
-	 */
+	/** Get the reaction force on body2 at the joint anchor in Newtons. */
 	private final Vector2 reactionForce = new Vector2();
 
 	public Vector2 getReactionForce (float inv_dt) {
@@ -114,16 +123,22 @@ public abstract class Joint {
 		return reactionForce;
 	}
 
-	private native void jniGetReactionForce (long addr, float inv_dt, float[] reactionForce);
+	private native void jniGetReactionForce (long addr, float inv_dt, float[] reactionForce); /*
+		b2Joint* joint = (b2Joint*)addr;
+		b2Vec2 f = joint->GetReactionForce(inv_dt);
+		reactionForce[0] = f.x;
+		reactionForce[1] = f.y;
+	*/
 
-	/**
-	 * Get the reaction torque on body2 in N*m.
-	 */
+	/** Get the reaction torque on body2 in N*m. */
 	public float getReactionTorque (float inv_dt) {
 		return jniGetReactionTorque(addr, inv_dt);
 	}
 
-	private native float jniGetReactionTorque (long addr, float inv_dt);
+	private native float jniGetReactionTorque (long addr, float inv_dt); /*
+		b2Joint* joint = (b2Joint*)addr;
+		return joint->GetReactionTorque(inv_dt);
+	*/
 
 // /// Get the next joint the world joint list.
 // b2Joint* GetNext();
@@ -134,12 +149,13 @@ public abstract class Joint {
 // /// Set the user data pointer.
 // void SetUserData(void* data);
 
-	/**
-	 * Short-cut function to determine if either body is inactive.
-	 */
+	/** Short-cut function to determine if either body is inactive. */
 	public boolean isActive () {
 		return jniIsActive(addr);
 	}
 
-	private native boolean jniIsActive (long addr);
+	private native boolean jniIsActive (long addr); /*
+		b2Joint* joint = (b2Joint*)addr;
+		return joint->IsActive();
+	*/
 }

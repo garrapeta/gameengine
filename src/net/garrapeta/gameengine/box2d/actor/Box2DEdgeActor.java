@@ -22,11 +22,11 @@ public class Box2DEdgeActor extends Box2DAtomicActor {
 	private final static int DEFAULT_LINE_COLOR = Color.TRANSPARENT;
 	
 	
-	// ------------------------------------------ Variables estáticas
+	// ------------------------------------------ Variables estï¿½ticas
 	
 	private final static ShapeBasedBodyDrawer edgeShapeDrawer;
 	
-	// -------------------------------------- Inicialización estática
+	// -------------------------------------- Inicializaciï¿½n estï¿½tica
 	
 	static {
 		edgeShapeDrawer = new ShapeBasedBodyDrawer(DEFAULT_STROKE_COLOR, 
@@ -38,7 +38,7 @@ public class Box2DEdgeActor extends Box2DAtomicActor {
 	
 	/**
 	 * @param world
-	 * @param worldPos, posición en el mundo, en unidades del mundo
+	 * @param worldPos, posiciï¿½n en el mundo, en unidades del mundo
 	 * @param vertexes vertices, EN EL SENTIDO CONTRARIO A LAS AGUJAS DEL RELOJ, en unidades del mundo
 	 * @param dynamic
 	 */
@@ -52,7 +52,7 @@ public class Box2DEdgeActor extends Box2DAtomicActor {
 	
 	/**
 	 * @param world
-	 * @param worldPos, posición en el mundo, en unidades del mundo
+	 * @param worldPos, posiciï¿½n en el mundo, en unidades del mundo
 	 * @param p0 vertice inicial, en unidades del mundo
 	 * @param p1 vertice final, en unidades del mundo
 	 * @param dynamic
@@ -68,8 +68,8 @@ public class Box2DEdgeActor extends Box2DAtomicActor {
 	
 	/**
 	 * @param world
-	 * @param worldPos, posición en el mundo, en unidades del mundo
-	 * @param vertexes, vértices, en unidades del mundo
+	 * @param worldPos, posiciï¿½n en el mundo, en unidades del mundo
+	 * @param vertexes, vï¿½rtices, en unidades del mundo
 	 * @param dynamic
 	 */
 	public Box2DEdgeActor(Box2DWorld world, PointF worldPos, PointF[] vertexes, boolean dynamic) {
@@ -87,7 +87,7 @@ public class Box2DEdgeActor extends Box2DAtomicActor {
 			Vector2 p1 = vertexes[i + 1];
 			
 			PolygonShape edgeShape = new PolygonShape();
-			edgeShape.setAsEdge(p0, p1);	
+			edgeShape.set(new Vector2[] {p0, p1});
 			
 			body.createFixture(edgeShape, 1.0f);
 			edgeShape.dispose();
