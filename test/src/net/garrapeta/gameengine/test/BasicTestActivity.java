@@ -11,10 +11,12 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class BasicTestActivity extends Activity {
+public class BasicTestActivity extends Activity implements OnTouchListener {
 
     private static final String LOG_SRC = GameWorld.LOG_SRC_GAME_ENGINE + ".Test";
     private static final int FPS = 60;
@@ -32,9 +34,19 @@ public class BasicTestActivity extends Activity {
 
         setContentView(R.layout.basic_test);
         mGameView = (GameView) findViewById(R.id.game_surface);
+        mGameView.setOnTouchListener(this);
         mWorld = new BasicTestBox2DWorld(this, mGameView);
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            PointF worldPos = mWorld.viewport.screenToWorld(event.getX(), event.getY());
+            mWorld.createCircleActor(worldPos);
+        }
+        return true;
+    }
+    
     /**
      * Basic Test World
      */
@@ -105,18 +117,7 @@ public class BasicTestActivity extends Activity {
 
         }
 
-        @Override
-        public void onTouchEvent(MotionEvent event) {
-            super.onTouchEvent(event);
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                PointF worldPos = viewport.screenToWorld(event.getX(), event.getY());
-                createCircleActor(worldPos);
-            }
-        }
 
-
-        
-        
         private void createCircleActor(PointF worldPos) {
             float radius = 0.5f;
             Box2DCircleActor actor = new Box2DCircleActor(this, worldPos, radius, true);
@@ -124,5 +125,7 @@ public class BasicTestActivity extends Activity {
         }
 
     }
+
+
 }
 

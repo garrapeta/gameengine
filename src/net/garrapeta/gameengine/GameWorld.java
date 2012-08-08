@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.util.Log;
-import android.view.MotionEvent;
 
 /**
  * Clase que representa un universo de juego.
@@ -417,15 +416,6 @@ public abstract class GameWorld {
 
     // ---------------------------------- M�todos relativos a la interacci�n
 
-    /**
-     * Llamado cuando el usuario realiza acci�n t�ctil sobre pantalla
-     * 
-     * @param event
-     */
-    public void onTouchEvent(MotionEvent event) {
-        checkPressedActors(event);
-    }
-
     final void gameViewSizeChanged(int width, int height) {
         Log.i(LOG_SRC, "surfaceChanged (" + width + ", " + height +")");
         onGameViewSizeChanged(width, height);
@@ -443,31 +433,6 @@ public abstract class GameWorld {
      * Invoked when the size of the viewport changes
      */
     public abstract void onGameWorldSizeChanged();
-
-    /**
-     * Recorres los actores comprobando cu�les pueden estar pesionados
-     * 
-     * @param event
-     */
-    final synchronized void checkPressedActors(MotionEvent event) {
-
-        for (int i = 0; i < actors.size(); i++) {
-            Actor actor = actors.elementAt(i);
-            boolean wasPressed = actor.isPressed();
-            boolean isPressed = actor.checkPressed(event);
-
-            if (wasPressed) {
-                if (!isPressed) {
-                    // levantado
-                    actor.setPressed(false);
-                }
-            } else if (isPressed) {
-                // presionado
-                actor.setPressed(true);
-            }
-        }
-
-    }
 
     // -------------------------------------- Clases internas
 

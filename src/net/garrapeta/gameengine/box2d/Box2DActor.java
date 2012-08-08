@@ -18,12 +18,12 @@ import com.badlogic.gdx.physics.box2d.Shape;
 
 
 /**
- * Actor de un mundo físico Box2D
+ * Actor de un mundo fï¿½sico Box2D
  * @author GaRRaPeTa
  */
 public abstract class Box2DActor extends Actor {
 
-	// ----------------------------------------- Variables estáticas
+	// ----------------------------------------- Variables estï¿½ticas
 	
 	protected static ShapeBasedBodyDrawer defaultBodyDrawer;
 	
@@ -38,7 +38,7 @@ public abstract class Box2DActor extends Actor {
 	 */
 	protected ArrayList<Joint> joints;
 	
-	// --------------------------------------------------- Inicialización estática
+	// --------------------------------------------------- Inicializaciï¿½n estï¿½tica
 
 	static  {
 		int strokeColor  = Color.GRAY;
@@ -51,7 +51,7 @@ public abstract class Box2DActor extends Actor {
 	
 	/**
 	 * @param world
-	 * @param worldPos, posición en el mundo, en unidades del mundo
+	 * @param worldPos, posiciï¿½n en el mundo, en unidades del mundo
 	 */
 	public Box2DActor(Box2DWorld gameWorld) {
 		this(gameWorld, 0);
@@ -59,13 +59,13 @@ public abstract class Box2DActor extends Actor {
 	
 	/**
 	 * @param world
-	 * @param worldPos, posición en el mundo, en unidades del mundo
+	 * @param worldPos, posiciï¿½n en el mundo, en unidades del mundo
 	 */
 	public Box2DActor(Box2DWorld gameWorld, int zIndex) {
 		super(gameWorld, zIndex);
 	}
 	
-	// ------------------------------------------------- Métodos propios
+	// ------------------------------------------------- Mï¿½todos propios
 	
 	public float getMass() {
 		float mass = 0;
@@ -119,7 +119,7 @@ public abstract class Box2DActor extends Actor {
 	public void onEndContact(Body bodyA, Box2DActor actorB, Body bodyB, Contact contact) {
 	}
 	
-	// --------------------------------------------------- Métodos de Actor
+	// --------------------------------------------------- Mï¿½todos de Actor
 	
 	@Override
 	public void draw(Canvas canvas) {
@@ -146,8 +146,13 @@ public abstract class Box2DActor extends Actor {
 		}
 	}
 	
-	@Override
-	public boolean isPointInActor(float worldX, float worldY) {
+
+	/**
+	 * @param worldX
+	 * @param worldY
+	 * @return if the point passed as an argument is contained in the shapes of the actor
+	 */
+	public boolean containsPoint(float worldX, float worldY) {
 		int l = bodies.size();
 		for (int i = 0; i < l; i++) {
 			Body body = bodies.get(i);
@@ -181,7 +186,7 @@ public abstract class Box2DActor extends Actor {
 		}
 		BodyUserData ud = (BodyUserData)body.getUserData();
 		
-		// si este body pertenecía a otro actor, se le quita como body
+		// si este body pertenecï¿½a a otro actor, se le quita como body
 		Box2DActor oldActor = ud.getActor(); 
 		if (oldActor != null) {
 			oldActor.removeBody(body);

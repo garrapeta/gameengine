@@ -3,7 +3,6 @@ package net.garrapeta.gameengine.test;
 import net.garrapeta.gameengine.GameView;
 import net.garrapeta.gameengine.GameWorld;
 import net.garrapeta.gameengine.SimpleActor;
-import net.garrapeta.gameengine.Viewport;
 import net.garrapeta.gameengine.box2d.Box2DActor;
 import net.garrapeta.gameengine.box2d.Box2DWorld;
 import net.garrapeta.gameengine.box2d.actor.Box2DCircleActor;
@@ -16,7 +15,6 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -214,11 +212,6 @@ public class TimingTestActivity extends Activity {
                     canvas.drawCircle(screenPos.x, screenPos.y, viewport.worldUnitsToPixels(mRadius), paint);
                 }
 
-                @Override
-                public boolean isPointInActor(float worldX, float worldY) {
-                    return false;
-                }
-                
             };
             mSimpleActor.setLinearVelocity(mVelX, 0);
             addActor(mSimpleActor);

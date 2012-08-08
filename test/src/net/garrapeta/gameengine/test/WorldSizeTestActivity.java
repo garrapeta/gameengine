@@ -4,7 +4,6 @@ import net.garrapeta.gameengine.GameView;
 import net.garrapeta.gameengine.GameWorld;
 import net.garrapeta.gameengine.Viewport;
 import net.garrapeta.gameengine.box2d.Box2DWorld;
-import net.garrapeta.gameengine.box2d.actor.Box2DCircleActor;
 import net.garrapeta.gameengine.box2d.actor.Box2DEdgeActor;
 import android.app.Activity;
 import android.graphics.Canvas;
@@ -12,7 +11,6 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -224,24 +222,6 @@ public class WorldSizeTestActivity extends Activity {
         protected void drawWorld(Canvas canvas) {
             super.drawWorld(canvas);
             viewport.drawBoundaries(canvas);
-        }
-
-        @Override
-        public void onTouchEvent(MotionEvent event) {
-            super.onTouchEvent(event);
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                PointF worldPos = viewport.screenToWorld(event.getX(), event.getY());
-                createCircleActor(worldPos);
-            }
-        }
-
-       
-        
-        
-        private void createCircleActor(PointF worldPos) {
-            float radius = 0.5f;
-            Box2DCircleActor actor = new Box2DCircleActor(this, worldPos, radius, true);
-            addActor(actor);
         }
 
     }
