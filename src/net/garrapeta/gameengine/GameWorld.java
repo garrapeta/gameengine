@@ -1,6 +1,5 @@
 package net.garrapeta.gameengine;
 
-import java.util.Iterator;
 import java.util.Vector;
 
 import android.app.Activity;
@@ -8,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -153,13 +151,6 @@ public abstract class GameWorld {
      */
     public long currentGameMillis() {
         return mCurrentGameMillis;
-    }
-
-    /**
-     * @return iterador a los actores
-     */
-    public synchronized Iterator<Actor> actors() {
-        return actors.iterator();
     }
 
     /**
@@ -476,24 +467,6 @@ public abstract class GameWorld {
             }
         }
 
-    }
-
-    // -------------------- M�todos relativos a unidades l�gicas / pantalla
-
-    public int inchesToPixels(float inches) {
-        DisplayMetrics dm = activity.getResources().getDisplayMetrics();
-        // los p�xeles por pulgada pueden ser diferentes en la horizontal /
-        // vertical
-        // hacemos la media
-        float scale = (dm.xdpi + dm.ydpi) / 2;
-        return (int) (scale * inches);
-    }
-
-    public int dpToPixels(float dp) {
-        // Get the screen's density scale
-        final float scale = activity.getResources().getDisplayMetrics().density;
-        // Convert the dps to pixels, based on density scale
-        return (int) (dp * scale + 0.5f);
     }
 
     // -------------------------------------- Clases internas
