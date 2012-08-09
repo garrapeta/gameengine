@@ -1,10 +1,9 @@
-package net.garrapeta.gameengine.box2d;
+package net.garrapeta.gameengine;
 
 import java.util.Vector;
 
-import net.garrapeta.gameengine.Actor;
-import net.garrapeta.gameengine.GameView;
-import net.garrapeta.gameengine.GameWorld;
+import net.garrapeta.gameengine.actor.Box2DActor;
+
 import android.app.Activity;
 import android.graphics.PointF;
 import android.util.Log;
@@ -116,8 +115,9 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     }
 
     @Override
-    public void processFrame(float lastFrameLength) {
+    void doProcessFrame(float lastFrameLength) {
         doPhysicalStep(lastFrameLength);
+        super.doProcessFrame(lastFrameLength);
     }
 
     @Override

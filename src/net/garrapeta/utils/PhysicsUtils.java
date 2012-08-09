@@ -1,7 +1,7 @@
-package net.garrapeta.gameengine.box2d;
+package net.garrapeta.utils;
 
 /**
- * Métodos de utilidad de físicas
+ * Mï¿½todos de utilidad de fï¿½sicas
  * @author GaRRaPeTa
  */
 public class PhysicsUtils {

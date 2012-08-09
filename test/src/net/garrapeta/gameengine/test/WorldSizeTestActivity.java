@@ -1,12 +1,13 @@
 package net.garrapeta.gameengine.test;
 
+import net.garrapeta.gameengine.Box2DWorld;
 import net.garrapeta.gameengine.GameView;
 import net.garrapeta.gameengine.GameWorld;
 import net.garrapeta.gameengine.Viewport;
-import net.garrapeta.gameengine.box2d.Box2DWorld;
-import net.garrapeta.gameengine.box2d.actor.Box2DEdgeActor;
+import net.garrapeta.gameengine.actor.Box2DEdgeActor;
 import android.app.Activity;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.hardware.SensorManager;
@@ -209,17 +210,6 @@ public class WorldSizeTestActivity extends Activity {
                                         new PointF(right,   bottom),  
                                         new PointF(right,   top ),
                                         false));
-        }
-
-        @Override
-        public void processFrame(float lastFrameLength) {
-            super.processFrame(lastFrameLength);
-        }
-
-        @Override
-        protected void drawWorld(Canvas canvas) {
-            super.drawWorld(canvas);
-            viewport.drawBoundaries(canvas);
         }
 
     }

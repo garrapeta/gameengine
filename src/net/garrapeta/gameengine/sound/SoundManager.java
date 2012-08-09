@@ -1,4 +1,4 @@
-package net.garrapeta.gameengine;
+package net.garrapeta.gameengine.sound;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import android.util.Log;
  */
 public class SoundManager {
 
-	// -------------------------------- Variables estáticas
+	// -------------------------------- Variables estï¿½ticas
 	
 	private static SoundManager instance;
 	
@@ -37,7 +37,7 @@ public class SoundManager {
 		playerSets = new HashMap<Integer, PlayerSet>();
 	}
 	
-	// --------------------------------------------- Métodos estáticos
+	// --------------------------------------------- Mï¿½todos estï¿½ticos
 	
 	/**
 	 * @return instancia de SoundManager
@@ -49,7 +49,7 @@ public class SoundManager {
 		return instance;
 	}
 	
-	// ------------------------------------------ Métodos de instancia
+	// ------------------------------------------ Mï¿½todos de instancia
 	
 	/**
 	 * Borra todo
@@ -64,7 +64,7 @@ public class SoundManager {
 	
 
 	/**
-	 * Añade un sample
+	 * Aï¿½ade un sample
 	 * @param resourceId
 	 * @param sampleId
 	 */
@@ -206,7 +206,7 @@ public class SoundManager {
 
 
 /**
- * Método que encapsula diferentes players que pueden estar referenciados
+ * Mï¿½todo que encapsula diferentes players que pueden estar referenciados
  * por un mismo id
  * @author GaRRaPeTa
  */
@@ -217,10 +217,10 @@ class PlayerSet {
 	private MediaPlayer player  = null;
 	private ArrayList<MediaPlayer>   players = null;
 	
-	// ----------------------------- Métodos
+	// ----------------------------- Mï¿½todos
 	
 	/**
-	 * Añade un player
+	 * Aï¿½ade un player
 	 * @param sample
 	 */
 	void add(MediaPlayer sample) {

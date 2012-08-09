@@ -1,9 +1,10 @@
-package net.garrapeta.gameengine.box2d.actor;
+package net.garrapeta.gameengine.actor;
 
+import net.garrapeta.gameengine.BodyUserData;
+import net.garrapeta.gameengine.Box2DWorld;
+import net.garrapeta.gameengine.ShapeBasedBodyDrawer;
 import net.garrapeta.gameengine.Viewport;
-import net.garrapeta.gameengine.box2d.BodyUserData;
-import net.garrapeta.gameengine.box2d.Box2DWorld;
-import net.garrapeta.gameengine.box2d.ShapeBasedBodyDrawer;
+import net.garrapeta.gameengine.actor.Box2DAtomicActor;
 import android.graphics.Color;
 import android.graphics.PointF;
 
@@ -21,11 +22,11 @@ public class Box2DPolygonActor extends Box2DAtomicActor {
 	private final static int DEFAULT_LINE_COLOR 	= Color.GRAY;
 	
 	
-	// ------------------------------------------ Variables estáticas
+	// ------------------------------------------ Variables estï¿½ticas
 	
 	private final static ShapeBasedBodyDrawer polygonShapeDrawer;
 	
-	// -------------------------------------- Inicialización estática
+	// -------------------------------------- Inicializaciï¿½n estï¿½tica
 	
 	static {
 		polygonShapeDrawer = new ShapeBasedBodyDrawer(DEFAULT_STROKE_COLOR, 
@@ -37,7 +38,7 @@ public class Box2DPolygonActor extends Box2DAtomicActor {
 	
 	/**
 	 * @param world
-	 * @param worldPos, posición en el mundo, en unidades del mundo
+	 * @param worldPos, posiciï¿½n en el mundo, en unidades del mundo
 	 * @param vertexes vertices, EN EL SENTIDO CONTRARIO A LAS AGUJAS DEL RELOJ, en unidades del mundo
 	 * @param dynamic
 	 */
@@ -51,7 +52,7 @@ public class Box2DPolygonActor extends Box2DAtomicActor {
 	
 	/**
 	 * @param world
-	 * @param worldPos, posición en el mundo, en unidades del mundo
+	 * @param worldPos, posiciï¿½n en el mundo, en unidades del mundo
 	 * @param vertexes vertices, EN EL SENTIDO CONTRARIO A LAS AGUJAS DEL RELOJ, en unidades del mundo
 	 * @param dynamic
 	 */
@@ -70,7 +71,7 @@ public class Box2DPolygonActor extends Box2DAtomicActor {
 
 	/**
 	 * @param world
-	 * @param worldPos,  posición en el mundo, en unidades del mundo
+	 * @param worldPos,  posiciï¿½n en el mundo, en unidades del mundo
 	 * @param halfWidth  en unidades del mundo
 	 * @param halfHeight en unidades del mundo
 	 * @param dynamic
@@ -93,7 +94,7 @@ public class Box2DPolygonActor extends Box2DAtomicActor {
 	
 	/**
 	 * @param world
-	 * @param worldPos, posición en el mundo, en unidades del mundo
+	 * @param worldPos, posiciï¿½n en el mundo, en unidades del mundo
 	 * @param halfWidth  en unidades del mundo
 	 * @param halfHeight en unidades del mundo
 	 * @param angle      

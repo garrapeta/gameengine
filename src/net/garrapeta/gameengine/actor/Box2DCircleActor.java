@@ -1,9 +1,10 @@
-package net.garrapeta.gameengine.box2d.actor;
+package net.garrapeta.gameengine.actor;
 
 
-import net.garrapeta.gameengine.box2d.BodyUserData;
-import net.garrapeta.gameengine.box2d.Box2DWorld;
-import net.garrapeta.gameengine.box2d.ShapeBasedBodyDrawer;
+import net.garrapeta.gameengine.BodyUserData;
+import net.garrapeta.gameengine.Box2DWorld;
+import net.garrapeta.gameengine.ShapeBasedBodyDrawer;
+import net.garrapeta.gameengine.actor.Box2DAtomicActor;
 import android.graphics.Color;
 import android.graphics.PointF;
 
@@ -11,7 +12,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 
 /**
- * Actor basado en un círculo
+ * Actor basado en un cï¿½rculo
  * @author GaRRaPeTa
  */
 public class Box2DCircleActor extends Box2DAtomicActor {
@@ -24,11 +25,11 @@ public class Box2DCircleActor extends Box2DAtomicActor {
 	private final static int DEFAULT_LINE_COLOR = Color.GRAY;
 	
 	
-	// ------------------------------------------ Variables estáticas
+	// ------------------------------------------ Variables estï¿½ticas
 	
 	private final static ShapeBasedBodyDrawer circleShapeDrawer;
 	
-	// -------------------------------------- Inicialización estática
+	// -------------------------------------- Inicializaciï¿½n estï¿½tica
 	
 	static {
 		circleShapeDrawer = new ShapeBasedBodyDrawer(DEFAULT_STROKE_COLOR, 
@@ -40,7 +41,7 @@ public class Box2DCircleActor extends Box2DAtomicActor {
 	/**
 	 * Constructor
 	 * @param world
-	 * @param worldPos, posición en el mundo, en unidades del mundo
+	 * @param worldPos, posiciï¿½n en el mundo, en unidades del mundo
 	 * @param radius, radio en unidades del mundo
 	 * @param dynamic
 	 */
@@ -63,7 +64,7 @@ public class Box2DCircleActor extends Box2DAtomicActor {
 	}
 
 
-	// ------------------------------------------------------ Métodos propios
+	// ------------------------------------------------------ Mï¿½todos propios
 
 
 }

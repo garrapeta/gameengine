@@ -1,7 +1,9 @@
-package net.garrapeta.gameengine.box2d;
+package net.garrapeta.gameengine;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import net.garrapeta.gameengine.actor.Box2DActor;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -40,15 +42,15 @@ public class ShapeBasedBodyDrawer implements IBodyDrawer {
 		this.lineColor = lineColor;
 	}
 	
-	// --------------------------------------------------------- Métodos estáticos
+	// --------------------------------------------------------- Mï¿½todos estï¿½ticos
 	
-	// ----------------------------------------------------- Métodos de IBodyDrawer
+	// ----------------------------------------------------- Mï¿½todos de IBodyDrawer
 	
 	@Override
 	public void draw(Canvas canvas, Box2DActor actor, Body body) {
 		Vector2 worldPos = body.getWorldCenter();
 		
-		PointF screenPos = actor.gameWorld.viewport.worldToScreen(worldPos.x, worldPos.y);
+		PointF screenPos = actor.mGameWorld.viewport.worldToScreen(worldPos.x, worldPos.y);
 		canvas.save();
 		
 		canvas.translate(screenPos.x, screenPos.y);
@@ -67,7 +69,7 @@ public class ShapeBasedBodyDrawer implements IBodyDrawer {
 	}
 	
 	protected void drawShape(Canvas canvas, Box2DActor actor, Shape shape) {
-		actor.gameWorld.viewport.draw(canvas, shape, strokeColor, fillColor, lineColor);
+		actor.mGameWorld.viewport.draw(canvas, shape, strokeColor, fillColor, lineColor);
 	}
 
 	

@@ -1,12 +1,13 @@
-package net.garrapeta.gameengine.box2d;
+package net.garrapeta.gameengine;
 
+import net.garrapeta.gameengine.actor.Box2DActor;
 import android.graphics.Canvas;
 
 import com.badlogic.gdx.physics.box2d.Body;
 
 /**
  * Interfaz para pintar un body.
- * Los métodos que implementen esta interfaz serán "estrategias" de pintado 
+ * Los mï¿½todos que implementen esta interfaz serï¿½n "estrategias" de pintado 
  * de bodys.
  * 
  * @author GaRRaPeTa

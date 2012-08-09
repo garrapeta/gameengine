@@ -1,4 +1,6 @@
-package net.garrapeta.gameengine.box2d;
+package net.garrapeta.gameengine;
+
+import net.garrapeta.gameengine.actor.Box2DActor;
 
 public class BodyUserData {
 	
@@ -13,7 +15,7 @@ public class BodyUserData {
 	public BodyUserData() {
 	}
 
-	//------------------------------------------------------------- Métodos
+	//------------------------------------------------------------- Mï¿½todos
 
 	/**
 	 * @return the actor

@@ -129,8 +129,7 @@ public abstract class GameWorld {
         this.mFps = fps;
         mspf = 1000 / fps;
     }
-    
-    
+
     /**
      * @return the fPS
      */
@@ -144,7 +143,6 @@ public abstract class GameWorld {
     public float getMspf() {
         return mspf;
     }
-
 
     /**
      * @return los ms que el del juego ha avanzado
@@ -280,9 +278,10 @@ public abstract class GameWorld {
             markedForRemovalActors.add(actor);
         }
     }
-    
+
     /**
      * Remove all the actors
+     * 
      * @param actor
      */
     public synchronized void removeAllActors() {
@@ -307,7 +306,9 @@ public abstract class GameWorld {
      * @param lastFrameLength
      *            tiempo que dur� el frame anterior, en ms
      */
-    public abstract void processFrame(float lastFrameLength);
+    public boolean processFrame(float lastFrameLength) {
+        return false;
+    }
 
     /**
      * C�digo ejecutado antes de procesar la l�gica del juego en cada frame
@@ -326,15 +327,8 @@ public abstract class GameWorld {
     // ---------------------------------------------- M�todos relativos al
     // pintado
 
-    /**
-     * Pinta un frame
-     * 
-     * @param canvas
-     */
-    protected final synchronized void drawFrame(Canvas canvas) {
+    final void doDrawWorld(Canvas canvas) {
         Log.v(LOG_SRC, "Drawing frame");
-        // pintado del fondo
-        drawBackground(canvas);
 
         // pintado del mundo
         drawWorld(canvas);
@@ -345,30 +339,15 @@ public abstract class GameWorld {
         }
     }
 
+    
     /**
      * C�digo ejecutado para pintar el mundo en cada frame
      * 
      * @param canvas
      */
     protected synchronized void drawWorld(Canvas canvas) {
-        // pintado de los actores
+        drawBackground(canvas);
         drawActors(canvas);
-    }
-
-    /**
-     * Pinta a los actores
-     * 
-     * @param canvas
-     */
-    public synchronized void drawActors(Canvas canvas) {
-        // Log.v(LOG_SRC, "GameWorld.drawActors(). Thread: " +
-        // Thread.currentThread().getName());
-        // actores
-        int l = actors.size();
-        for (int i = 0; i < l; i++) {
-            Actor actor = actors.elementAt(i);
-            actor.draw(canvas);
-        }
     }
 
     /**
@@ -378,7 +357,18 @@ public abstract class GameWorld {
      */
     protected void drawBackground(Canvas canvas) {
         canvas.drawColor(Color.BLACK);
+        viewport.drawBoundaries(canvas);
     }
+
+    protected void drawActors(Canvas canvas) {
+        int l = actors.size();
+        for (int i = 0; i < l; i++) {
+            Actor actor = actors.elementAt(i);
+            actor.draw(canvas);
+        }
+    }
+
+
 
     /**
      * Pinta informaci�n de debug
@@ -396,7 +386,6 @@ public abstract class GameWorld {
         return (int) mCurrentFps + " FPS";
     }
 
-    
     /**
      * Finaliza el mundo
      */
@@ -418,15 +407,18 @@ public abstract class GameWorld {
     // ---------------------------------- M�todos relativos a la interacci�n
 
     final void gameViewSizeChanged(int width, int height) {
-        Log.i(LOG_SRC, "surfaceChanged (" + width + ", " + height +")");
+        Log.i(LOG_SRC, "surfaceChanged (" + width + ", " + height + ")");
         onGameViewSizeChanged(width, height);
         viewport.gameViewSizeChanged(width, height);
     }
 
     /**
      * Invoked when the size of game view changes
-     * @param width, in pixels
-     * @param height, in pixels
+     * 
+     * @param width
+     *            , in pixels
+     * @param height
+     *            , in pixels
      */
     public abstract void onGameViewSizeChanged(int width, int height);
 
@@ -434,6 +426,17 @@ public abstract class GameWorld {
      * Invoked when the size of the viewport changes
      */
     public abstract void onGameWorldSizeChanged();
+
+    void doProcessFrame(float lastFrameLength) {
+        if (!processFrame(lastFrameLength)) {
+            preProcessFrame();
+            // TODO: do this with iterator
+            int size = actors.size();
+            for (int i = 0; i < size; i++) {
+                actors.get(i).processFrame(mspf);
+            }
+        }
+    }
 
     // -------------------------------------- Clases internas
 
@@ -449,22 +452,13 @@ public abstract class GameWorld {
             Log.i(LOG_SRC, "Game loop thread started. Thread: " + Thread.currentThread().getName());
 
             float lastFrameLength = 0;
-            
+
             while (running) {
-                
+
                 long begin = System.currentTimeMillis();
                 if (playing) {
                     synchronized (GameWorld.this) {
-                        // tareas de antes de procesar el frame
-                        preProcessFrame();
-                        // procesamiento del frame                       
-                        processFrame(lastFrameLength);
-                        // logica de los actores
-                        int size = actors.size();
-                        for (int i = 0; i < size; i++) {
-                            actors.get(i).doLogic(mspf);
-                        }
-                        // pintado
+                        doProcessFrame(lastFrameLength);
                         view.draw();
                     }
                 }
@@ -484,7 +478,7 @@ public abstract class GameWorld {
                 lastFrameLength = System.currentTimeMillis() - begin;
                 mCurrentGameMillis += lastFrameLength;
                 mCurrentFps = 1000 / lastFrameLength;
-                Log.v(LOG_SRC, "Game loop frame. Desired FPS: " + mFps +  " Actual: " + mCurrentFps);
+                Log.v(LOG_SRC, "Game loop frame. Desired FPS: " + mFps + " Actual: " + mCurrentFps);
                 Thread.yield();
             }
 
@@ -494,7 +488,5 @@ public abstract class GameWorld {
 
             Log.i(LOG_SRC, "Game loop thread ended");
         }
-
     }
-
 }

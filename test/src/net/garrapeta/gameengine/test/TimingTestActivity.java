@@ -1,12 +1,12 @@
 package net.garrapeta.gameengine.test;
 
+import net.garrapeta.gameengine.Box2DWorld;
 import net.garrapeta.gameengine.GameView;
 import net.garrapeta.gameengine.GameWorld;
-import net.garrapeta.gameengine.SimpleActor;
-import net.garrapeta.gameengine.box2d.Box2DActor;
-import net.garrapeta.gameengine.box2d.Box2DWorld;
-import net.garrapeta.gameengine.box2d.actor.Box2DCircleActor;
-import net.garrapeta.gameengine.box2d.actor.Box2DEdgeActor;
+import net.garrapeta.gameengine.actor.Box2DActor;
+import net.garrapeta.gameengine.actor.Box2DCircleActor;
+import net.garrapeta.gameengine.actor.Box2DEdgeActor;
+import net.garrapeta.gameengine.actor.SimpleActor;
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -157,8 +157,7 @@ public class TimingTestActivity extends Activity {
         }
 
         @Override
-        public void processFrame(float lastFrameLength) {
-            super.processFrame(lastFrameLength);
+        public boolean processFrame(float lastFrameLength) {
             if (mBox2DActor != null) {
                 if (mBox2DActor.getBodies().get(0).getWorldCenter().x >= viewport.getWorldBoundaries().right - (mRadius * 2)) {
                     removeActor(mBox2DActor);
@@ -176,18 +175,9 @@ public class TimingTestActivity extends Activity {
             } else {
                 createSimpleActor();
             }
+            return false;
         }
         
-
-
-
-
-        @Override
-        protected void drawWorld(Canvas canvas) {
-            super.drawWorld(canvas);
-            viewport.drawBoundaries(canvas);
-        }
-
 
         private void createBox2DActor() {
             RectF wb = viewport.getWorldBoundaries();

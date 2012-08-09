@@ -1,9 +1,10 @@
-package net.garrapeta.gameengine.box2d.actor;
+package net.garrapeta.gameengine.actor;
 
+import net.garrapeta.gameengine.BodyUserData;
+import net.garrapeta.gameengine.Box2DWorld;
+import net.garrapeta.gameengine.ShapeBasedBodyDrawer;
 import net.garrapeta.gameengine.Viewport;
-import net.garrapeta.gameengine.box2d.BodyUserData;
-import net.garrapeta.gameengine.box2d.Box2DWorld;
-import net.garrapeta.gameengine.box2d.ShapeBasedBodyDrawer;
+import net.garrapeta.gameengine.actor.Box2DAtomicActor;
 import android.graphics.Color;
 import android.graphics.PointF;
 

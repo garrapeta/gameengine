@@ -1,7 +1,6 @@
 package net.garrapeta.gameengine;
 
 import android.graphics.Canvas;
-import android.view.MotionEvent;
 
 /**
  * Actor del juego
@@ -13,7 +12,7 @@ public abstract class Actor {
     // --------------------------------------------------- Variables
 
     /** Mundo del actor */
-    public GameWorld gameWorld;
+    protected GameWorld mGameWorld;
 
     /**
      * Z-index del actor. Cuanto mayor, m�s en primer plano.
@@ -33,7 +32,7 @@ public abstract class Actor {
      * Constructor protegido
      */
     protected Actor(GameWorld gameWorld, int zIndex) {
-        this.gameWorld = gameWorld;
+        this.mGameWorld = gameWorld;
         this.zIndex = zIndex;
     }
 
@@ -45,7 +44,7 @@ public abstract class Actor {
      * 
      * @param canvas
      */
-    public abstract void draw(Canvas canvas);
+    protected abstract void draw(Canvas canvas);
 
     /**
      * Realiza la l�gica del frame
@@ -53,10 +52,10 @@ public abstract class Actor {
      * @param gameTimeStep
      *            tiempo del frame anterior, en ms
      */
-    public abstract void doLogic(float gameTimeStep);
+    protected abstract void processFrame(float gameTimeStep);
 
     /** M�todo ejecutado cuando el actor entra en el mundo */
-    public void onAddedToWorld() {
+    protected void onAddedToWorld() {
     }
 
     /**
@@ -68,16 +67,16 @@ public abstract class Actor {
     /**
      * Devuelve zIndex
      */
-    public final int getZIndex() {
+    protected final int getZIndex() {
         return zIndex;
     }
 
     /**
      * Devuelve zIndex
      */
-    public final void setZIndex(int zIndex) {
+    protected final void setZIndex(int zIndex) {
         this.zIndex = zIndex;
-        gameWorld.onZindexChanged(this);
+        mGameWorld.onZindexChanged(this);
     }
 
 }

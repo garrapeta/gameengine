@@ -55,7 +55,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     /**
      * @param gameWorld
      */
-    void setGameWorld(GameWorld gameWorld) {
+    final void setGameWorld(GameWorld gameWorld) {
         this.world = gameWorld;
     }
 
@@ -67,36 +67,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             Canvas canvas = holder.lockCanvas();
             if (canvas != null) {
                 // pintado del frame
-                world.drawFrame(canvas);
+                world.doDrawWorld(canvas);
                 holder.unlockCanvasAndPost(canvas);
             }
         }
 
     }
 
-    // -------------------------------------------------- M�todos de View
-
-    @Override
-    public void onDraw(Canvas canvas) {
-        if (world != null) {
-            // Esta comprobaci�n de nulidad sirve para evitar
-            // NullPointerExceptions
-            // en el visualizador de eclipse cuando se abre un Layout con una
-            // GameView
-            world.drawFrame(canvas);
-        }
-
-        // synchronized (world) {
-        // waitingForDrawingDispatched = false;
-        // world.notify();
-        // }
-    }
-
     // ------------------------------------------ M�todos de
     // SurfaceHolder.Callback
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
+    public final void surfaceCreated(SurfaceHolder holder) {
         Log.i(LOG_SRC, "surfaceCreated (" + getWidth() + ", " + getHeight() + ")");
     }
 
@@ -107,7 +89,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
+    public final void surfaceDestroyed(SurfaceHolder holder) {
         Log.i(LOG_SRC, "surfaceDestroyed");
     }
 

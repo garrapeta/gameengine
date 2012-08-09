@@ -1,11 +1,11 @@
-package net.garrapeta.gameengine;
+package net.garrapeta.gameengine.actor;
 
 import android.graphics.PointF;
 
 public interface IAtomicActor {
 
 	/**
-	 * @return posición en el mundo, en unidades del mundo
+	 * @return posiciï¿½n en el mundo, en unidades del mundo
 	 */
 	public abstract PointF getWorldPos();
 	

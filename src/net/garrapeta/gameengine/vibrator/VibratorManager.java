@@ -1,4 +1,4 @@
-package net.garrapeta.gameengine;
+package net.garrapeta.gameengine.vibrator;
 
 import java.util.HashMap;
 
@@ -12,7 +12,7 @@ import android.os.Vibrator;
  */
 public class VibratorManager {
 
-	// -------------------------------- Variables estáticas
+	// -------------------------------- Variables estï¿½ticas
 	
 	private static VibratorManager instance;
 	
@@ -31,7 +31,7 @@ public class VibratorManager {
 		patterns = new HashMap<Integer, long[]>();
 	}
 	
-	// --------------------------------------------- Métodos estáticos
+	// --------------------------------------------- Mï¿½todos estï¿½ticos
 	
 	/**
 	 * @return instancia de VibratorManager
@@ -43,10 +43,10 @@ public class VibratorManager {
 		return instance;
 	}
 	
-	// ------------------------------------------ Métodos de instancia
+	// ------------------------------------------ Mï¿½todos de instancia
 	
 	/**
-	 * Inicialización
+	 * Inicializaciï¿½n
 	 * @param context
 	 */
 	public void init(Context context) {
@@ -63,7 +63,7 @@ public class VibratorManager {
 	}
 	
 	/**
-	 * Añade un sample
+	 * Aï¿½ade un sample
 	 * @param patternId
 	 * @param patternId
 	 */

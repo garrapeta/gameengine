@@ -1,9 +1,7 @@
-package net.garrapeta.gameengine.box2d.actor;
+package net.garrapeta.gameengine.actor;
 
-import net.garrapeta.gameengine.IAtomicActor;
+import net.garrapeta.gameengine.Box2DWorld;
 import net.garrapeta.gameengine.Viewport;
-import net.garrapeta.gameengine.box2d.Box2DActor;
-import net.garrapeta.gameengine.box2d.Box2DWorld;
 import android.graphics.PointF;
 import android.util.Log;
 
@@ -11,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 
 /**
- * Actor de un mundo físico Box2D
+ * Actor de un mundo fï¿½sico Box2D
  * @author GaRRaPeTa
  */
 public abstract class Box2DAtomicActor extends Box2DActor implements IAtomicActor {
@@ -41,12 +39,12 @@ public abstract class Box2DAtomicActor extends Box2DActor implements IAtomicActo
 	protected int fillColor;
 	protected int lineColor;
 	
-	// --------------------------------------------------- Métodos de Actor
+	// --------------------------------------------------- Mï¿½todos de Actor
 	
 	@Override
-	public void doLogic(float gameTimeStep) {}
+	public void processFrame(float gameTimeStep) {}
 	
-	// ------------------------------------------- Métodos de IAtomicActor
+	// ------------------------------------------- Mï¿½todos de IAtomicActor
 
 
 	@Override
@@ -60,7 +58,7 @@ public abstract class Box2DAtomicActor extends Box2DActor implements IAtomicActo
 		Log.e("world", "setWorldPos");
 	}
 	
-	// ------------------------------------------------- Métodos propios
+	// ------------------------------------------------- Mï¿½todos propios
 	
 	public PointF getLinearVelocity () {
 		return Viewport.vector2ToPointF(bodies.get(0).getLinearVelocity());

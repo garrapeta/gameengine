@@ -1,6 +1,8 @@
-package net.garrapeta.gameengine;
+package net.garrapeta.gameengine.actor;
 
 
+import net.garrapeta.gameengine.Actor;
+import net.garrapeta.gameengine.GameWorld;
 import android.graphics.PointF;
 
 /**
@@ -57,7 +59,7 @@ public abstract class SimpleActor extends Actor implements IAtomicActor {
 	// -------------------------------------------M�todos de Actor
 	
 	@Override
-	public void doLogic(float frameTime) {
+	public void processFrame(float frameTime) {
 		updatePosition(frameTime);
 	}
 	

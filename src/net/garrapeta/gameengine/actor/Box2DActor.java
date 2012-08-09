@@ -1,10 +1,15 @@
-package net.garrapeta.gameengine.box2d;
+package net.garrapeta.gameengine.actor;
 
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import net.garrapeta.gameengine.Actor;
+import net.garrapeta.gameengine.BodyUserData;
+import net.garrapeta.gameengine.Box2DWorld;
+import net.garrapeta.gameengine.IBodyDrawer;
+import net.garrapeta.gameengine.ShapeBasedBodyDrawer;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 
@@ -126,6 +131,9 @@ public abstract class Box2DActor extends Actor {
 		drawShapes(canvas);
 	}
 
+    public void processFrame(float gameTimeStep) {
+    }
+
 	/**
 	 * Pinta las shapes de este objeto usando los shapedrawers declarados
 	 * @param canvas
@@ -163,7 +171,7 @@ public abstract class Box2DActor extends Actor {
 	        	Fixture f = ite.next();
 	        	Shape shape = f.getShape();
 	        	
-	        	if (gameWorld.viewport.isPointInShape(shape, worldX, worldY)) {
+	        	if (mGameWorld.viewport.isPointInShape(shape, worldX, worldY)) {
 	        		return true;
 	        	}
 	        	
@@ -205,10 +213,10 @@ public abstract class Box2DActor extends Actor {
 	}
 
 	public void destroyAllBodies() {
-		synchronized (gameWorld) {
+		synchronized (mGameWorld) {
 			int l = bodies.size();
 			for (int i = l -1 ; i >= 0; i--) {
-				((Box2DWorld) gameWorld).destroyBody(this, bodies.get(i));
+				((Box2DWorld) mGameWorld).destroyBody(this, bodies.get(i));
 			}
 		}
 	}
