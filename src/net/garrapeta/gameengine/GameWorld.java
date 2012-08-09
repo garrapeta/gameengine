@@ -1,5 +1,7 @@
 package net.garrapeta.gameengine;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import android.app.Activity;
@@ -51,6 +53,8 @@ public abstract class GameWorld {
      * ser�n destru�dos y eliminados del juego.
      */
     private Vector<Actor> markedForRemovalActors;
+    
+    private List<GameMessage> mMessages;
 
     /** Frames por segundo que se intentan conseguir */
     private float mFps; //
@@ -90,6 +94,7 @@ public abstract class GameWorld {
 
         actors = new Vector<Actor>();
         markedForRemovalActors = new Vector<Actor>();
+        mMessages = new ArrayList<GameMessage>();
 
         setFPS(DEFAULT_FPS);
 
@@ -209,6 +214,29 @@ public abstract class GameWorld {
 
     // ----------------------------------- M�todos relativos a la l�gica del
     // juego
+
+    
+    public void post(GameMessage message) {
+        synchronized (mMessages) {
+            int index = 0;
+            for (GameMessage aux : mMessages) {
+                if (aux.getPriority() > message.getPriority()) {
+                    break;
+                }
+                index++;
+            }
+            mMessages.add(index, message);
+        }
+    }
+    
+    private void processMessages() {
+        synchronized (mMessages) {
+            for (GameMessage message : mMessages) {
+                message.process();
+            }
+            mMessages.clear();
+        }
+    }
 
     /**
      * A�ade un actor
@@ -428,8 +456,9 @@ public abstract class GameWorld {
     public abstract void onGameWorldSizeChanged();
 
     void doProcessFrame(float lastFrameLength) {
-        if (!processFrame(lastFrameLength)) {
-            preProcessFrame();
+        preProcessFrame();
+        processMessages();
+        if (!processFrame(lastFrameLength)) {            
             // TODO: do this with iterator
             int size = actors.size();
             for (int i = 0; i < size; i++) {
