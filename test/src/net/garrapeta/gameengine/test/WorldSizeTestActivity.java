@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,8 +21,6 @@ import android.widget.Button;
 public class WorldSizeTestActivity extends Activity {
 
     private static final String LOG_SRC = GameWorld.LOG_SRC_GAME_ENGINE + ".Test";
-    private static final int FPS = 60;
-
     private WorldSizeBox2DWorld mWorld;
     private GameView mGameView;
 
@@ -38,7 +37,6 @@ public class WorldSizeTestActivity extends Activity {
         setContentView(R.layout.world_size_test);
         mGameView = (GameView) findViewById(R.id.game_surface);
         mWorld = new WorldSizeBox2DWorld(this, mGameView);
-        mWorld.setFPS(FPS);
         mWorld.setDrawDebugInfo(true);
         
         
@@ -165,7 +163,7 @@ public class WorldSizeTestActivity extends Activity {
         @Override
         public void onGameViewSizeChanged(int width, int height) {
             Log.i(WorldSizeTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
-            setGravityY(-9.8f);
+            setGravityY(-SensorManager.GRAVITY_EARTH);
             mWorld.startLooping();
             mWorld.play();
         }
@@ -214,8 +212,8 @@ public class WorldSizeTestActivity extends Activity {
         }
 
         @Override
-        public void processFrame(float gameTimeStep) {
-
+        public void processFrame(float lastFrameLength) {
+            super.processFrame(lastFrameLength);
         }
 
         @Override

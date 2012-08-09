@@ -18,7 +18,7 @@ public abstract class GameWorld {
 
     // -------------------------------------------------------------- Constantes
     /** Frames por segundo por defecto */
-    private static final float DEFAULT_FPS = 33;
+    private static final float DEFAULT_FPS = 36f;
 
     /** Source trazas de log */
     public static final String LOG_SRC_GAME_ENGINE = "game";
@@ -53,13 +53,13 @@ public abstract class GameWorld {
     private Vector<Actor> markedForRemovalActors;
 
     /** Frames por segundo que se intentan conseguir */
-    private float fps; //
+    private float mFps; //
 
     /** Milisegundos por frame (periodo) que se intentan conseguir */
     private float mspf;
 
-    /** Milisegundos que dur� el �ltimo frame */
-    private float mLastGameLoopFrameTime;
+    /** FPS achieved in last frame */
+    private float mCurrentFps;
 
     /** Si el game loop est� corriendo */
     protected boolean running;
@@ -126,15 +126,16 @@ public abstract class GameWorld {
      *            the fPS to set
      */
     public void setFPS(float fps) {
-        this.fps = fps;
+        this.mFps = fps;
         mspf = 1000 / fps;
     }
-
+    
+    
     /**
      * @return the fPS
      */
     public float getFPS() {
-        return fps;
+        return mFps;
     }
 
     /**
@@ -303,10 +304,10 @@ public abstract class GameWorld {
     /**
      * C�digo ejecutado para procesar la l�gica del juego en cada frame
      * 
-     * @param gameTimeStep
+     * @param lastFrameLength
      *            tiempo que dur� el frame anterior, en ms
      */
-    public abstract void processFrame(float gameTimeStep);
+    public abstract void processFrame(float lastFrameLength);
 
     /**
      * C�digo ejecutado antes de procesar la l�gica del juego en cada frame
@@ -392,7 +393,7 @@ public abstract class GameWorld {
     }
 
     protected String getDebugString() {
-        return (int) (1000 / mLastGameLoopFrameTime) + " FPS";
+        return (int) mCurrentFps + " FPS";
     }
 
     
@@ -447,18 +448,17 @@ public abstract class GameWorld {
         public void run() {
             Log.i(LOG_SRC, "Game loop thread started. Thread: " + Thread.currentThread().getName());
 
-            long prevTimeStamp = System.currentTimeMillis();
-
+            float lastFrameLength = 0;
+            
             while (running) {
                 
-
+                long begin = System.currentTimeMillis();
                 if (playing) {
-                    
                     synchronized (GameWorld.this) {
                         // tareas de antes de procesar el frame
                         preProcessFrame();
                         // procesamiento del frame                       
-                        processFrame(mspf);
+                        processFrame(lastFrameLength);
                         // logica de los actores
                         int size = actors.size();
                         for (int i = 0; i < size; i++) {
@@ -469,9 +469,8 @@ public abstract class GameWorld {
                     }
                 }
 
-                long currentTimeStamp = System.currentTimeMillis();
-                long elapsed = currentTimeStamp - prevTimeStamp;
-                Log.v(LOG_SRC, "Game loop frame. Desired: " + mspf +  " Actual: " + elapsed);
+                long end = System.currentTimeMillis();
+                long elapsed = end - begin;
 
                 long diff = (long) (mspf - elapsed);
                 if (diff > 0) {
@@ -482,10 +481,10 @@ public abstract class GameWorld {
                     }
 
                 }
-                mLastGameLoopFrameTime = System.currentTimeMillis() - prevTimeStamp;
-                mCurrentGameMillis += mLastGameLoopFrameTime;
-                prevTimeStamp = currentTimeStamp;
-                
+                lastFrameLength = System.currentTimeMillis() - begin;
+                mCurrentGameMillis += lastFrameLength;
+                mCurrentFps = 1000 / lastFrameLength;
+                Log.v(LOG_SRC, "Game loop frame. Desired FPS: " + mFps +  " Actual: " + mCurrentFps);
                 Thread.yield();
             }
 

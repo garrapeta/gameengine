@@ -18,7 +18,7 @@
             android:id="@+id/btn1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="FPS 2" />
+            android:text="FPS 10" />
 
         <Button
             android:id="@+id/btn2"
@@ -30,7 +30,7 @@
             android:id="@+id/btn3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PSPS 5" />
+            android:text="PSPS 15" />
 
         <Button
             android:id="@+id/btn4"

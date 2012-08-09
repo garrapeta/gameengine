@@ -50,7 +50,7 @@ public class TimingTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.setFPS(2);
+                    mWorld.setFPS(10);
                 }
             });
         }
@@ -72,7 +72,7 @@ public class TimingTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.setFSPS(5);
+                    mWorld.setPhysicalFrequency(15);
                 }
             });
         }
@@ -83,7 +83,7 @@ public class TimingTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.setFSPS(60);
+                    mWorld.setPhysicalFrequency(60);
                 }
             });
         }
@@ -109,8 +109,6 @@ public class TimingTestActivity extends Activity {
         public void onGameViewSizeChanged(int width, int height) {
             Log.i(TimingTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
             viewport.setWorldWidth(10);
-
-            
         }
  
         @Override
@@ -159,7 +157,8 @@ public class TimingTestActivity extends Activity {
         }
 
         @Override
-        public void processFrame(float gameTimeStep) {
+        public void processFrame(float lastFrameLength) {
+            super.processFrame(lastFrameLength);
             if (mBox2DActor != null) {
                 if (mBox2DActor.getBodies().get(0).getWorldCenter().x >= viewport.getWorldBoundaries().right - (mRadius * 2)) {
                     removeActor(mBox2DActor);

@@ -8,6 +8,7 @@ import net.garrapeta.gameengine.box2d.actor.Box2DEdgeActor;
 import android.app.Activity;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -19,7 +20,6 @@ import android.view.WindowManager;
 public class BasicTestActivity extends Activity implements OnTouchListener {
 
     private static final String LOG_SRC = GameWorld.LOG_SRC_GAME_ENGINE + ".Test";
-    private static final int FPS = 60;
 
     private BasicTestBox2DWorld mWorld;
     private GameView mGameView;
@@ -52,12 +52,11 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
      */
     class BasicTestBox2DWorld extends Box2DWorld {
 
-        private static final float WORLD_HEIGHT = 10f;
+        private static final float WORLD_HEIGHT = 14f;
 
         public BasicTestBox2DWorld(Activity activity, GameView gameView) {
             super(activity, gameView);
-            setGravityY(-9.8f);
-            setFPS(FPS);
+            setGravityY(-SensorManager.GRAVITY_EARTH);
             setDrawDebugInfo(true);
             viewport.setWorldHeight(WORLD_HEIGHT);
         }
@@ -113,8 +112,8 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
         }
 
         @Override
-        public void processFrame(float gameTimeStep) {
-
+        public void processFrame(float lastFrameLength) {
+            super.processFrame(lastFrameLength);
         }
 
 

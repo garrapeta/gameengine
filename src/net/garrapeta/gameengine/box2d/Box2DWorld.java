@@ -25,18 +25,12 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
     // ----------------------------------------------- Constantes
 
-    /** Nombre del thread del motor de f�sica */
-    public static final String PHYSICS_THREAD_NAME = "physicsThread";
-
     /** Nombre del thread del game loop */
     public static final String LOG_SRC = GameWorld.LOG_SRC + ".physics";
 
     /** Default phisical steps per second */
-    private static final float DEFAULT_PSPS = 60f; // (recomendado: 60Hertz)
+    private static final float DEFAULT_PHYSICAL_PERIOD = 60f; // (recomendado: 60Hertz)
     // ------------------------------------------------ Variables
-
-    /** Hilo con el motor de f�sicas */
-    private Thread physicsThread;
 
     public World box2dWorld;
     private Vector2 gravity;
@@ -47,14 +41,11 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
      */
     private Vector<Body> markedForDestructionBodies;
 
-    /** Milisegundos que dur� el �ltimo frame */
-    private float mLastPhysicStepTime;
+    /** Target frequency of the of psyhical simulation, in seconds */
+    private float mFrequency; //
 
-    /** Target physical steps per second (frequency) */
-    private float mFsps; //
-
-    /** Target ms per physical step (period) */
-    private float mSpfs;
+    /** Target timestep of psyhical simulation, in seconds */
+    private float mTimeStep;
     // ---------------------------------------------------- Inicializaci�n
     // est�tica
 
@@ -89,13 +80,12 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         box2dWorld = new World(gravity, doSleep);
         box2dWorld.setContactListener(this);
 
-        setFSPS(DEFAULT_PSPS);
-        physicsThread = new Thread(new PhysicsThreadRunnable(), PHYSICS_THREAD_NAME);
+        setPhysicalFrequency(DEFAULT_PHYSICAL_PERIOD);
     }
 
-    public void setFSPS(float fsps) {
-        mFsps = fsps;
-        mSpfs = 1000f / mFsps;
+    public void setPhysicalFrequency(float frequency) {
+        mFrequency = frequency;
+        mTimeStep = 1f / mFrequency;
     }
 
 
@@ -110,17 +100,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         String bodyCount;
         bodyCount = String.valueOf(box2dWorld.getBodyCount());
 
-        String fpsStr = String.valueOf((int) (1000 / mLastPhysicStepTime));
-        return actorCount + " actors " + bodyCount + " bodies " + fpsStr + " Hz " + super.getDebugString();
-    }
-
-    @Override
-    public void startLooping() {
-        super.startLooping();
-
-        if (!physicsThread.isAlive()) {
-            physicsThread.start();
-        }
+        return actorCount + " actors " + bodyCount + " bodies " + super.getDebugString();
     }
 
     @Override
@@ -136,6 +116,11 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     }
 
     @Override
+    public void processFrame(float lastFrameLength) {
+        doPhysicalStep(lastFrameLength);
+    }
+
+    @Override
     public synchronized void preProcessFrame() {
         super.preProcessFrame();
         // Se destruyen actores marcados como muertos
@@ -145,37 +130,34 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         markedForDestructionBodies.removeAllElements();
     }
 
+    /**
+     * Triggers physical simulation
+     * 
+     * @param time to emulate, in ms
+     */
+    private void doPhysicalStep(float time) {
+        time = time / 1000;
+
+        float step = mTimeStep;
+        if (time < step) {
+            Log.w(LOG_SRC, "Physical timestep higher than game timestep. Physical simulation can be unestable.");
+            step = time;
+        }
+        while (time > 0) {
+            box2dWorld.step(step, 2, 1);
+            time -= step;
+        }
+    }
+    
     // M�todos relativos a unidades l�gicas / pantalla
 
     @Override
     public void dispose() {
-        super.dispose();
-        if (physicsThread != null && physicsThread.isAlive()) {
-            synchronized (physicsThread) {
-                try {
-                    physicsThread.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
         box2dWorld.dispose();
     }
 
     // ---------------------------------------------------------- M�todos
     // propios
-
-    /**
-     * Realiza un paso en la f�sica
-     * 
-     * @param timeStep
-     *            , en ms
-     */
-    private void physicalStep(float timeStep) {
-        synchronized (this) {
-            box2dWorld.step(timeStep / 1000, 2, 1);
-        }
-    }
 
     public Body createBody(Box2DActor actor, PointF worldPos, boolean dynamic) {
 
@@ -392,50 +374,50 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
     // -------------------------------------- Clases internas
 
-    /**
-     * Runnable del hilo de f�sicas
-     * 
-     * @author GaRRaPeTa
-     */
-    class PhysicsThreadRunnable implements Runnable {
-
-        @Override
-        public void run() {
-            Log.i(LOG_SRC, "Physics thread started. Thread: " + Thread.currentThread().getName());
-
-            long prevTimeStamp = System.currentTimeMillis();
-
-            while (running) {
-                if (playing) {
-                    physicalStep(mSpfs);
-                }
-
-                long currentTimeStamp = System.currentTimeMillis();
-                long elapsed = currentTimeStamp - prevTimeStamp;
-                Log.v(LOG_SRC, "Physical simulation frame. Desired: " + mSpfs + " Actual: " + elapsed);
-
-                long diff = (long) (mSpfs - elapsed);
-                if (diff > 0) {
-                    try {
-                        Thread.sleep(diff);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                mLastPhysicStepTime = System.currentTimeMillis() - prevTimeStamp;
-                prevTimeStamp = currentTimeStamp;
-
-                Thread.yield();
-
-            }
-
-            synchronized (physicsThread) {
-                physicsThread.notify();
-            }
-
-            Log.i(LOG_SRC, "Physics thread ended");
-        }
-
-    }
+//    /**
+//     * Runnable del hilo de f�sicas
+//     * 
+//     * @author GaRRaPeTa
+//     */
+//    class PhysicsThreadRunnable implements Runnable {
+//
+//        @Override
+//        public void run() {
+//            Log.i(LOG_SRC, "Physics thread started. Thread: " + Thread.currentThread().getName());
+//
+//            long prevTimeStamp = System.currentTimeMillis();
+//
+//            while (running) {
+//                if (playing) {
+//                    physicalStep(mSpfs);
+//                }
+//
+//                long currentTimeStamp = System.currentTimeMillis();
+//                long elapsed = currentTimeStamp - prevTimeStamp;
+//                Log.v(LOG_SRC, "Physical simulation frame. Desired: " + mSpfs + " Actual: " + elapsed);
+//
+//                long diff = (long) (mSpfs - elapsed);
+//                if (diff > 0) {
+//                    try {
+//                        Thread.sleep(diff);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                mLastPhysicStepTime = System.currentTimeMillis() - prevTimeStamp;
+//                prevTimeStamp = currentTimeStamp;
+//
+//                Thread.yield();
+//
+//            }
+//
+//            synchronized (physicsThread) {
+//                physicsThread.notify();
+//            }
+//
+//            Log.i(LOG_SRC, "Physics thread ended");
+//        }
+//
+//    }
 
 }
