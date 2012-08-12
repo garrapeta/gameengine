@@ -29,10 +29,12 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
     /** Default phisical steps per second */
     private static final float DEFAULT_PHYSICAL_PERIOD = 60f; // (recomendado: 60Hertz)
+    
+    private static final int MAX_PHYSICAL_TIMESTEPS_PER_FRAME = 5;
     // ------------------------------------------------ Variables
 
-    public World box2dWorld;
-    private Vector2 gravity;
+    public World mBox2dWorld;
+    private Vector2 mGravity;
 
     /**
      * Cuerpos marcados para eliminaci�n. En el pr�ximo frame estos cuerpos
@@ -74,10 +76,11 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         // worldAABB.upperBound.set(new Vector2((float) 100.0, (float) 100.0));
 
         // Step 2: Create Physics World with Gravity
-        gravity = new Vector2((float) 0.0, (float) 0.0);
+        mGravity = new Vector2((float) 0.0, (float) 0.0);
         boolean doSleep = true;
-        box2dWorld = new World(gravity, doSleep);
-        box2dWorld.setContactListener(this);
+        mBox2dWorld = new World(mGravity, doSleep);
+        mBox2dWorld.setContactListener(this);
+        mBox2dWorld.setAutoClearForces(false);
 
         setPhysicalFrequency(DEFAULT_PHYSICAL_PERIOD);
     }
@@ -97,7 +100,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         actorCount = String.valueOf(actors.size());
 
         String bodyCount;
-        bodyCount = String.valueOf(box2dWorld.getBodyCount());
+        bodyCount = String.valueOf(mBox2dWorld.getBodyCount());
 
         return actorCount + " actors " + bodyCount + " bodies " + super.getDebugString();
     }
@@ -125,17 +128,18 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         super.preProcessFrame();
         // Se destruyen actores marcados como muertos
         for (int i = 0; i < markedForDestructionBodies.size(); i++) {
-            box2dWorld.destroyBody(markedForDestructionBodies.elementAt(i));
+            mBox2dWorld.destroyBody(markedForDestructionBodies.elementAt(i));
         }
         markedForDestructionBodies.removeAllElements();
     }
 
-    /**
+    /** 
      * Triggers physical simulation
      * 
      * @param time to emulate, in ms
      */
     private void doPhysicalStep(float time) {
+        int steps = 0;
         time = time / 1000;
 
         float step = mTimeStep;
@@ -143,17 +147,19 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
             Log.w(LOG_SRC, "Physical timestep higher than game timestep. Physical simulation can be unestable.");
             step = time;
         }
-        while (time > 0) {
-            box2dWorld.step(step, 2, 1);
+        while (time > 0 && steps < MAX_PHYSICAL_TIMESTEPS_PER_FRAME) {
+            mBox2dWorld.step(step, 2, 1);
             time -= step;
+            steps ++;
         }
+        mBox2dWorld.clearForces();
     }
     
     // M�todos relativos a unidades l�gicas / pantalla
 
     @Override
     public void dispose() {
-        box2dWorld.dispose();
+        mBox2dWorld.dispose();
     }
 
     // ---------------------------------------------------------- M�todos
@@ -168,7 +174,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
         Body body;
         synchronized (this) {
-            body = box2dWorld.createBody(bodyDef);
+            body = mBox2dWorld.createBody(bodyDef);
         }
 
         body.setUserData(new BodyUserData());
@@ -192,41 +198,41 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     public void createJoint(Box2DActor actor, JointDef jointDef) {
         Joint joint;
         synchronized (this) {
-            joint = box2dWorld.createJoint(jointDef);
+            joint = mBox2dWorld.createJoint(jointDef);
         }
         actor.addJoint(joint);
     }
 
     public void destroyJoint(Box2DActor actor, Joint joint) {
         synchronized (this) {
-            box2dWorld.destroyJoint(joint);
+            mBox2dWorld.destroyJoint(joint);
         }
         actor.removeJoint(joint);
     }
 
     public float getGravityX() {
         synchronized (this) {
-            return box2dWorld.getGravity().x;
+            return mBox2dWorld.getGravity().x;
         }
     }
 
     public float getGravityY() {
         synchronized (this) {
-            return box2dWorld.getGravity().y;
+            return mBox2dWorld.getGravity().y;
         }
     }
 
     public void setGravityX(float gx) {
-        gravity.x = gx;
+        mGravity.x = gx;
         synchronized (this) {
-            box2dWorld.setGravity(gravity);
+            mBox2dWorld.setGravity(mGravity);
         }
     }
 
     public void setGravityY(float gy) {
-        gravity.y = gy;
+        mGravity.y = gy;
         synchronized (this) {
-            box2dWorld.setGravity(gravity);
+            mBox2dWorld.setGravity(mGravity);
         }
     }
 
@@ -238,7 +244,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
      * @param radius
      * @param force
      */
-    public void applyForce(Vector2 origin, Body target, float radius, float force) {
+    public void applyBlast(Vector2 origin, Body target, float radius, float force) {
         Vector2 aux = target.getWorldCenter().cpy();
         aux.sub(origin);
 
