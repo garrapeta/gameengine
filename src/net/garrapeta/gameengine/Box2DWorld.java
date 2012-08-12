@@ -1,8 +1,7 @@
 package net.garrapeta.gameengine;
 
-import java.util.Vector;
+import java.util.List;
 
-import net.garrapeta.gameengine.actor.Box2DActor;
 
 import android.app.Activity;
 import android.graphics.PointF;
@@ -36,12 +35,6 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     public World mBox2dWorld;
     private Vector2 mGravity;
 
-    /**
-     * Cuerpos marcados para eliminaci�n. En el pr�ximo frame estos cuerpos
-     * ser�n destru�dos y eliminados del juego.
-     */
-    private Vector<Body> markedForDestructionBodies;
-
     /** Target frequency of the of psyhical simulation, in seconds */
     private float mFrequency; //
 
@@ -68,8 +61,6 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     public Box2DWorld(Activity activity, GameView gameView) {
         super(activity, gameView);
 
-        markedForDestructionBodies = new Vector<Body>();
-
         // Step 1: Create Physics World Boundaries
         // worldAABB = new AABB();
         // worldAABB.lowerBound.set(new Vector2((float) 0, (float) 0));
@@ -94,10 +85,10 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     // ------------------------------------------------------ M�todos de
     // GameWorld
 
-    protected synchronized String getDebugString() {
+    protected String getDebugString() {
 
         String actorCount;
-        actorCount = String.valueOf(actors.size());
+        actorCount = String.valueOf(mActors.size());
 
         String bodyCount;
         bodyCount = String.valueOf(mBox2dWorld.getBodyCount());
@@ -106,34 +97,12 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     }
 
     @Override
-    public void addActor(Actor actor) {
-        super.addActor(actor);
-        actor.onAddedToWorld();
-    }
-
-    @Override
-    protected void onRemoveFromWorld(Actor actor) {
-        super.onRemoveFromWorld(actor);
-        actor.onRemovedFromWorld();
-    }
-
-    @Override
     void doProcessFrame(float lastFrameLength) {
-        doPhysicalStep(lastFrameLength);
         super.doProcessFrame(lastFrameLength);
+        doPhysicalStep(lastFrameLength);
     }
 
-    @Override
-    public synchronized void preProcessFrame() {
-        super.preProcessFrame();
-        // Se destruyen actores marcados como muertos
-        for (int i = 0; i < markedForDestructionBodies.size(); i++) {
-            mBox2dWorld.destroyBody(markedForDestructionBodies.elementAt(i));
-        }
-        markedForDestructionBodies.removeAllElements();
-    }
-
-    /** 
+    /**
      * Triggers physical simulation
      * 
      * @param time to emulate, in ms
@@ -166,16 +135,13 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     // propios
 
     public Body createBody(Box2DActor actor, PointF worldPos, boolean dynamic) {
-
-        // Create Dynamic Body
+        checkExecutedInGameLoopThread();
+        
         BodyDef bodyDef = new BodyDef();
 
         bodyDef.position.set(worldPos.x, worldPos.y);
 
-        Body body;
-        synchronized (this) {
-            body = mBox2dWorld.createBody(bodyDef);
-        }
+        Body body = mBox2dWorld.createBody(bodyDef);
 
         body.setUserData(new BodyUserData());
         actor.addBody(body);
@@ -189,51 +155,36 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     }
 
     public void destroyBody(Box2DActor actor, Body body) {
-        if (!markedForDestructionBodies.contains(body)) {
-            markedForDestructionBodies.add(body);
-            actor.removeBody(body);
-        }
+        checkExecutedInGameLoopThread();
+        mBox2dWorld.destroyBody(body);
     }
 
     public void createJoint(Box2DActor actor, JointDef jointDef) {
-        Joint joint;
-        synchronized (this) {
-            joint = mBox2dWorld.createJoint(jointDef);
-        }
+        Joint joint = mBox2dWorld.createJoint(jointDef);
         actor.addJoint(joint);
     }
 
     public void destroyJoint(Box2DActor actor, Joint joint) {
-        synchronized (this) {
-            mBox2dWorld.destroyJoint(joint);
-        }
+        mBox2dWorld.destroyJoint(joint);
         actor.removeJoint(joint);
     }
 
     public float getGravityX() {
-        synchronized (this) {
-            return mBox2dWorld.getGravity().x;
-        }
+       return mBox2dWorld.getGravity().x;
     }
 
     public float getGravityY() {
-        synchronized (this) {
-            return mBox2dWorld.getGravity().y;
-        }
+        return mBox2dWorld.getGravity().y;
     }
 
     public void setGravityX(float gx) {
         mGravity.x = gx;
-        synchronized (this) {
-            mBox2dWorld.setGravity(mGravity);
-        }
+        mBox2dWorld.setGravity(mGravity);
     }
 
     public void setGravityY(float gy) {
         mGravity.y = gy;
-        synchronized (this) {
-            mBox2dWorld.setGravity(mGravity);
-        }
+        mBox2dWorld.setGravity(mGravity);
     }
 
     /**
@@ -378,52 +329,6 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         }
     }
 
-    // -------------------------------------- Clases internas
-
-//    /**
-//     * Runnable del hilo de f�sicas
-//     * 
-//     * @author GaRRaPeTa
-//     */
-//    class PhysicsThreadRunnable implements Runnable {
-//
-//        @Override
-//        public void run() {
-//            Log.i(LOG_SRC, "Physics thread started. Thread: " + Thread.currentThread().getName());
-//
-//            long prevTimeStamp = System.currentTimeMillis();
-//
-//            while (running) {
-//                if (playing) {
-//                    physicalStep(mSpfs);
-//                }
-//
-//                long currentTimeStamp = System.currentTimeMillis();
-//                long elapsed = currentTimeStamp - prevTimeStamp;
-//                Log.v(LOG_SRC, "Physical simulation frame. Desired: " + mSpfs + " Actual: " + elapsed);
-//
-//                long diff = (long) (mSpfs - elapsed);
-//                if (diff > 0) {
-//                    try {
-//                        Thread.sleep(diff);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                mLastPhysicStepTime = System.currentTimeMillis() - prevTimeStamp;
-//                prevTimeStamp = currentTimeStamp;
-//
-//                Thread.yield();
-//
-//            }
-//
-//            synchronized (physicsThread) {
-//                physicsThread.notify();
-//            }
-//
-//            Log.i(LOG_SRC, "Physics thread ended");
-//        }
-//
-//    }
+ 
 
 }

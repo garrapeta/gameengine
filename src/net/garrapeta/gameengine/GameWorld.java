@@ -37,23 +37,17 @@ public abstract class GameWorld {
     protected Activity activity;
 
     /** SurfaceView donde se renderiza el juego. */
-    public GameView view;
+    public GameView mView;
 
     /** Viewport activo */
     public Viewport viewport;
 
     /** Hilo con el loop principal */
-    private Thread loopThread;
+    private Thread mGameLoopThread;
 
     /** Actores del juego */
-    public Vector<Actor> actors;
+    public Vector<Actor> mActors;
 
-    /**
-     * Actores marcados para eliminaci�n. En el pr�ximo frame estos actores
-     * ser�n destru�dos y eliminados del juego.
-     */
-    private Vector<Actor> markedForRemovalActors;
-    
     private List<GameMessage> mMessages;
 
     /** Frames por segundo que se intentan conseguir */
@@ -72,7 +66,7 @@ public abstract class GameWorld {
     protected boolean playing;
 
     /** Paint usado para info de debug */
-    protected Paint debugPaint;
+    protected Paint mDebugPaint;
 
     /** Ms que el mundo del juego a avanzado */
     private long mCurrentGameMillis;
@@ -92,16 +86,16 @@ public abstract class GameWorld {
 
         mCurrentGameMillis = 0;
 
-        actors = new Vector<Actor>();
-        markedForRemovalActors = new Vector<Actor>();
+        mActors = new Vector<Actor>();
+
         mMessages = new ArrayList<GameMessage>();
 
         setFPS(DEFAULT_FPS);
 
-        debugPaint = new Paint();
-        debugPaint.setColor(Color.RED);
+        mDebugPaint = new Paint();
+        mDebugPaint.setColor(Color.RED);
 
-        loopThread = new Thread(new GameLoopRunnable(), LOOP_THREAD_NAME);
+        mGameLoopThread = new Thread(new GameLoopRunnable(), LOOP_THREAD_NAME);
     }
 
     /**
@@ -112,7 +106,7 @@ public abstract class GameWorld {
      */
     public GameWorld(Activity activity, GameView view) {
         this(activity);
-        this.view = view;
+        mView = view;
         view.setGameWorld(this);
     }
 
@@ -179,8 +173,8 @@ public abstract class GameWorld {
      */
     public void startLooping() {
         running = true;
-        if (!loopThread.isAlive()) {
-            loopThread.start();
+        if (!mGameLoopThread.isAlive()) {
+            mGameLoopThread.start();
         }
     }
 
@@ -230,12 +224,17 @@ public abstract class GameWorld {
     }
     
     private void processMessages() {
+        GameMessage[] messages;
         synchronized (mMessages) {
-            for (GameMessage message : mMessages) {
-                message.process();
-            }
+            messages = new GameMessage[mMessages.size()];
+            mMessages.toArray(messages);
             mMessages.clear();
         }
+        for (GameMessage message : messages) {
+            message.process(this);
+        }
+        
+
     }
 
     /**
@@ -243,68 +242,51 @@ public abstract class GameWorld {
      * 
      * @param actor
      */
-    public synchronized void addActor(Actor actor) {
+    public final void addActor(final Actor actor) {
         Log.d(LOG_SRC, "GameWorld.addActor(" + actor + "). Thread: " + Thread.currentThread().getName());
-        addInOrder(actor);
-    }
 
-    /**
-     * A�ade un actor justo detr�s del actor especificado
-     * 
-     * @param actor
-     */
-    public synchronized void addActorAfter(Actor newActor, Actor existingActor) {
-        Log.d(LOG_SRC, "GameWorld.addActorAfter(" + newActor + "). Thread: " + Thread.currentThread().getName());
-        int index = actors.indexOf(existingActor);
-        if (index == -1) {
-            throw new IllegalArgumentException("Actor not in actor list: " + existingActor);
-        }
-        actors.insertElementAt(newActor, index + 1);
-    }
-
-    /**
-     * M�todo invocado cuando el z-index de un actor cambia
-     * 
-     * @param actor
-     */
-    synchronized void onZindexChanged(Actor actor) {
-        if (actors.contains(actor)) {
-            actors.remove(actor);
-            addInOrder(actor);
-        }
-    }
-
-    /**
-     * A�ade un actor ordenadamente
-     * 
-     * @param actor
-     */
-    private synchronized void addInOrder(Actor actor) {
-
-        int length = actors.size();
-        int index = length;
-
-        while (index > 0) {
-            Actor aux = actors.get(index - 1);
-            if (aux.getZIndex() <= actor.getZIndex()) {
-                break;
+        //TODO: let adding an actor in same frame?
+        //       if user catches MotionEvent, post a message to handle it, and it there post the adition of
+        //       one actor, one cycle is lost
+        post(new GameMessage(GameMessage.MESSAGE_PRIORITY_MAX) {
+            @Override
+            public void process(GameWorld world) {
+                int length = mActors.size();
+                int index = length;
+        
+                while (index > 0) {
+                    Actor aux = mActors.get(index - 1);
+                    if (aux.getZIndex() <= actor.getZIndex()) {
+                        break;
+                    }
+                    index--;
+                }
+        
+                mActors.add(index, actor);
+                onActorAdded(actor);
+                actor.doOnAddedToWorld();
             }
-            index--;
-        }
-
-        actors.add(index, actor);
+        });
     }
 
-    /**
-     * Elimina un actor
-     * 
-     * @param actor
-     */
-    public synchronized void removeActor(Actor actor) {
-        if (!markedForRemovalActors.contains(actor)) {
-            Log.d(LOG_SRC, "GameWorld.removeActor(" + actor + "). Thread: " + Thread.currentThread().getName());
-            markedForRemovalActors.add(actor);
-        }
+    public void onActorAdded(Actor actor) {
+    }
+
+    public final void removeActor(final Actor actor) {
+        Log.d(LOG_SRC, "GameWorld.removeActor(" + actor + "). Thread: " + Thread.currentThread().getName());
+        post(new GameMessage(GameMessage.MESSAGE_PRIORITY_MAX) {
+            @Override
+            public void process(GameWorld world) {
+                if (mActors.contains(actor)) {
+                    onActorRemoved(actor);
+                    actor.doOnRemovedFromWorld();
+                    mActors.remove(actor);
+                }
+            }
+        });
+    }
+
+    public void onActorRemoved(Actor actor) {
     }
 
     /**
@@ -312,22 +294,14 @@ public abstract class GameWorld {
      * 
      * @param actor
      */
-    public synchronized void removeAllActors() {
-        for (Actor actor : actors) {
+    // TODO message for this?
+    public void removeAllActors() {
+        for (Actor actor : mActors) {
             removeActor(actor);
         }
     }
 
-    /**
-     * C�digo ejecutado al eliminar un actor
-     * 
-     * @param actor
-     */
-    protected synchronized void onRemoveFromWorld(Actor actor) {
-        Log.d(LOG_SRC, "GameWorld.onRemoveFromWorld(" + actor + "). Thread: " + Thread.currentThread().getName());
-        actors.remove(actor);
-    }
-
+ 
     /**
      * C�digo ejecutado para procesar la l�gica del juego en cada frame
      * 
@@ -338,20 +312,9 @@ public abstract class GameWorld {
         return false;
     }
 
-    /**
-     * C�digo ejecutado antes de procesar la l�gica del juego en cada frame
-     * 
-     * @param stepTime
-     *            tiempo del frame anterior, en ms
-     */
-    public synchronized void preProcessFrame() {
-        // Se destruyen actores marcados como muertos
-        for (int i = 0; i < markedForRemovalActors.size(); i++) {
-            onRemoveFromWorld(markedForRemovalActors.elementAt(i));
-        }
-        markedForRemovalActors.removeAllElements();
+    protected void onGameLoopStarted() {
     }
-
+    
     // ---------------------------------------------- M�todos relativos al
     // pintado
 
@@ -363,7 +326,7 @@ public abstract class GameWorld {
 
         // pintado de debug
         if (drawDebugInfo) {
-            drawDebugInfo(canvas, debugPaint);
+            drawDebugInfo(canvas, mDebugPaint);
         }
     }
 
@@ -373,7 +336,7 @@ public abstract class GameWorld {
      * 
      * @param canvas
      */
-    protected synchronized void drawWorld(Canvas canvas) {
+    protected void drawWorld(Canvas canvas) {
         drawBackground(canvas);
         drawActors(canvas);
     }
@@ -389,9 +352,9 @@ public abstract class GameWorld {
     }
 
     protected void drawActors(Canvas canvas) {
-        int l = actors.size();
+        int l = mActors.size();
         for (int i = 0; i < l; i++) {
-            Actor actor = actors.elementAt(i);
+            Actor actor = mActors.elementAt(i);
             actor.draw(canvas);
         }
     }
@@ -407,7 +370,7 @@ public abstract class GameWorld {
     private final void drawDebugInfo(Canvas canvas, Paint debugPaint) {
         // se pintan los FPS actuales
         debugPaint.setTextAlign(Align.RIGHT);
-        canvas.drawText(getDebugString(), view.getWidth(), view.getHeight() - 20, debugPaint);
+        canvas.drawText(getDebugString(), mView.getWidth(), mView.getHeight() - 20, debugPaint);
     }
 
     protected String getDebugString() {
@@ -419,10 +382,10 @@ public abstract class GameWorld {
      */
     public void dispose() {
         Log.i(LOG_SRC, "GameWorld.dispose()");
-        if (loopThread != null && loopThread.isAlive()) {
-            synchronized (loopThread) {
+        if (mGameLoopThread != null && mGameLoopThread.isAlive()) {
+            synchronized (mGameLoopThread) {
                 try {
-                    loopThread.wait();
+                    mGameLoopThread.wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -456,14 +419,20 @@ public abstract class GameWorld {
     public abstract void onGameWorldSizeChanged();
 
     void doProcessFrame(float lastFrameLength) {
-        preProcessFrame();
         processMessages();
         if (!processFrame(lastFrameLength)) {            
             // TODO: do this with iterator
-            int size = actors.size();
+            int size = mActors.size();
             for (int i = 0; i < size; i++) {
-                actors.get(i).processFrame(mspf);
+                mActors.get(i).processFrame(mspf);
             }
+        }
+    }
+    
+    
+    void checkExecutedInGameLoopThread() {
+        if (Thread.currentThread() != mGameLoopThread) {
+            throw new IllegalStateException("This operation needs to be executed in the game loop thread");
         }
     }
 
@@ -482,14 +451,14 @@ public abstract class GameWorld {
 
             float lastFrameLength = 0;
 
+            onGameLoopStarted();
+            
             while (running) {
 
                 long begin = System.currentTimeMillis();
                 if (playing) {
-                    synchronized (GameWorld.this) {
-                        doProcessFrame(lastFrameLength);
-                        view.draw();
-                    }
+                    doProcessFrame(lastFrameLength);
+                    mView.draw();
                 }
 
                 long end = System.currentTimeMillis();
@@ -511,8 +480,8 @@ public abstract class GameWorld {
                 Thread.yield();
             }
 
-            synchronized (loopThread) {
-                loopThread.notify();
+            synchronized (mGameLoopThread) {
+                mGameLoopThread.notify();
             }
 
             Log.i(LOG_SRC, "Game loop thread ended");

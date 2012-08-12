@@ -1,16 +1,14 @@
 package net.garrapeta.gameengine.test;
 
 import net.garrapeta.gameengine.Box2DWorld;
+import net.garrapeta.gameengine.GameMessage;
 import net.garrapeta.gameengine.GameView;
 import net.garrapeta.gameengine.GameWorld;
 import net.garrapeta.gameengine.Viewport;
 import net.garrapeta.gameengine.actor.Box2DEdgeActor;
 import android.app.Activity;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -164,7 +162,6 @@ public class WorldSizeTestActivity extends Activity {
         @Override
         public void onGameViewSizeChanged(int width, int height) {
             Log.i(WorldSizeTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
-            setGravityY(-SensorManager.GRAVITY_EARTH);
             mWorld.startLooping();
             mWorld.play();
         }
@@ -172,46 +169,56 @@ public class WorldSizeTestActivity extends Activity {
         @Override
         public void onGameWorldSizeChanged() {
             Log.i(WorldSizeTestActivity.LOG_SRC, "onGameWorldSizeChanged " + this);
-            removeAllActors();
-
-
-            RectF vb = viewport.getWorldBoundaries();
-
-            float margin = viewport.pixelsToWorldUnits(1);
-            float left   = vb.left + margin;
-            float bottom = vb.bottom + margin ;
-            float right  = vb.right - margin;
-            float top    = vb.top - margin;
-
-            // upper edge
-            addActor(new Box2DEdgeActor(this, 
-                                         new PointF(0, 0),
-                                         new PointF(left,   top),  
-                                         new PointF(right,  top),
-                                         false));
-            
-            // bottom edge
-            addActor(new Box2DEdgeActor(this,
-                                         new PointF(0, 0),  
-                                         new PointF(left,   bottom),  
-                                         new PointF(right,  bottom),
-                                         false));
-            
-            // left edge
-            addActor(new Box2DEdgeActor(this,
-                                         new PointF(0,0 ),
-                                         new PointF(left,   bottom),  
-                                         new PointF(left,   top),
-                                         false));            
-
-            // right edge
-            addActor(new Box2DEdgeActor(this,
-                                        new PointF(0, 0),
-                                        new PointF(right,   bottom),  
-                                        new PointF(right,   top ),
-                                        false));
+            create();
         }
 
+        private void create() {
+            post(new GameMessage() {
+
+                @Override
+                public void process(GameWorld world) {
+                    removeAllActors();
+
+
+                    RectF vb = viewport.getWorldBoundaries();
+
+                    float margin = viewport.pixelsToWorldUnits(1);
+                    float left   = vb.left + margin;
+                    float bottom = vb.bottom + margin ;
+                    float right  = vb.right - margin;
+                    float top    = vb.top - margin;
+
+                    // upper edge
+                    addActor(new Box2DEdgeActor(mWorld, 
+                                                 new PointF(0, 0),
+                                                 new PointF(left,   top),  
+                                                 new PointF(right,  top),
+                                                 false));
+                    
+                    // bottom edge
+                    addActor(new Box2DEdgeActor(mWorld,
+                                                 new PointF(0, 0),  
+                                                 new PointF(left,   bottom),  
+                                                 new PointF(right,  bottom),
+                                                 false));
+                    
+                    // left edge
+                    addActor(new Box2DEdgeActor(mWorld,
+                                                 new PointF(0,0 ),
+                                                 new PointF(left,   bottom),  
+                                                 new PointF(left,   top),
+                                                 false));            
+
+                    // right edge
+                    addActor(new Box2DEdgeActor(mWorld,
+                                                new PointF(0, 0),
+                                                new PointF(right,   bottom),  
+                                                new PointF(right,   top ),
+                                                false));
+                }
+                
+            });
+        }
     }
 }
 

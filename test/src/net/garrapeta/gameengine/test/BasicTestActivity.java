@@ -1,6 +1,7 @@
 package net.garrapeta.gameengine.test;
 
 import net.garrapeta.gameengine.Box2DWorld;
+import net.garrapeta.gameengine.GameMessage;
 import net.garrapeta.gameengine.GameView;
 import net.garrapeta.gameengine.GameWorld;
 import net.garrapeta.gameengine.actor.Box2DCircleActor;
@@ -74,50 +75,60 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
         public void onGameWorldSizeChanged() {
             Log.i(BasicTestActivity.LOG_SRC, "onGameWorldSizeChanged " + this);
 
-            RectF vb = viewport.getWorldBoundaries();
-
-
-            float margin = 0.5f;
-            float left   = vb.left + margin;
-            float bottom = vb.bottom + margin ;
-            float right  = vb.right - margin;
-            float top    = vb.top - margin;
-
-            // upper edge
-            addActor(new Box2DEdgeActor(this, 
-                                         new PointF(0, 0),
-                                         new PointF(left,   top),  
-                                         new PointF(right,  top),
-                                         false));
             
-            // bottom edge
-            addActor(new Box2DEdgeActor(this,
-                                         new PointF(0, 0),  
-                                         new PointF(left,   bottom),  
-                                         new PointF(right,  bottom),
-                                         false));
-            
-            // left edge
-            addActor(new Box2DEdgeActor(this,
-                                         new PointF(0,0 ),
-                                         new PointF(left,   bottom),  
-                                         new PointF(left,   top),
-                                         false));            
+            post(new GameMessage() {
 
-            // right edge
-            addActor(new Box2DEdgeActor(this,
-                                        new PointF(0, 0),
-                                        new PointF(right,   bottom),  
-                                        new PointF(right,   top ),
-                                        false));
+                @Override
+                public void process(GameWorld world) {
+                    RectF vb = viewport.getWorldBoundaries();
 
+
+                    float margin = 0.5f;
+                    float left   = vb.left + margin;
+                    float bottom = vb.bottom + margin ;
+                    float right  = vb.right - margin;
+                    float top    = vb.top - margin;
+
+                    // upper edge
+                    addActor(new Box2DEdgeActor(mWorld, 
+                                                 new PointF(0, 0),
+                                                 new PointF(left,   top),  
+                                                 new PointF(right,  top),
+                                                 false));
+                    
+                    // bottom edge
+                    addActor(new Box2DEdgeActor(mWorld,
+                                                 new PointF(0, 0),  
+                                                 new PointF(left,   bottom),  
+                                                 new PointF(right,  bottom),
+                                                 false));
+                    
+                    // left edge
+                    addActor(new Box2DEdgeActor(mWorld,
+                                                 new PointF(0,0 ),
+                                                 new PointF(left,   bottom),  
+                                                 new PointF(left,   top),
+                                                 false));            
+
+                    // right edge
+                    addActor(new Box2DEdgeActor(mWorld,
+                                                new PointF(0, 0),
+                                                new PointF(right,   bottom),  
+                                                new PointF(right,   top ),
+                                                false));
+                }});
         }
         
 
-        private void createCircleActor(PointF worldPos) {
-            float radius = 0.5f;
-            Box2DCircleActor actor = new Box2DCircleActor(this, worldPos, radius, true);
-            addActor(actor);
+        private void createCircleActor(final PointF worldPos) {
+            post(new GameMessage() {
+                @Override
+                public void process(GameWorld world) {
+                    float radius = 0.5f;
+                    Box2DCircleActor actor = new Box2DCircleActor(mWorld, worldPos, radius, true);
+                    addActor(actor);
+                }});
+
         }
 
     }

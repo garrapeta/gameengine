@@ -133,13 +133,11 @@ public class Viewport {
     }
     
     private void setWorldSize(float width, float height, float dpsInWorldUnit, ProjectionMode mode) {
-        synchronized (mWorld) {
-            mWorldWidth  = width;
-            mWorldHeight = height;
-            mDpsInWorldUnits = dpsInWorldUnit;
-            mProjectionMode  = mode;
-            updateWorldBoundaries();
-        }
+        mWorldWidth  = width;
+        mWorldHeight = height;
+        mDpsInWorldUnits = dpsInWorldUnit;
+        mProjectionMode  = mode;
+        updateWorldBoundaries();
     }
 
     private void updateWorldBoundaries() {

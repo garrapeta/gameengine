@@ -1,14 +1,10 @@
-package net.garrapeta.gameengine.actor;
+package net.garrapeta.gameengine;
 
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
-import net.garrapeta.gameengine.Actor;
-import net.garrapeta.gameengine.BodyUserData;
-import net.garrapeta.gameengine.Box2DWorld;
-import net.garrapeta.gameengine.IBodyDrawer;
-import net.garrapeta.gameengine.ShapeBasedBodyDrawer;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -71,6 +67,15 @@ public abstract class Box2DActor extends Actor {
 	}
 	
 	// ------------------------------------------------- M�todos propios
+	
+	void doOnRemovedFromWorld() {
+        super.doOnRemovedFromWorld();
+        // TODO: delegate this to the world using visitor pattern
+        int l = bodies.size();
+        for (int i = l - 1; i >= 0; i--) {
+            ((Box2DWorld)mGameWorld).destroyBody(this, bodies.get(i));
+        }
+	}
 	
 	public float getMass() {
 		float mass = 0;
@@ -180,13 +185,6 @@ public abstract class Box2DActor extends Actor {
 		}
 		return false;
 	}
-	
-	
-	@Override
-	public void onRemovedFromWorld() {
-		super.onRemovedFromWorld();
-		destroyAllBodies();
-	}
 
 	public void addBody(Body body) {
 		if (bodies == null) {
@@ -212,15 +210,6 @@ public abstract class Box2DActor extends Actor {
 		((BodyUserData)body.getUserData()).setActor(null);
 	}
 
-	public void destroyAllBodies() {
-		synchronized (mGameWorld) {
-			int l = bodies.size();
-			for (int i = l -1 ; i >= 0; i--) {
-				((Box2DWorld) mGameWorld).destroyBody(this, bodies.get(i));
-			}
-		}
-	}
-	
 	public void addJoint(Joint joint) {
 		if (joints == null) {
 			joints = new ArrayList<Joint>();

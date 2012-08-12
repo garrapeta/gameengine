@@ -1,6 +1,5 @@
 package net.garrapeta.gameengine;
 
-import net.garrapeta.gameengine.actor.Box2DActor;
 
 public class BodyUserData {
 	

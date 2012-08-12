@@ -1,6 +1,5 @@
 package net.garrapeta.gameengine;
 
-import net.garrapeta.gameengine.actor.Box2DActor;
 import android.graphics.Canvas;
 
 import com.badlogic.gdx.physics.box2d.Body;

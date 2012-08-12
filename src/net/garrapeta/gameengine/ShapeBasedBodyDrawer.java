@@ -3,7 +3,6 @@ package net.garrapeta.gameengine;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import net.garrapeta.gameengine.actor.Box2DActor;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

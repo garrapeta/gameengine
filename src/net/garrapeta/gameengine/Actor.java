@@ -58,6 +58,11 @@ public abstract class Actor {
     protected void onAddedToWorld() {
     }
 
+    void doOnRemovedFromWorld() {
+        onRemovedFromWorld();
+    }
+
+    
     /**
      * M�todo dispose, ejecutado cuando el actor se quita del mundo
      */
@@ -71,12 +76,8 @@ public abstract class Actor {
         return zIndex;
     }
 
-    /**
-     * Devuelve zIndex
-     */
-    protected final void setZIndex(int zIndex) {
-        this.zIndex = zIndex;
-        mGameWorld.onZindexChanged(this);
+    void doOnAddedToWorld() {
+        onAddedToWorld();
     }
 
 }

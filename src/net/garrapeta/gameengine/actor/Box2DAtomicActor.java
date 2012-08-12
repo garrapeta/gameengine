@@ -1,5 +1,6 @@
 package net.garrapeta.gameengine.actor;
 
+import net.garrapeta.gameengine.Box2DActor;
 import net.garrapeta.gameengine.Box2DWorld;
 import net.garrapeta.gameengine.Viewport;
 import android.graphics.PointF;

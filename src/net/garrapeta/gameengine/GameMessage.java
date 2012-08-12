@@ -16,7 +16,7 @@ public abstract class GameMessage {
     }
     
     
-    public abstract void process();
+    public abstract void process(GameWorld world);
     
     final int getPriority() {
         return mPriority;
