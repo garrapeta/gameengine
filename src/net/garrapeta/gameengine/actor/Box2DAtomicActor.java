@@ -32,14 +32,7 @@ public abstract class Box2DAtomicActor extends Box2DActor implements IAtomicActo
 	public Box2DAtomicActor(Box2DWorld gameWorld, int zIndex) {
 		super(gameWorld, zIndex);
 	}
-	
-	
-	// --------------------------------------------------- Variable
-	
-	protected int strokeColor;
-	protected int fillColor;
-	protected int lineColor;
-	
+
 	// --------------------------------------------------- M�todos de Actor
 	
 	@Override

@@ -1,10 +1,7 @@
 package net.garrapeta.gameengine.actor;
 
-import net.garrapeta.gameengine.BodyUserData;
 import net.garrapeta.gameengine.Box2DWorld;
-import net.garrapeta.gameengine.ShapeBasedBodyDrawer;
 import net.garrapeta.gameengine.Viewport;
-import android.graphics.Color;
 import android.graphics.PointF;
 
 import com.badlogic.gdx.math.Vector2;
@@ -13,21 +10,6 @@ import com.badlogic.gdx.physics.box2d.EdgeShape;
 
 public class Box2DEdgeActor extends Box2DAtomicActor {
 
-    // -------------------------------------------------- Constantes
-
-    private final static int DEFAULT_STROKE_COLOR = Color.YELLOW;
-    private final static int DEFAULT_FILL_COLOR = Color.TRANSPARENT;
-    private final static int DEFAULT_LINE_COLOR = Color.TRANSPARENT;
-
-    // ------------------------------------------ Variables est�ticas
-
-    private final static ShapeBasedBodyDrawer edgeShapeDrawer;
-
-    // -------------------------------------- Inicializaci�n est�tica
-
-    static {
-        edgeShapeDrawer = new ShapeBasedBodyDrawer(DEFAULT_STROKE_COLOR, DEFAULT_FILL_COLOR, DEFAULT_LINE_COLOR);
-    }
 
     // -------------------------------------------------- Constructor
 
@@ -42,10 +24,6 @@ public class Box2DEdgeActor extends Box2DAtomicActor {
      */
     public Box2DEdgeActor(Box2DWorld world) {
         super(world);
-
-        this.strokeColor = DEFAULT_STROKE_COLOR;
-        this.fillColor = DEFAULT_FILL_COLOR;
-        this.lineColor = DEFAULT_LINE_COLOR;
     }
 
     /**
@@ -63,7 +41,6 @@ public class Box2DEdgeActor extends Box2DAtomicActor {
 
         Body body = world.createBody(this, worldPos, dynamic);
         setEdges(body, Viewport.pointFToVector2(p0), Viewport.pointFToVector2(p1) );
-        ((BodyUserData) body.getUserData()).setBodyDrawer(edgeShapeDrawer);
     }
 
     private void setEdges(Body body, Vector2 p0, Vector2 p1) {

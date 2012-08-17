@@ -4,8 +4,10 @@ package net.garrapeta.gameengine;
 import java.util.ArrayList;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.PointF;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -21,11 +23,7 @@ import com.badlogic.gdx.physics.box2d.Shape;
  */
 public abstract class Box2DActor extends Actor {
 
-	// ----------------------------------------- Variables est�ticas
-	
-	protected static ShapeBasedBodyDrawer defaultBodyDrawer;
-	
-	// --------------------------------------------------- Variables
+    // --------------------------------------------------- Variables
 	/**
 	 *  Cuerpos del actor
 	 */
@@ -36,15 +34,7 @@ public abstract class Box2DActor extends Actor {
 	 */
 	protected ArrayList<Joint> joints;
 	
-	// --------------------------------------------------- Inicializaci�n est�tica
 
-	static  {
-		int strokeColor  = Color.GRAY;
-		int fillColor    = Color.DKGRAY;
-		
-		defaultBodyDrawer = new ShapeBasedBodyDrawer(strokeColor, fillColor, Color.TRANSPARENT);
-	}
-	
 	// --------------------------------------------------- Constructor
 	
 	/**
@@ -130,7 +120,7 @@ public abstract class Box2DActor extends Actor {
 	
 	@Override
 	public void draw(Canvas canvas) {
-		drawShapes(canvas);
+		drawBodiesShapes(canvas);
 	}
 
     public void processFrame(float gameTimeStep) {
@@ -140,18 +130,20 @@ public abstract class Box2DActor extends Actor {
 	 * Pinta las shapes de este objeto usando los shapedrawers declarados
 	 * @param canvas
 	 */
-	public void drawShapes(Canvas canvas) {
+	public void drawBodiesShapes(Canvas canvas) {
 		if (bodies != null) {
 			int size = bodies.size();
 			for (int i = 0; i < size; i++) {
 				Body body = bodies.get(i);
-				IBodyDrawer drawer = ((BodyUserData) body.getUserData()).getBodyDrawer();
-				if (drawer == null) {
-					drawer = defaultBodyDrawer;
+				for (Fixture fixture : body.getFixtureList()) {
+			        Vector2 worldPos = body.getWorldCenter();
+			        PointF screenPos = mGameWorld.viewport.worldToScreen(worldPos.x, worldPos.y);
+			        canvas.save();
+			        canvas.translate(screenPos.x, screenPos.y);
+			        canvas.rotate(-(float) Math.toDegrees(body.getAngle()));
+                    ShapeDrawer.draw(canvas, mGameWorld.viewport, fixture.getShape());
+			        canvas.restore();
 				}
-				
-				drawer.draw(canvas, this, body);
-				
 			}
 		}
 	}
@@ -161,24 +153,22 @@ public abstract class Box2DActor extends Actor {
 		if (bodies == null) {
 			bodies = new ArrayList<Body>();
 		}
-		BodyUserData ud = (BodyUserData)body.getUserData();
 		
 		// si este body pertenec�a a otro actor, se le quita como body
-		Box2DActor oldActor = ud.getActor(); 
+		Box2DActor oldActor = (Box2DActor) body.getUserData();
 		if (oldActor != null) {
 			oldActor.removeBody(body);
 		}
 		
 		// se pone el body en este actor
 		bodies.add(body);
-		((BodyUserData)body.getUserData()).setActor(this);
 	}
 	
 	public void removeBody(Body body) {
 		if (bodies != null) {
 			bodies.remove(body);
 		}
-		((BodyUserData)body.getUserData()).setActor(null);
+		body.setUserData(null);
 	}
 
 	public void addJoint(Joint joint) {

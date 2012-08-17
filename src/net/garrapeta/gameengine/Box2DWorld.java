@@ -140,9 +140,9 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
         Body body = mBox2dWorld.createBody(bodyDef);
 
-        body.setUserData(new BodyUserData());
         actor.addBody(body);
-
+        body.setUserData(actor);
+        
         if (dynamic) {
             body.setType(BodyType.DynamicBody);
         }
@@ -215,26 +215,13 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         Body bodyA = contact.getFixtureA().getBody();
         Body bodyB = contact.getFixtureB().getBody();
 
-        Box2DActor actorA = null;
-        Object objectA = bodyA.getUserData();
-        if (objectA != null) {
-            if (objectA instanceof BodyUserData) {
-                actorA = ((BodyUserData) objectA).getActor();
-            }
-        }
+        Box2DActor actorA = (Box2DActor) bodyA.getUserData();
 
         if (actorA != null) {
-            Box2DActor actorB = null;
-            Object objectB = bodyB.getUserData();
-            if (objectB != null) {
-                if (objectB instanceof BodyUserData) {
-                    actorB = ((BodyUserData) objectB).getActor();
-
-                    if (actorB != null) {
-                        actorA.onBeginContact(bodyA, actorB, bodyB, contact);
-                        actorB.onBeginContact(bodyB, actorA, bodyA, contact);
-                    }
-                }
+            Box2DActor actorB = (Box2DActor) bodyB.getUserData();
+            if (actorB != null) {
+               actorA.onBeginContact(bodyA, actorB, bodyB, contact);
+               actorB.onBeginContact(bodyB, actorA, bodyA, contact);
             }
         }
     }
@@ -244,26 +231,13 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         Body bodyA = contact.getFixtureA().getBody();
         Body bodyB = contact.getFixtureB().getBody();
 
-        Box2DActor actorA = null;
-        Object objectA = bodyA.getUserData();
-        if (objectA != null) {
-            if (objectA instanceof BodyUserData) {
-                actorA = ((BodyUserData) objectA).getActor();
-            }
-        }
+        Box2DActor actorA = (Box2DActor) bodyA.getUserData();
 
         if (actorA != null) {
-            Box2DActor actorB = null;
-            Object objectB = bodyB.getUserData();
-            if (objectB != null) {
-                if (objectB instanceof BodyUserData) {
-                    actorB = ((BodyUserData) objectB).getActor();
-
-                    if (actorB != null) {
-                        actorA.onEndContact(bodyA, actorB, bodyB, contact);
-                        actorB.onEndContact(bodyB, actorA, bodyA, contact);
-                    }
-                }
+            Box2DActor actorB = (Box2DActor) bodyB.getUserData();
+            if (actorB != null) {
+                actorA.onEndContact(bodyA, actorB, bodyB, contact);
+                actorB.onEndContact(bodyB, actorA, bodyA, contact);
             }
         }
     }
@@ -273,26 +247,12 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         Body bodyA = contact.getFixtureA().getBody();
         Body bodyB = contact.getFixtureB().getBody();
 
-        Box2DActor actorA = null;
-        Object objectA = bodyA.getUserData();
-        if (objectA != null) {
-            if (objectA instanceof BodyUserData) {
-                actorA = ((BodyUserData) objectA).getActor();
-            }
-        }
-
+        Box2DActor actorA = (Box2DActor) bodyA.getUserData();
         if (actorA != null) {
-            Box2DActor actorB = null;
-            Object objectB = bodyB.getUserData();
-            if (objectB != null) {
-                if (objectB instanceof BodyUserData) {
-                    actorB = ((BodyUserData) objectB).getActor();
-
-                    if (actorB != null) {
-                        actorA.onPreSolveContact(bodyA, actorB, bodyB, contact, oldManifold);
-                        actorB.onPreSolveContact(bodyB, actorA, bodyA, contact, oldManifold);
-                    }
-                }
+            Box2DActor actorB = (Box2DActor) bodyB.getUserData();
+            if (actorB != null) {
+                actorA.onPreSolveContact(bodyA, actorB, bodyB, contact, oldManifold);
+                actorB.onPreSolveContact(bodyB, actorA, bodyA, contact, oldManifold);
             }
         }
     }
@@ -302,26 +262,12 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         Body bodyA = contact.getFixtureA().getBody();
         Body bodyB = contact.getFixtureB().getBody();
 
-        Box2DActor actorA = null;
-        Object objectA = bodyA.getUserData();
-        if (objectA != null) {
-            if (objectA instanceof BodyUserData) {
-                actorA = ((BodyUserData) objectA).getActor();
-            }
-        }
-
+        Box2DActor actorA = (Box2DActor) bodyA.getUserData();
         if (actorA != null) {
-            Box2DActor actorB = null;
-            Object objectB = bodyB.getUserData();
-            if (objectB != null) {
-                if (objectB instanceof BodyUserData) {
-                    actorB = ((BodyUserData) objectB).getActor();
-
-                    if (actorB != null) {
-                        actorA.onPostSolveContact(bodyA, actorB, bodyB, contact, impulse);
-                        actorB.onPostSolveContact(bodyB, actorA, bodyA, contact, impulse);
-                    }
-                }
+            Box2DActor actorB = (Box2DActor) bodyB.getUserData();
+            if (actorB != null) {
+                actorA.onPostSolveContact(bodyA, actorB, bodyB, contact, impulse);
+                actorB.onPostSolveContact(bodyB, actorA, bodyA, contact, impulse);
             }
         }
     }
