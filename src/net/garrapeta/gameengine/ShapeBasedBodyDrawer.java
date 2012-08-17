@@ -3,9 +3,9 @@ package net.garrapeta.gameengine;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PointF;
 
 import com.badlogic.gdx.math.Vector2;
@@ -67,10 +67,10 @@ public class ShapeBasedBodyDrawer implements IBodyDrawer {
 		
 	}
 	
-	protected void drawShape(Canvas canvas, Box2DActor actor, Shape shape) {
-		actor.mGameWorld.viewport.draw(canvas, shape, strokeColor, fillColor, lineColor);
-	}
+	private static Paint sPaint = new Paint();
 
-	
+	protected void drawShape(Canvas canvas, Box2DActor actor, Shape shape) {
+	    ShapeDrawer.draw(canvas, sPaint, actor.mGameWorld.viewport, shape, strokeColor, fillColor, lineColor);
+	}
 	
 }

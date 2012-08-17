@@ -2,9 +2,6 @@ package net.garrapeta.gameengine;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -159,32 +156,6 @@ public abstract class Box2DActor extends Actor {
 		}
 	}
 	
-
-	/**
-	 * @param worldX
-	 * @param worldY
-	 * @return if the point passed as an argument is contained in the shapes of the actor
-	 */
-	public boolean containsPoint(float worldX, float worldY) {
-		int l = bodies.size();
-		for (int i = 0; i < l; i++) {
-			Body body = bodies.get(i);
-			
-			ArrayList<Fixture> fixtures = body.getFixtureList();
-			Iterator<Fixture> ite = fixtures.iterator();
-	        while (ite.hasNext()) {
-	        	Fixture f = ite.next();
-	        	Shape shape = f.getShape();
-	        	
-	        	if (mGameWorld.viewport.isPointInShape(shape, worldX, worldY)) {
-	        		return true;
-	        	}
-	        	
-	        }
-	        
-		}
-		return false;
-	}
 
 	public void addBody(Body body) {
 		if (bodies == null) {

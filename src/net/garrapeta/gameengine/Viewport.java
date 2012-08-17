@@ -1,20 +1,14 @@
 package net.garrapeta.gameengine;
 
-import net.garrapeta.MathUtils;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.Shape;
-import com.badlogic.gdx.physics.box2d.Shape.Type;
 
 public class Viewport {
 
@@ -233,150 +227,8 @@ public class Viewport {
         return new PointF(pixelsToWorldUnits(screenX), pixelsToWorldUnits(mViewHeight - screenY));
     }
 
-    // ------------------------------------------------------ Static Variables
-
-    private static Paint paint = new Paint();
-
-    // ------------------------------------------------ Static initialisation block
-
-    // ------------------------------------------------------------------- Methods
-
-
-    public void draw(Canvas canvas, Shape shape, int strokeColor, int fillColor, int lineColor) {
-        Type t = shape.getType();
-
-        if (t == Type.Circle) {
-            drawCircleShape(canvas, (CircleShape) shape, strokeColor, fillColor, lineColor);
-
-        } else if (t == Type.Polygon) {
-            drawPolygonShape(canvas, (PolygonShape) shape, strokeColor, fillColor, lineColor);
-
-        } else {
-            throw new IllegalArgumentException("Can not draw shape: " + shape);
-        }
-
-    }
-
-    private void drawCircleShape(Canvas canvas, CircleShape circleShape, int strokeColor, int fillColor, int lineColor) {
-        float screenRadius = mWorld.viewport.worldUnitsToPixels(circleShape.getRadius());
-        Vector2 worldPosition = circleShape.getPosition();
-        PointF screenPosition = mWorld.viewport.worldToScreen(worldPosition.x, worldPosition.y);
-        screenPosition = new PointF(0, 0);
-        // circulo
-        drawCircle(canvas, screenPosition, screenRadius, strokeColor, fillColor);
-
-        // linea
-        if (lineColor != Color.TRANSPARENT) {
-            paint.setStyle(Style.STROKE);
-            paint.setColor(lineColor);
-            canvas.drawLine(screenPosition.x, screenPosition.y, screenPosition.x + screenRadius, screenPosition.y,
-                    paint);
-        }
-
-    }
-
-    private void drawCircle(Canvas canvas, PointF screenPosition, float screenRadius, int strokeColor, int fillColor) {
-
-        // circulo
-        if (fillColor != Color.TRANSPARENT) {
-            paint.setStyle(Style.FILL);
-            paint.setColor(fillColor);
-
-            canvas.drawCircle(screenPosition.x, screenPosition.y, screenRadius, paint);
-        }
-
-        // circunferencia
-        if (strokeColor != Color.TRANSPARENT) {
-            paint.setStyle(Style.STROKE);
-            paint.setColor(strokeColor);
-
-            canvas.drawCircle(screenPosition.x, screenPosition.y, screenRadius, paint);
-        }
-
-    }
-
-    private void drawPolygonShape(Canvas canvas, PolygonShape polygon, int strokeColor, int fillColor, int lineColor) {
-        int count = polygon.getVertexCount();
-
-        Vector2[] aux = new Vector2[count];
-        for (int i = 0; i < count; i++) {
-            Vector2 vertex = new Vector2();
-            polygon.getVertex(i, vertex);
-            aux[i] = vertex;
-        }
-        drawPath(canvas, aux, true, strokeColor, fillColor, lineColor);
-    }
-
-    private void drawPath(Canvas canvas, Vector2[] vertexes, boolean close, int strokeColor, int fillColor,
-            int lineColor) {
-
-        int count = vertexes.length;
-        Path path = new Path();
-
-        for (int i = 0; i < count; i++) {
-            Vector2 aux = new Vector2(mWorld.viewport.worldUnitsToPixels(vertexes[i].x),
-                    -mWorld.viewport.worldUnitsToPixels(vertexes[i].y));
-            if (path.isEmpty()) {
-                path.moveTo(aux.x, aux.y);
-            }
-            path.lineTo(aux.x, aux.y);
-        }
-
-        if (close) {
-            path.close();
-        }
-
-        if (fillColor != Color.TRANSPARENT) {
-            paint.setStyle(Style.FILL);
-            paint.setColor(fillColor);
-            canvas.drawPath(path, paint);
-        }
-
-        if (strokeColor != Color.TRANSPARENT) {
-            paint.setStyle(Style.STROKE);
-            paint.setColor(strokeColor);
-            canvas.drawPath(path, paint);
-        }
-
-        // linea
-        if (lineColor != Color.TRANSPARENT) {
-            canvas.save();
-            canvas.clipPath(path);
-            paint.setStyle(Style.STROKE);
-            paint.setColor(lineColor);
-            canvas.drawLine(0, 0, Math.max(canvas.getWidth(), canvas.getHeight()), 0, paint);
-            canvas.restore();
-        }
-
-    }
-
+        
     // ----------------------------------------------------------------------------------
-
-    // Methods to check if a point is in a shape
-
-    public boolean isPointInShape(Shape shape, float worldX, float worldY) {
-        Type t = shape.getType();
-
-        if (t == Type.Circle) {
-            return isPointInCircleShape((CircleShape) shape, worldX, worldY);
-
-        } else if (t == Type.Polygon) {
-            return isPointInPolygonShape((PolygonShape) shape, worldX, worldY);
-
-        } else {
-            throw new IllegalArgumentException("Can not verify is pointis in shape shape: " + shape);
-        }
-    }
-
-    private static boolean isPointInCircleShape(CircleShape shape, float worldX, float worldY) {
-        Vector2 pos = shape.getPosition();
-        return MathUtils.isPointInCicle(worldX, worldY, pos.x, pos.y, shape.getRadius());
-    }
-
-    private boolean isPointInPolygonShape(PolygonShape shape, float worldX, float worldY) {
-        Log.w(GameWorld.LOG_SRC, "Not implmented: isPointInPolygonShape");
-        return false;
-    }
 
     /**
      * Dibuja una cuadr�cula en pantalla
@@ -386,7 +238,7 @@ public class Viewport {
      *            tama�o de las celdas en unidades del mundo (normalmente
      *            metros)
      */
-    public void drawBoundaries(Canvas canvas) {
+    public void drawBoundaries(Canvas canvas, Paint paint) {
         // TODO: not sure if offsets are working
         float worldSpacing = 1;
         float screenSpacing = worldUnitsToPixels(worldSpacing);

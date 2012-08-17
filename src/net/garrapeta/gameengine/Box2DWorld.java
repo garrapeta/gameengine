@@ -1,8 +1,5 @@
 package net.garrapeta.gameengine;
 
-import java.util.List;
-
-
 import android.app.Activity;
 import android.graphics.PointF;
 import android.util.Log;

@@ -6,6 +6,9 @@ import net.garrapeta.gameengine.GameView;
 import net.garrapeta.gameengine.GameWorld;
 import net.garrapeta.gameengine.actor.Box2DCircleActor;
 import net.garrapeta.gameengine.actor.Box2DEdgeActor;
+import net.garrapeta.gameengine.actor.Box2DPolygonActor;
+import net.garrapeta.gameengine.actor.Box2DLoopActor;
+import net.garrapeta.gameengine.actor.Box2DOpenChainActor;
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -89,34 +92,43 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
                     float right  = vb.right - margin;
                     float top    = vb.top - margin;
 
-                    // upper edge
-                    addActor(new Box2DEdgeActor(mWorld, 
+                    // box
+                    addActor(new Box2DLoopActor(mWorld, 
                                                  new PointF(0, 0),
-                                                 new PointF(left,   top),  
-                                                 new PointF(right,  top),
+                                                 new PointF[] {
+                                                    new PointF(left,   bottom),
+                                                    new PointF(left,   top),
+                                                    new PointF(right,  top),
+                                                    new PointF(right,  bottom),
+                                                 },
                                                  false));
                     
-                    // bottom edge
-                    addActor(new Box2DEdgeActor(mWorld,
-                                                 new PointF(0, 0),  
-                                                 new PointF(left,   bottom),  
-                                                 new PointF(right,  bottom),
-                                                 false));
                     
-                    // left edge
-                    addActor(new Box2DEdgeActor(mWorld,
-                                                 new PointF(0,0 ),
-                                                 new PointF(left,   bottom),  
-                                                 new PointF(left,   top),
-                                                 false));            
+                    // shared vertexes
+                    PointF[] vertexes = new PointF[] {
+                            new PointF(5, 0),
+                            new PointF(3.5f, 3),
+                            new PointF(2, 0),
+                    };
+                    
+                    // loop Actor
+                    Box2DLoopActor loop = new Box2DLoopActor(mWorld, new PointF(0, 4), vertexes, false);
+                    addActor(loop);
+                    
+                    // open chain actor
+                    Box2DOpenChainActor openChain = new Box2DOpenChainActor(mWorld, new PointF(5, 4), vertexes, false);
+                    addActor(openChain);
 
-                    // right edge
-                    addActor(new Box2DEdgeActor(mWorld,
-                                                new PointF(0, 0),
-                                                new PointF(right,   bottom),  
-                                                new PointF(right,   top ),
-                                                false));
+                    // edge actor
+                    Box2DEdgeActor edge = new Box2DEdgeActor(mWorld, new PointF(10, 4), vertexes[0], vertexes[1], false);
+                    addActor(edge);
+
+                    // polygon actor
+                    Box2DPolygonActor polygon = new Box2DPolygonActor(mWorld, new PointF(15, 4), vertexes, false);
+                    addActor(polygon);
                 }});
+            
+            
         }
         
 
