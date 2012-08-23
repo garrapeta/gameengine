@@ -342,6 +342,14 @@ public abstract class GameWorld {
     }
 
     /**
+     * Request an explicit draw.
+     */
+    public void requestDraw() {
+        mView.postInvalidate();
+    }
+
+
+    /**
      * Pinta el background
      * 
      * @param canvas
