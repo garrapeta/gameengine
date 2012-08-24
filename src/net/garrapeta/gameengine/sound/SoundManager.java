@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.util.Log;
 
 /**
@@ -15,7 +16,7 @@ import android.util.Log;
  * 
  * @author GaRRaPeTa
  */
-public class SoundManager {
+public class SoundManager implements OnCompletionListener {
 
     // -------------------------------- Variables est�ticas
 
@@ -24,7 +25,7 @@ public class SoundManager {
 
     // ----------------------------- Variables de instancia
 
-    private HashMap<Integer, PlayerSet> playerSets;
+    private HashMap<Integer, PlayerSet> mPlayerSets;
     
     private boolean mSoundEnabled = true;
 
@@ -34,7 +35,7 @@ public class SoundManager {
      * Constructor protegido
      */
     public SoundManager() {
-        playerSets = new HashMap<Integer, PlayerSet>();
+        mPlayerSets = new HashMap<Integer, PlayerSet>();
     }
 
     // ------------------------------------------ M�todos de instancia
@@ -63,7 +64,7 @@ public class SoundManager {
         Log.i(LOG_SRC, "disposing");
         stopAll();
         releaseAll();
-        playerSets.clear();
+        mPlayerSets.clear();
     }
 
     /**
@@ -74,6 +75,7 @@ public class SoundManager {
      */
     public void add(int resourceId, int sampleId, Context context) {
         MediaPlayer player = MediaPlayer.create(context, resourceId);
+        player.setOnCompletionListener(this);
         /*
          * try { player.prepare(); } catch (IOException ioe) {
          * ioe.printStackTrace(); String msg = "Poblems adding sampleId " +
@@ -83,11 +85,11 @@ public class SoundManager {
 
         PlayerSet set;
 
-        if (playerSets.containsKey(sampleId)) {
-            set = playerSets.get(sampleId);
+        if (mPlayerSets.containsKey(sampleId)) {
+            set = mPlayerSets.get(sampleId);
         } else {
             set = new PlayerSet();
-            playerSets.put(sampleId, set);
+            mPlayerSets.put(sampleId, set);
         }
 
         set.add(player);
@@ -111,8 +113,8 @@ public class SoundManager {
         if (!mSoundEnabled) {
             return null;
         }
-        if (playerSets.containsKey(sampleId)) {
-            PlayerSet set = playerSets.get(sampleId);
+        if (mPlayerSets.containsKey(sampleId)) {
+            PlayerSet set = mPlayerSets.get(sampleId);
             MediaPlayer p = set.play(loop, reset);
             Log.d(LOG_SRC, "playing: " + sampleId + " " + p);
             return p;
@@ -136,7 +138,7 @@ public class SoundManager {
      */
     public void resume(MediaPlayer p) {
         Log.d(LOG_SRC, "resume: " + p);
-        if (!p.isPlaying() && p.getCurrentPosition() != 0) {
+        if (p.getCurrentPosition() != 0) {
             p.start();
         }
     }
@@ -163,7 +165,7 @@ public class SoundManager {
      * Para todos los reproductores
      */
     public void stopAll() {
-        Iterator<Entry<Integer, PlayerSet>> it = playerSets.entrySet().iterator();
+        Iterator<Entry<Integer, PlayerSet>> it = mPlayerSets.entrySet().iterator();
         while (it.hasNext()) {
             Entry<Integer, PlayerSet> entry = it.next();
             PlayerSet playerSet = entry.getValue();
@@ -175,7 +177,7 @@ public class SoundManager {
      * Pause todos los reproductores
      */
     public void pauseAll() {
-        Iterator<Entry<Integer, PlayerSet>> it = playerSets.entrySet().iterator();
+        Iterator<Entry<Integer, PlayerSet>> it = mPlayerSets.entrySet().iterator();
         while (it.hasNext()) {
             Entry<Integer, PlayerSet> entry = it.next();
             PlayerSet playerSet = entry.getValue();
@@ -187,7 +189,7 @@ public class SoundManager {
      * Resume todos los reproductores
      */
     public void resumeAll() {
-        Iterator<Entry<Integer, PlayerSet>> it = playerSets.entrySet().iterator();
+        Iterator<Entry<Integer, PlayerSet>> it = mPlayerSets.entrySet().iterator();
         while (it.hasNext()) {
             Entry<Integer, PlayerSet> entry = it.next();
             PlayerSet playerSet = entry.getValue();
@@ -199,13 +201,20 @@ public class SoundManager {
      * Disposea todos los players
      */
     private void releaseAll() {
-        Iterator<Entry<Integer, PlayerSet>> it = playerSets.entrySet().iterator();
+        Iterator<Entry<Integer, PlayerSet>> it = mPlayerSets.entrySet().iterator();
         while (it.hasNext()) {
             Entry<Integer, PlayerSet> entry = it.next();
             PlayerSet playerSet = entry.getValue();
             playerSet.releaseAll();
         }
     }
+
+    
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mp.seekTo(0);
+    }
+
 
     /**
      * M�todo que encapsula diferentes players que pueden estar referenciados
@@ -217,27 +226,27 @@ public class SoundManager {
 
         // ----------------------------- Variables de instancia
 
-        private MediaPlayer player = null;
-        private ArrayList<MediaPlayer> players = null;
+        private MediaPlayer mPlayer = null;
+        private ArrayList<MediaPlayer> mPlayers = null;
 
         // ----------------------------- M�todos
 
         /**
          * A�ade un player
          * 
-         * @param sample
+         * @param player
          */
-        void add(MediaPlayer sample) {
-            if (player == null && players == null) {
+        void add(MediaPlayer player) {
+            if (mPlayer == null && mPlayers == null) {
 
-                player = sample;
+                mPlayer = player;
             } else {
 
-                if (players == null) {
-                    players = new ArrayList<MediaPlayer>();
-                    player = null;
+                if (mPlayers == null) {
+                    mPlayers = new ArrayList<MediaPlayer>();
+                    mPlayer = null;
                 }
-                players.add(sample);
+                mPlayers.add(player);
             }
 
             // sample.prepareAsync();
@@ -248,11 +257,11 @@ public class SoundManager {
          */
         MediaPlayer play(boolean loop, boolean reset) {
             MediaPlayer p = null;
-            if (player != null) {
-                p = player;
+            if (mPlayer != null) {
+                p = mPlayer;
             } else {
-                int index = (int) Math.floor(Math.random() * players.size());
-                p = players.get(index);
+                int index = (int) Math.floor(Math.random() * mPlayers.size());
+                p = mPlayers.get(index);
             }
 
             if (p.isPlaying()) {
@@ -273,13 +282,13 @@ public class SoundManager {
          * Pausa todos los reproductores de este set
          */
         public void pauseAll() {
-            if (player != null) {
-                SoundManager.this.pause(player);
+            if (mPlayer != null) {
+                SoundManager.this.pause(mPlayer);
             }
-            if (players != null) {
-                int playersCount = players.size();
+            if (mPlayers != null) {
+                int playersCount = mPlayers.size();
                 for (int i = 0; i < playersCount; i++) {
-                    MediaPlayer player = players.get(i);
+                    MediaPlayer player = mPlayers.get(i);
                     SoundManager.this.pause(player);
                 }
             }
@@ -289,13 +298,13 @@ public class SoundManager {
          * Resume todos los reproductores de este set
          */
         public void resumeAll() {
-            if (player != null) {
-                SoundManager.this.resume(player);
+            if (mPlayer != null) {
+                SoundManager.this.resume(mPlayer);
             }
-            if (players != null) {
-                int playersCount = players.size();
+            if (mPlayers != null) {
+                int playersCount = mPlayers.size();
                 for (int i = 0; i < playersCount; i++) {
-                    MediaPlayer player = players.get(i);
+                    MediaPlayer player = mPlayers.get(i);
                     SoundManager.this.resume(player);
                 }
             }
@@ -305,13 +314,13 @@ public class SoundManager {
          * Para todos los reproductores de este set
          */
         public void stopAll() {
-            if (player != null) {
-                SoundManager.this.stop(player);
+            if (mPlayer != null) {
+                SoundManager.this.stop(mPlayer);
             }
-            if (players != null) {
-                int playersCount = players.size();
+            if (mPlayers != null) {
+                int playersCount = mPlayers.size();
                 for (int i = 0; i < playersCount; i++) {
-                    MediaPlayer player = players.get(i);
+                    MediaPlayer player = mPlayers.get(i);
                     SoundManager.this.stop(player);
                 }
             }
@@ -321,14 +330,14 @@ public class SoundManager {
          * Disposea todos los reproductores de este set
          */
         public void releaseAll() {
-            if (player != null) {
-                player.release();
-                player = null;
+            if (mPlayer != null) {
+                mPlayer.release();
+                mPlayer = null;
             }
-            if (players != null) {
-                int playersCount = players.size();
+            if (mPlayers != null) {
+                int playersCount = mPlayers.size();
                 for (int i = 0; i < playersCount; i++) {
-                    MediaPlayer player = players.get(i);
+                    MediaPlayer player = mPlayers.get(i);
                     player.release();
                     player = null;
                 }
@@ -336,4 +345,5 @@ public class SoundManager {
         }
 
     }
+
 }
