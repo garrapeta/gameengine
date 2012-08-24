@@ -6,7 +6,6 @@ import net.garrapeta.gameengine.GameMessage;
 import net.garrapeta.gameengine.GameView;
 import net.garrapeta.gameengine.GameWorld;
 import net.garrapeta.gameengine.actor.Box2DCircleActor;
-import net.garrapeta.gameengine.actor.Box2DEdgeActor;
 import net.garrapeta.gameengine.actor.Box2DLoopActor;
 import net.garrapeta.gameengine.actor.SimpleActor;
 import android.app.Activity;
@@ -112,7 +111,6 @@ public class TimingTestActivity extends Activity {
             Log.i(TimingTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
             viewport.setWorldWidth(10);
             startRunning();
-            play();
         }
  
         @Override

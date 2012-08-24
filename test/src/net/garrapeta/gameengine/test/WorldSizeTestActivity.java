@@ -5,7 +5,6 @@ import net.garrapeta.gameengine.GameMessage;
 import net.garrapeta.gameengine.GameView;
 import net.garrapeta.gameengine.GameWorld;
 import net.garrapeta.gameengine.Viewport;
-import net.garrapeta.gameengine.actor.Box2DEdgeActor;
 import net.garrapeta.gameengine.actor.Box2DLoopActor;
 import android.app.Activity;
 import android.graphics.PointF;
@@ -164,7 +163,6 @@ public class WorldSizeTestActivity extends Activity {
         public void onGameViewSizeChanged(int width, int height) {
             Log.i(WorldSizeTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
             mWorld.startRunning();
-            mWorld.play();
         }
  
         @Override

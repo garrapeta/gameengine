@@ -10,8 +10,6 @@ import net.garrapeta.gameengine.actor.Box2DPolygonActor;
 import net.garrapeta.gameengine.actor.Box2DLoopActor;
 import net.garrapeta.gameengine.actor.Box2DOpenChainActor;
 import android.app.Activity;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.hardware.SensorManager;
@@ -71,7 +69,6 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
         public void onGameViewSizeChanged(int width, int height) {
             Log.i(BasicTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
             mWorld.startRunning();
-            mWorld.play();
         }
  
         @Override

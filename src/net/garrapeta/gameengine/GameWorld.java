@@ -203,7 +203,10 @@ public abstract class GameWorld {
             mPaused = true;
         }
     }
-    
+
+    /**
+     * Resumes the game loop 
+     */
     public final void resume() {
         // TODO: IllegalState is if not paused
         Log.i(LOG_SRC, "Resuming...");
@@ -211,6 +214,19 @@ public abstract class GameWorld {
             mPaused = false;
             mGameLoopThread.notify();
         }
+    }
+
+
+    /**
+     * Notified when the game is paused.
+     */
+    protected void onPaused() {
+    }
+
+    /**
+     * Notified when the game is resumed.
+     */
+    protected void onResumed() {
     }
 
     /**
@@ -481,9 +497,11 @@ public abstract class GameWorld {
                 synchronized (mGameLoopThread) {
                     if (mPaused) {
                         Log.d(LOG_SRC, "Game loop paused.");
+                        onPaused();
                         try {
                             mGameLoopThread.wait();
                             Log.v(LOG_SRC, "Game loop resumed.");
+                            onResumed();
                         } catch (InterruptedException e) {}
                     }
                 }
