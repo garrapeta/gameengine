@@ -59,11 +59,11 @@ public abstract class GameWorld {
     /** FPS achieved in last frame */
     private float mCurrentFps;
 
-    /** Si el game loop est� corriendo */
-    protected boolean running;
+    /** If the game loop is running */
+    boolean mRunning = false;
 
-    /** Si se est� procesando la l�gica del juego */
-    protected boolean playing;
+    /** If the game loop is pause */
+    boolean mPaused = false;
 
     /** Paint usado para info de debug */
     protected Paint mDebugPaint;
@@ -169,42 +169,57 @@ public abstract class GameWorld {
     // vida
 
     /**
-     * Inicia el game loop
+     * Starts running the game loop
      */
-    public void startLooping() {
-        running = true;
+    public void startRunning() {
+        Log.i(LOG_SRC, "Start running...");
+        mRunning = true;
         if (!mGameLoopThread.isAlive()) {
             mGameLoopThread.start();
         }
     }
 
     /**
-     * Detiene y cancela el game loop
+     * Stops running the game loop
      */
-    public void stopLooping() {
-        running = false;
+    public final void stopRunning() {
+        Log.i(LOG_SRC, "Stop running...");
+        mRunning = false;
     }
 
     /**
-     * Comienza a procesar la l�gica del juego
+     * If the game loop is running
      */
-    public void play() {
-        this.playing = true;
+    public final boolean isStarted() {
+        return mRunning;
     }
 
     /**
-     * @return si se est� procesando l�gica del juego
+     * Pauses the game loop
      */
-    public boolean isPlaying() {
-        return playing;
+    public final void pause() {
+        Log.i(LOG_SRC, "Pausing...");
+        synchronized (mGameLoopThread) {
+            mPaused = true;
+        }
+    }
+    
+    public final void resume() {
+        // TODO: IllegalState is if not paused
+        Log.i(LOG_SRC, "Resuming...");
+        synchronized (mGameLoopThread) {
+            mPaused = false;
+            mGameLoopThread.notify();
+        }
     }
 
     /**
-     * Pausa el proceso de l�gica del juego
+     * If the game loop is paused
      */
-    public void pause() {
-        this.playing = false;
+    public final boolean isPaused() {
+        return mPaused;
     }
+
 
     // ----------------------------------- M�todos relativos a la l�gica del
     // juego
@@ -461,13 +476,21 @@ public abstract class GameWorld {
 
             onGameLoopStarted();
             
-            while (running) {
+            while (mRunning) {
+                
+                synchronized (mGameLoopThread) {
+                    if (mPaused) {
+                        Log.d(LOG_SRC, "Game loop paused.");
+                        try {
+                            mGameLoopThread.wait();
+                            Log.v(LOG_SRC, "Game loop resumed.");
+                        } catch (InterruptedException e) {}
+                    }
+                }
 
                 long begin = System.currentTimeMillis();
-                if (playing) {
-                    doProcessFrame(lastFrameLength);
-                    mView.draw();
-                }
+                doProcessFrame(lastFrameLength);
+                mView.draw();
 
                 long end = System.currentTimeMillis();
                 long elapsed = end - begin;

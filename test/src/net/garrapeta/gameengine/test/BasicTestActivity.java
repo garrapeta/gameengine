@@ -70,7 +70,7 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
         @Override
         public void onGameViewSizeChanged(int width, int height) {
             Log.i(BasicTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
-            mWorld.startLooping();
+            mWorld.startRunning();
             mWorld.play();
         }
  

@@ -111,7 +111,7 @@ public class TimingTestActivity extends Activity {
         public void onGameViewSizeChanged(int width, int height) {
             Log.i(TimingTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
             viewport.setWorldWidth(10);
-            startLooping();
+            startRunning();
             play();
         }
  
