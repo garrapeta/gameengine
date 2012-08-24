@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import net.garrapeta.gameengine.sound.SoundManager;
+
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -60,10 +62,10 @@ public abstract class GameWorld {
     private float mCurrentFps;
 
     /** If the game loop is running */
-    boolean mRunning = false;
+    private boolean mRunning = false;
 
     /** If the game loop is pause */
-    boolean mPaused = false;
+    private boolean mPaused = false;
 
     /** Paint usado para info de debug */
     protected Paint mDebugPaint;
@@ -73,6 +75,9 @@ public abstract class GameWorld {
 
     /** Si pintar la info de FPS, etc **/
     private boolean drawDebugInfo = false;
+
+    /** Sound manager user by the world */
+    private SoundManager mSoundManager;
 
     // --------------------------------------------------------------
     // Constructor
@@ -96,6 +101,8 @@ public abstract class GameWorld {
         mDebugPaint.setColor(Color.RED);
 
         mGameLoopThread = new Thread(new GameLoopRunnable(), LOOP_THREAD_NAME);
+        
+        mSoundManager = new SoundManager();
     }
 
     /**
@@ -116,8 +123,15 @@ public abstract class GameWorld {
     /**
      * @return la actividad padre
      */
-    public Activity getActivity() {
+    public final Activity getActivity() {
         return activity;
+    }
+    
+    /**
+     * @return the SoundManager
+     */
+    public final SoundManager getSoundManager() {
+        return mSoundManager;
     }
 
     /**
@@ -220,13 +234,15 @@ public abstract class GameWorld {
     /**
      * Notified when the game is paused.
      */
-    protected void onPaused() {
+    private final void onPaused() {
+        getSoundManager().pauseAll();
     }
 
     /**
      * Notified when the game is resumed.
      */
-    protected void onResumed() {
+    private final void onResumed() {
+        getSoundManager().resumeAll();
     }
 
     /**

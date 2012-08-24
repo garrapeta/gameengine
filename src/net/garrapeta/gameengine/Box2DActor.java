@@ -4,7 +4,6 @@ package net.garrapeta.gameengine;
 import java.util.ArrayList;
 
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.PointF;
 
 import com.badlogic.gdx.math.Vector2;
