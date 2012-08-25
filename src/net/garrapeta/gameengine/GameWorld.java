@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import net.garrapeta.gameengine.sound.SoundManager;
+import net.garrapeta.gameengine.module.BitmapManager;
+import net.garrapeta.gameengine.module.SoundManager;
 
 import android.app.Activity;
 import android.graphics.Canvas;
@@ -76,6 +77,9 @@ public abstract class GameWorld {
     /** Si pintar la info de FPS, etc **/
     private boolean drawDebugInfo = false;
 
+    /** Bitmap manager user by the world */
+    private BitmapManager mBitmapManager;
+    
     /** Sound manager user by the world */
     private SoundManager mSoundManager;
 
@@ -101,7 +105,8 @@ public abstract class GameWorld {
         mDebugPaint.setColor(Color.RED);
 
         mGameLoopThread = new Thread(new GameLoopRunnable(), LOOP_THREAD_NAME);
-        
+
+        mBitmapManager = new BitmapManager(mActivity.getResources());
         mSoundManager = new SoundManager();
     }
 
@@ -126,7 +131,14 @@ public abstract class GameWorld {
     public final Activity getActivity() {
         return mActivity;
     }
-    
+
+    /**
+     * @return the BitmaManager
+     */
+    public final BitmapManager getBitmapManager() {
+        return mBitmapManager;
+    }
+
     /**
      * @return the SoundManager
      */
@@ -441,7 +453,7 @@ public abstract class GameWorld {
      */
     void dispose() {
         Log.i(LOG_SRC, "GameWorld.dispose()");
-        mSoundManager.dispose();
+        mSoundManager.releaseAll();
     }
 
     // ---------------------------------- M�todos relativos a la interacci�n

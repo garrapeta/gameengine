@@ -1,4 +1,4 @@
-package net.garrapeta.gameengine.sound;
+package net.garrapeta.gameengine.module;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,10 +58,15 @@ public class SoundManager implements OnCompletionListener {
      * 
      * @param context
      */
-    public void dispose() {
+    public void releaseAll() {
         Log.i(LOG_SRC, "disposing");
         stopAll();
-        releaseAll();
+        int key = 0;
+        for(int i = 0; i < mPlayerSets.size(); i++) {
+            key = mPlayerSets.keyAt(i);
+            PlayerSet playerSet = mPlayerSets.get(key);
+            playerSet.releaseAll();
+        }
         mPlayerSets.clear();
     }
 
@@ -191,18 +196,6 @@ public class SoundManager implements OnCompletionListener {
             key = mPlayerSets.keyAt(i);
             PlayerSet playerSet = mPlayerSets.get(key);
             playerSet.resumeAll();
-        }
-    }
-
-    /**
-     * Disposea todos los players
-     */
-    private void releaseAll() {
-        int key = 0;
-        for(int i = 0; i < mPlayerSets.size(); i++) {
-            key = mPlayerSets.keyAt(i);
-            PlayerSet playerSet = mPlayerSets.get(key);
-            playerSet.releaseAll();
         }
     }
 

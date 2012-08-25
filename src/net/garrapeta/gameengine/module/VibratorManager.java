@@ -1,4 +1,4 @@
-package net.garrapeta.gameengine.vibrator;
+package net.garrapeta.gameengine.module;
 
 import java.util.HashMap;
 
