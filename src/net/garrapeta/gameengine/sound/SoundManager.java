@@ -2,14 +2,12 @@ package net.garrapeta.gameengine.sound;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.util.Log;
+import android.util.SparseArray;
 
 /**
  * Manager de samples de sonido
@@ -25,7 +23,7 @@ public class SoundManager implements OnCompletionListener {
 
     // ----------------------------- Variables de instancia
 
-    private HashMap<Integer, PlayerSet> mPlayerSets;
+    private SparseArray<PlayerSet> mPlayerSets;
     
     private boolean mSoundEnabled = true;
 
@@ -35,7 +33,7 @@ public class SoundManager implements OnCompletionListener {
      * Constructor protegido
      */
     public SoundManager() {
-        mPlayerSets = new HashMap<Integer, PlayerSet>();
+        mPlayerSets = new SparseArray<PlayerSet>();
     }
 
     // ------------------------------------------ M�todos de instancia
@@ -83,9 +81,8 @@ public class SoundManager implements OnCompletionListener {
          * IllegalArgumentException(msg); }
          */
 
-        PlayerSet set;
-
-        if (mPlayerSets.containsKey(sampleId)) {
+        PlayerSet set = mPlayerSets.get(sampleId);
+        if (set != null) {
             set = mPlayerSets.get(sampleId);
         } else {
             set = new PlayerSet();
@@ -113,8 +110,8 @@ public class SoundManager implements OnCompletionListener {
         if (!mSoundEnabled) {
             return null;
         }
-        if (mPlayerSets.containsKey(sampleId)) {
-            PlayerSet set = mPlayerSets.get(sampleId);
+        PlayerSet set = mPlayerSets.get(sampleId);
+        if (set != null) {
             MediaPlayer p = set.play(loop, reset);
             Log.d(LOG_SRC, "playing: " + sampleId + " " + p);
             return p;
@@ -165,10 +162,10 @@ public class SoundManager implements OnCompletionListener {
      * Para todos los reproductores
      */
     public void stopAll() {
-        Iterator<Entry<Integer, PlayerSet>> it = mPlayerSets.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<Integer, PlayerSet> entry = it.next();
-            PlayerSet playerSet = entry.getValue();
+        int key = 0;
+        for(int i = 0; i < mPlayerSets.size(); i++) {
+            key = mPlayerSets.keyAt(i);
+            PlayerSet playerSet = mPlayerSets.get(key);
             playerSet.stopAll();
         }
     }
@@ -177,10 +174,10 @@ public class SoundManager implements OnCompletionListener {
      * Pause todos los reproductores
      */
     public void pauseAll() {
-        Iterator<Entry<Integer, PlayerSet>> it = mPlayerSets.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<Integer, PlayerSet> entry = it.next();
-            PlayerSet playerSet = entry.getValue();
+        int key = 0;
+        for(int i = 0; i < mPlayerSets.size(); i++) {
+            key = mPlayerSets.keyAt(i);
+            PlayerSet playerSet = mPlayerSets.get(key);
             playerSet.pauseAll();
         }
     }
@@ -189,10 +186,10 @@ public class SoundManager implements OnCompletionListener {
      * Resume todos los reproductores
      */
     public void resumeAll() {
-        Iterator<Entry<Integer, PlayerSet>> it = mPlayerSets.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<Integer, PlayerSet> entry = it.next();
-            PlayerSet playerSet = entry.getValue();
+        int key = 0;
+        for(int i = 0; i < mPlayerSets.size(); i++) {
+            key = mPlayerSets.keyAt(i);
+            PlayerSet playerSet = mPlayerSets.get(key);
             playerSet.resumeAll();
         }
     }
@@ -201,10 +198,10 @@ public class SoundManager implements OnCompletionListener {
      * Disposea todos los players
      */
     private void releaseAll() {
-        Iterator<Entry<Integer, PlayerSet>> it = mPlayerSets.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<Integer, PlayerSet> entry = it.next();
-            PlayerSet playerSet = entry.getValue();
+        int key = 0;
+        for(int i = 0; i < mPlayerSets.size(); i++) {
+            key = mPlayerSets.keyAt(i);
+            PlayerSet playerSet = mPlayerSets.get(key);
             playerSet.releaseAll();
         }
     }
