@@ -54,11 +54,11 @@ public class SoundManager implements OnCompletionListener {
     }
 
     /**
-     * Borra todo
+     * Stops all players and releases resources.
      * 
      * @param context
      */
-    public void clearAll() {
+    public void dispose() {
         Log.i(LOG_SRC, "disposing");
         stopAll();
         releaseAll();

@@ -125,6 +125,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
     @Override
     public void dispose() {
+        super.dispose();
         mBox2dWorld.dispose();
     }
 

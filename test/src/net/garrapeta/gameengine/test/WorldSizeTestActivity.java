@@ -162,7 +162,7 @@ public class WorldSizeTestActivity extends Activity {
         @Override
         public void onGameViewSizeChanged(int width, int height) {
             Log.i(WorldSizeTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
-            mWorld.startRunning();
+            mWorld.start();
         }
  
         @Override

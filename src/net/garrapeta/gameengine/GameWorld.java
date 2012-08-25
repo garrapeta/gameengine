@@ -185,7 +185,7 @@ public abstract class GameWorld {
     /**
      * Starts running the game loop
      */
-    public void startRunning() {
+    public void start() {
         Log.i(LOG_SRC, "Start running...");
         mRunning = true;
         if (!mGameLoopThread.isAlive()) {
@@ -196,7 +196,7 @@ public abstract class GameWorld {
     /**
      * Stops running the game loop
      */
-    public final void stopRunning() {
+    public final void finish() {
         Log.i(LOG_SRC, "Stop running...");
         mRunning = false;
     }
@@ -235,6 +235,7 @@ public abstract class GameWorld {
      * Notified when the game is paused.
      */
     private final void onPaused() {
+        // TODO: not only pause, but release the resources of the soundManager
         getSoundManager().pauseAll();
     }
 
@@ -359,7 +360,10 @@ public abstract class GameWorld {
         return false;
     }
 
-    protected void onGameLoopStarted() {
+    /**
+     * Called from the GameLoop when this has been created
+     */
+    protected void onCreated() {
     }
     
     // ---------------------------------------------- M�todos relativos al
@@ -435,19 +439,9 @@ public abstract class GameWorld {
     /**
      * Finaliza el mundo
      */
-    public void dispose() {
+    void dispose() {
         Log.i(LOG_SRC, "GameWorld.dispose()");
-        if (mGameLoopThread != null && mGameLoopThread.isAlive()) {
-            synchronized (mGameLoopThread) {
-                try {
-                    mGameLoopThread.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        // TODO: dispose del mundo
+        mSoundManager.dispose();
     }
 
     // ---------------------------------- M�todos relativos a la interacci�n
@@ -506,7 +500,7 @@ public abstract class GameWorld {
 
             float lastFrameLength = 0;
 
-            onGameLoopStarted();
+            onCreated();
             
             while (mRunning) {
                 
@@ -545,11 +539,9 @@ public abstract class GameWorld {
                 Thread.yield();
             }
 
-            synchronized (mGameLoopThread) {
-                mGameLoopThread.notify();
-            }
-
             Log.i(LOG_SRC, "Game loop thread ended");
+            
+            dispose();
         }
     }
 }
