@@ -36,7 +36,7 @@ public abstract class GameWorld {
     // --------------------------------------------------------------- Variables
 
     /** Actividad padre */
-    protected Activity activity;
+    protected Activity mActivity;
 
     /** SurfaceView donde se renderiza el juego. */
     public GameView mView;
@@ -86,7 +86,7 @@ public abstract class GameWorld {
      * Constructor privado
      */
     private GameWorld(Activity activity) {
-        this.activity = activity;
+        this.mActivity = activity;
         viewport = new Viewport(this);
 
         mCurrentGameMillis = 0;
@@ -124,7 +124,7 @@ public abstract class GameWorld {
      * @return la actividad padre
      */
     public final Activity getActivity() {
-        return activity;
+        return mActivity;
     }
     
     /**
