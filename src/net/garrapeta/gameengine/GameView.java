@@ -77,13 +77,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     protected void onDraw(Canvas canvas) {
         world.doDrawWorld(canvas);
     }
-    
+
     // ------------------------------------------ M�todos de
     // SurfaceHolder.Callback
 
     @Override
     public final void surfaceCreated(SurfaceHolder holder) {
         Log.i(LOG_SRC, "surfaceCreated (" + getWidth() + ", " + getHeight() + ")");
+        // Draw the view when it's been created, to avoid a black screen
+        draw();
     }
 
     @Override

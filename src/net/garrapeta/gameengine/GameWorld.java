@@ -206,11 +206,21 @@ public abstract class GameWorld {
     }
 
     /**
-     * Stops running the game loop
+     * Stops running the game loop.
+     * This method blocks until the game loop is finished. 
      */
     public final void finish() {
         Log.i(LOG_SRC, "Stop running...");
         mRunning = false;
+        // Interrupt the thread, in case it was paused
+        mGameLoopThread.interrupt();
+        synchronized (mGameLoopThread) {
+            if (mGameLoopThread.isAlive()) {
+                try {
+                    mGameLoopThread.wait();
+                } catch (InterruptedException ie) {}
+            }
+        }
     }
 
     /**
@@ -373,6 +383,12 @@ public abstract class GameWorld {
     }
 
     /**
+     * Called from the GameLoop. Load your resources here.
+     */
+    protected void loadResources() {
+    }
+
+    /**
      * Called from the GameLoop when this has been created
      */
     protected void onCreated() {
@@ -403,14 +419,6 @@ public abstract class GameWorld {
         drawBackground(canvas);
         drawActors(canvas);
     }
-
-    /**
-     * Request an explicit draw.
-     */
-    public void requestDraw() {
-        mView.postInvalidate();
-    }
-
 
     /**
      * Pinta el background
@@ -453,6 +461,7 @@ public abstract class GameWorld {
      */
     void dispose() {
         Log.i(LOG_SRC, "GameWorld.dispose()");
+        mBitmapManager.releaseAll();
         mSoundManager.releaseAll();
     }
 
@@ -512,22 +521,11 @@ public abstract class GameWorld {
 
             float lastFrameLength = 0;
 
+            loadResources();
             onCreated();
             
             while (mRunning) {
                 
-                synchronized (mGameLoopThread) {
-                    if (mPaused) {
-                        Log.d(LOG_SRC, "Game loop paused.");
-                        onPaused();
-                        try {
-                            mGameLoopThread.wait();
-                            Log.v(LOG_SRC, "Game loop resumed.");
-                            onResumed();
-                        } catch (InterruptedException e) {}
-                    }
-                }
-
                 long begin = System.currentTimeMillis();
                 doProcessFrame(lastFrameLength);
                 mView.draw();
@@ -549,11 +547,27 @@ public abstract class GameWorld {
                 mCurrentFps = 1000 / lastFrameLength;
                 Log.v(LOG_SRC, "Game loop frame. Desired FPS: " + mFps + " Actual: " + mCurrentFps);
                 Thread.yield();
+
+                synchronized (mGameLoopThread) {
+                    if (mPaused) {
+                        Log.d(LOG_SRC, "Game loop paused.");
+                        onPaused();
+                        try {
+                            mGameLoopThread.wait();
+                            Log.v(LOG_SRC, "Game loop resumed.");
+                            onResumed();
+                        } catch (InterruptedException e) {}
+                    }
+                }
+            }
+
+            dispose();
+            
+            synchronized (mGameLoopThread) {
+                mGameLoopThread.notify();
             }
 
             Log.i(LOG_SRC, "Game loop thread ended");
-            
-            dispose();
         }
     }
 }
