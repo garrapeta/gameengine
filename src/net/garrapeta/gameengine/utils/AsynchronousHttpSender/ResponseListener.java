@@ -1,4 +1,4 @@
-package net.garrapeta.utils.AsynchronousHttpSender;
+package net.garrapeta.gameengine.utils.AsynchronousHttpSender;
 
 import java.io.IOException;
 

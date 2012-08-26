@@ -391,7 +391,7 @@ public abstract class GameWorld {
     /**
      * Called from the GameLoop when this has been created
      */
-    protected void onCreated() {
+    protected void onBeforeRunning() {
     }
     
     // ---------------------------------------------- M�todos relativos al
@@ -415,7 +415,7 @@ public abstract class GameWorld {
      * 
      * @param canvas
      */
-    protected void drawWorld(Canvas canvas) {
+    public final void drawWorld(Canvas canvas) {
         drawBackground(canvas);
         drawActors(canvas);
     }
@@ -522,7 +522,7 @@ public abstract class GameWorld {
             float lastFrameLength = 0;
 
             loadResources();
-            onCreated();
+            onBeforeRunning();
             
             while (mRunning) {
                 

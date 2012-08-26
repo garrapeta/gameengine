@@ -1,4 +1,4 @@
-package net.garrapeta.utils;
+package net.garrapeta.gameengine.utils;
 
 /**
  * M�todos de utilidad de f�sicas
