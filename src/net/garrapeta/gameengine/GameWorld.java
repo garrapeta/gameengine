@@ -214,13 +214,13 @@ public abstract class GameWorld {
         mRunning = false;
         // Interrupt the thread, in case it was paused
         mGameLoopThread.interrupt();
-        synchronized (mGameLoopThread) {
-            if (mGameLoopThread.isAlive()) {
-                try {
-                    mGameLoopThread.wait();
-                } catch (InterruptedException ie) {}
-            }
-        }
+//        synchronized (mGameLoopThread) {
+//            if (mGameLoopThread.isAlive()) {
+//                try {
+//                    mGameLoopThread.wait();
+//                } catch (InterruptedException ie) {}
+//            }
+//        }
     }
 
     /**
@@ -457,7 +457,8 @@ public abstract class GameWorld {
     }
 
     /**
-     * Finaliza el mundo
+     * Stops the game loop and disposed the world.
+     * This method does not block until the world is disposed.
      */
     void dispose() {
         Log.i(LOG_SRC, "GameWorld.dispose()");
@@ -562,10 +563,6 @@ public abstract class GameWorld {
             }
 
             dispose();
-            
-            synchronized (mGameLoopThread) {
-                mGameLoopThread.notify();
-            }
 
             Log.i(LOG_SRC, "Game loop thread ended");
         }
