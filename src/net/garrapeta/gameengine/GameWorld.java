@@ -69,7 +69,7 @@ public abstract class GameWorld {
     private boolean mPaused = false;
 
     /** Paint usado para info de debug */
-    protected Paint mDebugPaint;
+    Paint mDebugPaint;
 
     /** Ms que el mundo del juego a avanzado */
     private long mCurrentGameMillis;
@@ -281,6 +281,10 @@ public abstract class GameWorld {
 
     
     public void post(GameMessage message) {
+        message.onPosted(this);
+    }
+
+    void add(GameMessage message) {
         synchronized (mMessages) {
             int index = 0;
             for (GameMessage aux : mMessages) {
@@ -292,7 +296,7 @@ public abstract class GameWorld {
             mMessages.add(index, message);
         }
     }
-    
+
     private void processMessages() {
         GameMessage[] messages;
         synchronized (mMessages) {
@@ -301,7 +305,7 @@ public abstract class GameWorld {
             mMessages.clear();
         }
         for (GameMessage message : messages) {
-            message.process(this);
+            message.doInGameLoop(this);
         }
         
 
@@ -318,9 +322,9 @@ public abstract class GameWorld {
         //TODO: let adding an actor in same frame?
         //       if user catches MotionEvent, post a message to handle it, and it there post the adition of
         //       one actor, one cycle is lost
-        post(new GameMessage(GameMessage.MESSAGE_PRIORITY_MAX) {
+        post(new SyncGameMessage(GameMessage.MESSAGE_PRIORITY_MAX) {
             @Override
-            public void process(GameWorld world) {
+            public void doInGameLoop(GameWorld world) {
                 int length = mActors.size();
                 int index = length;
         
@@ -344,9 +348,9 @@ public abstract class GameWorld {
 
     public final void removeActor(final Actor actor) {
         Log.d(LOG_SRC, "GameWorld.removeActor(" + actor + "). Thread: " + Thread.currentThread().getName());
-        post(new GameMessage(GameMessage.MESSAGE_PRIORITY_MAX) {
+        post(new SyncGameMessage(GameMessage.MESSAGE_PRIORITY_MAX) {
             @Override
-            public void process(GameWorld world) {
+            public void doInGameLoop(GameWorld world) {
                 if (mActors.contains(actor)) {
                     onActorRemoved(actor);
                     actor.doOnRemovedFromWorld();

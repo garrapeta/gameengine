@@ -2,23 +2,20 @@ package net.garrapeta.gameengine;
 
 public abstract class GameMessage {
 
-    private int mPriority;
-    
-    static final int MESSAGE_PRIORITY_DEFAULT = 0;
-    static final int MESSAGE_PRIORITY_MAX = Integer.MIN_VALUE;
-    
+    protected int mPriority;
+    protected static final int MESSAGE_PRIORITY_DEFAULT = 0;
+    protected static final int MESSAGE_PRIORITY_MAX = Integer.MIN_VALUE;
+
     public GameMessage() {
-        this(MESSAGE_PRIORITY_DEFAULT);
+        super();
     }
 
-    public GameMessage(int priority) {
-        mPriority = priority;
-    }
-    
-    
-    public abstract void process(GameWorld world);
-    
-    final int getPriority() {
+    public abstract void onPosted(GameWorld world);
+
+    public abstract void doInGameLoop(GameWorld world);
+
+    protected final int getPriority() {
         return mPriority;
     }
+
 }

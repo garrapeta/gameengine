@@ -1,7 +1,7 @@
 package net.garrapeta.gameengine.test;
 
 import net.garrapeta.gameengine.Box2DWorld;
-import net.garrapeta.gameengine.GameMessage;
+import net.garrapeta.gameengine.SyncGameMessage;
 import net.garrapeta.gameengine.GameView;
 import net.garrapeta.gameengine.GameWorld;
 import net.garrapeta.gameengine.actor.Box2DCircleActor;
@@ -76,10 +76,10 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
             Log.i(BasicTestActivity.LOG_SRC, "onGameWorldSizeChanged " + this);
 
             
-            post(new GameMessage() {
+            post(new SyncGameMessage() {
 
                 @Override
-                public void process(GameWorld world) {
+                public void doInGameLoop(GameWorld world) {
                     RectF vb = viewport.getWorldBoundaries();
 
 
@@ -130,9 +130,9 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
         
 
         private void createCircleActor(final PointF worldPos) {
-            post(new GameMessage() {
+            post(new SyncGameMessage() {
                 @Override
-                public void process(GameWorld world) {
+                public void doInGameLoop(GameWorld world) {
                     float radius = 0.5f;
                     Box2DCircleActor actor = new Box2DCircleActor(mWorld, worldPos, radius, true);
                     addActor(actor);

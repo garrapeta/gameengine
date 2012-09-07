@@ -1,7 +1,7 @@
 package net.garrapeta.gameengine.test;
 
 import net.garrapeta.gameengine.Box2DWorld;
-import net.garrapeta.gameengine.GameMessage;
+import net.garrapeta.gameengine.SyncGameMessage;
 import net.garrapeta.gameengine.GameView;
 import net.garrapeta.gameengine.GameWorld;
 import net.garrapeta.gameengine.Viewport;
@@ -172,10 +172,10 @@ public class WorldSizeTestActivity extends Activity {
         }
 
         private void create() {
-            post(new GameMessage() {
+            post(new SyncGameMessage() {
 
                 @Override
-                public void process(GameWorld world) {
+                public void doInGameLoop(GameWorld world) {
                     removeAllActors();
 
 
