@@ -79,7 +79,7 @@ public abstract class GameWorld {
 
     /** Bitmap manager user by the world */
     private BitmapManager mBitmapManager;
-    
+
     /** Sound manager user by the world */
     private SoundManager mSoundManager;
 
@@ -206,21 +206,21 @@ public abstract class GameWorld {
     }
 
     /**
-     * Stops running the game loop.
-     * This method blocks until the game loop is finished. 
+     * Stops running the game loop. This method blocks until the game loop is
+     * finished.
      */
     public final void finish() {
         Log.i(LOG_SRC, "Stop running...");
         mRunning = false;
         // Interrupt the thread, in case it was paused
         mGameLoopThread.interrupt();
-//        synchronized (mGameLoopThread) {
-//            if (mGameLoopThread.isAlive()) {
-//                try {
-//                    mGameLoopThread.wait();
-//                } catch (InterruptedException ie) {}
-//            }
-//        }
+        // synchronized (mGameLoopThread) {
+        // if (mGameLoopThread.isAlive()) {
+        // try {
+        // mGameLoopThread.wait();
+        // } catch (InterruptedException ie) {}
+        // }
+        // }
     }
 
     /**
@@ -241,7 +241,7 @@ public abstract class GameWorld {
     }
 
     /**
-     * Resumes the game loop 
+     * Resumes the game loop
      */
     public final void resume() {
         // TODO: IllegalState is if not paused
@@ -251,7 +251,6 @@ public abstract class GameWorld {
             mGameLoopThread.notify();
         }
     }
-
 
     /**
      * Notified when the game is paused.
@@ -275,12 +274,15 @@ public abstract class GameWorld {
         return mPaused;
     }
 
-
     // ----------------------------------- M�todos relativos a la l�gica del
     // juego
 
-    
     public void post(GameMessage message) {
+        post(message, 0);
+    }
+
+    public void post(GameMessage message, float delay) {
+        message.setDelay(delay);
         message.onPosted(this);
     }
 
@@ -297,18 +299,20 @@ public abstract class GameWorld {
         }
     }
 
-    private void processMessages() {
-        GameMessage[] messages;
+    private void processMessages(float lastFrameLength) {
         synchronized (mMessages) {
-            messages = new GameMessage[mMessages.size()];
-            mMessages.toArray(messages);
-            mMessages.clear();
+            int index = 0;
+            GameMessage message;
+            while (index < mMessages.size()) {
+                message = mMessages.get(index);
+                if (message.isReadyToBeDispatched(lastFrameLength)) {
+                    mMessages.remove(index);
+                    message.doInGameLoop(this);
+                } else {
+                    index ++;
+                }
+            }
         }
-        for (GameMessage message : messages) {
-            message.doInGameLoop(this);
-        }
-        
-
     }
 
     /**
@@ -319,15 +323,16 @@ public abstract class GameWorld {
     public final void addActor(final Actor actor) {
         Log.d(LOG_SRC, "GameWorld.addActor(" + actor + "). Thread: " + Thread.currentThread().getName());
 
-        //TODO: let adding an actor in same frame?
-        //       if user catches MotionEvent, post a message to handle it, and it there post the adition of
-        //       one actor, one cycle is lost
+        // TODO: let adding an actor in same frame?
+        // if user catches MotionEvent, post a message to handle it, and it
+        // there post the adition of
+        // one actor, one cycle is lost
         post(new SyncGameMessage(GameMessage.MESSAGE_PRIORITY_MAX) {
             @Override
             public void doInGameLoop(GameWorld world) {
                 int length = mActors.size();
                 int index = length;
-        
+
                 while (index > 0) {
                     Actor aux = mActors.get(index - 1);
                     if (aux.getZIndex() <= actor.getZIndex()) {
@@ -335,7 +340,7 @@ public abstract class GameWorld {
                     }
                     index--;
                 }
-        
+
                 mActors.add(index, actor);
                 onActorAdded(actor);
                 actor.doOnAddedToWorld();
@@ -375,7 +380,6 @@ public abstract class GameWorld {
         }
     }
 
- 
     /**
      * C�digo ejecutado para procesar la l�gica del juego en cada frame
      * 
@@ -397,7 +401,7 @@ public abstract class GameWorld {
      */
     protected void onBeforeRunning() {
     }
-    
+
     // ---------------------------------------------- M�todos relativos al
     // pintado
 
@@ -413,7 +417,6 @@ public abstract class GameWorld {
         }
     }
 
-    
     /**
      * C�digo ejecutado para pintar el mundo en cada frame
      * 
@@ -442,8 +445,6 @@ public abstract class GameWorld {
         }
     }
 
-
-
     /**
      * Pinta informaci�n de debug
      * 
@@ -461,8 +462,8 @@ public abstract class GameWorld {
     }
 
     /**
-     * Stops the game loop and disposed the world.
-     * This method does not block until the world is disposed.
+     * Stops the game loop and disposed the world. This method does not block
+     * until the world is disposed.
      */
     void dispose() {
         Log.i(LOG_SRC, "GameWorld.dispose()");
@@ -494,8 +495,8 @@ public abstract class GameWorld {
     public abstract void onGameWorldSizeChanged();
 
     void doProcessFrame(float lastFrameLength) {
-        processMessages();
-        if (!processFrame(lastFrameLength)) {            
+        processMessages(lastFrameLength);
+        if (!processFrame(lastFrameLength)) {
             // TODO: do this with iterator
             int size = mActors.size();
             for (int i = 0; i < size; i++) {
@@ -503,8 +504,7 @@ public abstract class GameWorld {
             }
         }
     }
-    
-    
+
     void checkExecutedInGameLoopThread() {
         if (Thread.currentThread() != mGameLoopThread) {
             throw new IllegalStateException("This operation needs to be executed in the game loop thread");
@@ -528,9 +528,9 @@ public abstract class GameWorld {
 
             loadResources();
             onBeforeRunning();
-            
+
             while (mRunning) {
-                
+
                 long begin = System.currentTimeMillis();
                 doProcessFrame(lastFrameLength);
                 mView.draw();
@@ -561,7 +561,8 @@ public abstract class GameWorld {
                             mGameLoopThread.wait();
                             Log.v(LOG_SRC, "Game loop resumed.");
                             onResumed();
-                        } catch (InterruptedException e) {}
+                        } catch (InterruptedException e) {
+                        }
                     }
                 }
             }
