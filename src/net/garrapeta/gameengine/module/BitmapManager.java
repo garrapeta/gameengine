@@ -3,6 +3,7 @@ package net.garrapeta.gameengine.module;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -50,11 +51,14 @@ public class BitmapManager {
      */
     public Bitmap loadBitmap(int resourceId) {
         Log.d(LOG_SRC, "Loading bitmap: " + resourceId);
+
         if (mBitmaps == null) {
             mBitmaps = new SparseArray<Bitmap>();
         }
-        Bitmap bmp = BitmapFactory.decodeResource(mResources, resourceId);
+        Options o = new Options();
+        Bitmap bmp = BitmapFactory.decodeResource(mResources, resourceId, o);
         mBitmaps.append(resourceId, bmp);
+        Log.v(LOG_SRC, "Loaded " + resourceId + ". "+  mBitmaps.size() + " bitmaps in memory");
         return bmp;
     }
 
@@ -66,10 +70,12 @@ public class BitmapManager {
     public void releaseBitmap(int resourceId) {
         Log.d(LOG_SRC, "Releasing bitmap: " + resourceId);
         Bitmap bmp = getBitmap(resourceId);
+        mBitmaps.delete(resourceId);
         if (bmp != null) {
             bmp.recycle();
             mBitmaps.delete(resourceId);
         }
+        Log.v(LOG_SRC, "Released " + resourceId + ". "+  mBitmaps.size() + " bitmaps in memory");
     }
 
     /**
@@ -79,7 +85,8 @@ public class BitmapManager {
         Log.i(LOG_SRC, "Releasing all the bitmaps");
         if (mBitmaps != null) {
             int key = 0;
-            for(int i = 0; i < mBitmaps.size(); i++) {
+            int size = mBitmaps.size();
+            for (int i = size - 1; i >= 0; i--) {
                 key = mBitmaps.keyAt(i);
                 releaseBitmap(key);
             }

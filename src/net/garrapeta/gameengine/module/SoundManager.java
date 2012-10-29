@@ -325,8 +325,8 @@ public class SoundManager implements OnCompletionListener {
                 mPlayer = null;
             }
             if (mPlayers != null) {
-                int playersCount = mPlayers.size();
-                for (int i = 0; i < playersCount; i++) {
+                int size = mPlayers.size();
+                for (int i = size - 1; i >= 0; i--) {
                     MediaPlayer player = mPlayers.get(i);
                     player.release();
                     player = null;
