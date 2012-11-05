@@ -21,16 +21,6 @@ public class BitmapManager {
 
     private SparseArray<Bitmap> mBitmaps;
 
-    private Resources mResources;
-
-    /**
-     * Constructor
-     * @param resources
-     */
-    public BitmapManager(Resources resources) {
-        mResources = resources;        
-    }
-
     /**
      * Gets the bitmap with the specified resource id
      * @param resourceId
@@ -49,14 +39,14 @@ public class BitmapManager {
      * @param resourceId
      * @return the loaded bitmap
      */
-    public Bitmap loadBitmap(int resourceId) {
+    public Bitmap loadBitmap(Resources resources, int resourceId) {
         Log.d(LOG_SRC, "Loading bitmap: " + resourceId);
 
         if (mBitmaps == null) {
             mBitmaps = new SparseArray<Bitmap>();
         }
         Options o = new Options();
-        Bitmap bmp = BitmapFactory.decodeResource(mResources, resourceId, o);
+        Bitmap bmp = BitmapFactory.decodeResource(resources, resourceId, o);
         mBitmaps.append(resourceId, bmp);
         Log.v(LOG_SRC, "Loaded " + resourceId + ". "+  mBitmaps.size() + " bitmaps in memory");
         return bmp;

@@ -39,6 +39,4 @@ public class Box2DCircleActor extends Box2DAtomicActor {
 
     }
 
-    // ------------------------------------------------------ M�todos propios
-
 }

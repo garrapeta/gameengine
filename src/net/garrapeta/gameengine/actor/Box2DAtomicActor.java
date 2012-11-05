@@ -43,7 +43,7 @@ public abstract class Box2DAtomicActor extends Box2DActor implements IAtomicActo
 
 	@Override
 	public PointF getWorldPos() {
-		Vector2 worldPos = bodies.get(0).getWorldCenter();
+		Vector2 worldPos = mBodies.get(0).getWorldCenter();
 		return Viewport.vector2ToPointF(worldPos);
 	}
 	
@@ -55,6 +55,6 @@ public abstract class Box2DAtomicActor extends Box2DActor implements IAtomicActo
 	// ------------------------------------------------- M�todos propios
 	
 	public PointF getLinearVelocity () {
-		return Viewport.vector2ToPointF(bodies.get(0).getLinearVelocity());
+		return Viewport.vector2ToPointF(mBodies.get(0).getLinearVelocity());
 	}
 }

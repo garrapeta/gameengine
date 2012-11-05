@@ -3,6 +3,7 @@ package net.garrapeta.gameengine;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -21,12 +22,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     // -----------------------------------------------------------------
     // Variables
+
+    private GameWorld mWorld;
+
     /**
      * Holder del la SurfaceView
      */
-    private SurfaceHolder holder;
+    private final SurfaceHolder mHolder;
 
-    private GameWorld world;
 
     // private boolean waitingForDrawingDispatched = false;
 
@@ -42,8 +45,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        this.holder = getHolder();
-        this.holder.addCallback(this);
+        mHolder = getHolder();
+        mHolder.addCallback(this);
 
         setFocusableInTouchMode(true);
         requestFocus();
@@ -56,27 +59,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
      * @param gameWorld
      */
     final void setGameWorld(GameWorld gameWorld) {
-        this.world = gameWorld;
+        this.mWorld = gameWorld;
     }
 
     /**
      * Pinta el mundo sobre la pantalla
      */
     final void draw() {
-        if (holder != null) {
-            Canvas canvas = holder.lockCanvas();
+        if (mHolder != null) {
+            Canvas canvas = mHolder.lockCanvas();
             if (canvas != null) {
                 // pintado del frame
                 onDraw(canvas);
-                holder.unlockCanvasAndPost(canvas);
+                mHolder.unlockCanvasAndPost(canvas);
             }
         }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (world != null) {
-            world.doDrawWorld(canvas);
+        if (mWorld != null) {
+            mWorld.doDrawWorld(canvas);
         }
     }
 
@@ -93,7 +96,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public final void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         Log.i(LOG_SRC, "surfaceChanged (" + width + ", " + height + ")");
-        world.gameViewSizeChanged(width, height);
+        mWorld.gameViewSizeChanged(this, width, height);
     }
 
     @Override

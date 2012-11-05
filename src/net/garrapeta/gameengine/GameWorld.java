@@ -7,11 +7,11 @@ import java.util.Vector;
 import net.garrapeta.gameengine.module.BitmapManager;
 import net.garrapeta.gameengine.module.SoundManager;
 
-import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 /**
@@ -35,9 +35,6 @@ public abstract class GameWorld {
     public static final String LOOP_THREAD_NAME = "gameLoop";
 
     // --------------------------------------------------------------- Variables
-
-    /** Actividad padre */
-    protected Activity mActivity;
 
     /** SurfaceView donde se renderiza el juego. */
     public GameView mView;
@@ -89,8 +86,7 @@ public abstract class GameWorld {
     /**
      * Constructor privado
      */
-    private GameWorld(Activity activity) {
-        this.mActivity = activity;
+    private GameWorld() {
         viewport = new Viewport(this);
 
         mCurrentGameMillis = 0;
@@ -106,18 +102,17 @@ public abstract class GameWorld {
 
         mGameLoopThread = new Thread(new GameLoopRunnable(), LOOP_THREAD_NAME);
 
-        mBitmapManager = new BitmapManager(mActivity.getResources());
+        mBitmapManager = new BitmapManager();
         mSoundManager = new SoundManager();
     }
 
     /**
      * Constructor
      * 
-     * @param view
-     *            vista del juego
+     * @param view vista del juego
      */
-    public GameWorld(Activity activity, GameView view) {
-        this(activity);
+    public GameWorld(GameView view) {
+        this();
         mView = view;
         view.setGameWorld(this);
     }
@@ -125,15 +120,9 @@ public abstract class GameWorld {
     // -------------------------------------------------------- Getters y
     // Setters
 
+    
     /**
-     * @return la actividad padre
-     */
-    public final Activity getActivity() {
-        return mActivity;
-    }
-
-    /**
-     * @return the BitmaManager
+     * @return the BitmapManager
      */
     public final BitmapManager getBitmapManager() {
         return mBitmapManager;
@@ -473,10 +462,10 @@ public abstract class GameWorld {
 
     // ---------------------------------- M�todos relativos a la interacci�n
 
-    final void gameViewSizeChanged(int width, int height) {
+    final void gameViewSizeChanged(GameView gameView, int width, int height) {
         Log.i(LOG_SRC, "surfaceChanged (" + width + ", " + height + ")");
         onGameViewSizeChanged(width, height);
-        viewport.gameViewSizeChanged(width, height);
+        viewport.gameViewSizeChanged(gameView, width, height);
     }
 
     /**
@@ -572,4 +561,6 @@ public abstract class GameWorld {
             Log.i(LOG_SRC, "Game loop thread ended");
         }
     }
+
+
 }

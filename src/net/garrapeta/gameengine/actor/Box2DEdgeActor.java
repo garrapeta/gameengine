@@ -15,7 +15,7 @@ public class Box2DEdgeActor extends Box2DAtomicActor {
 
     /**
      * @param world
-     * @param worldPos
+     * @param mWorldPos
      *            , posici�n en el mundo, en unidades del mundo
      * @param vertexes
      *            vertices, EN EL SENTIDO CONTRARIO A LAS AGUJAS DEL RELOJ, en

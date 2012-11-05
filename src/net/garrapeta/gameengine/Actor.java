@@ -17,7 +17,7 @@ public abstract class Actor {
     /**
      * Z-index del actor. Cuanto mayor, m�s en primer plano.
      */
-    private int zIndex = 0;
+    private int mZIndex = 0;
 
     // ----------------------------------------------- Constructores
 
@@ -33,7 +33,7 @@ public abstract class Actor {
      */
     protected Actor(GameWorld gameWorld, int zIndex) {
         this.mGameWorld = gameWorld;
-        this.zIndex = zIndex;
+        this.mZIndex = zIndex;
     }
 
     // ------------------------------------------- Getters y Setters
@@ -60,6 +60,7 @@ public abstract class Actor {
 
     void doOnRemovedFromWorld() {
         onRemovedFromWorld();
+        dispose();
     }
 
     
@@ -73,11 +74,18 @@ public abstract class Actor {
      * Devuelve zIndex
      */
     protected final int getZIndex() {
-        return zIndex;
+        return mZIndex;
     }
 
     void doOnAddedToWorld() {
         onAddedToWorld();
+    }
+
+    /**
+     * Frees resources and nullifies references
+     */
+    protected void dispose() {
+        mGameWorld = null;
     }
 
 }

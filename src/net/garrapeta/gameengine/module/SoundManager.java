@@ -78,23 +78,27 @@ public class SoundManager implements OnCompletionListener {
      */
     public void add(int resourceId, int sampleId, Context context) {
         MediaPlayer player = MediaPlayer.create(context, resourceId);
-        player.setOnCompletionListener(this);
-        /*
-         * try { player.prepare(); } catch (IOException ioe) {
-         * ioe.printStackTrace(); String msg = "Poblems adding sampleId " +
-         * ioe.toString(); Log.e(LOG_SRC, msg); throw new
-         * IllegalArgumentException(msg); }
-         */
-
-        PlayerSet set = mPlayerSets.get(sampleId);
-        if (set != null) {
-            set = mPlayerSets.get(sampleId);
+        if (player != null) {
+            player.setOnCompletionListener(this);
+            /*
+             * try { player.prepare(); } catch (IOException ioe) {
+             * ioe.printStackTrace(); String msg = "Poblems adding sampleId " +
+             * ioe.toString(); Log.e(LOG_SRC, msg); throw new
+             * IllegalArgumentException(msg); }
+             */
+    
+            PlayerSet set = mPlayerSets.get(sampleId);
+            if (set != null) {
+                set = mPlayerSets.get(sampleId);
+            } else {
+                set = new PlayerSet();
+                mPlayerSets.put(sampleId, set);
+            }
+    
+            set.add(player);
         } else {
-            set = new PlayerSet();
-            mPlayerSets.put(sampleId, set);
+            Log.w(LOG_SRC, "Could not load player for sample id: " + sampleId);
         }
-
-        set.add(player);
     }
 
     /**

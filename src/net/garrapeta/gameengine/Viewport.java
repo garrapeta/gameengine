@@ -92,12 +92,12 @@ public class Viewport {
 
     // ------------------------------------------------ Instance methods
 
-    public void gameViewSizeChanged(int viewWidth, int viewHeight) {
+    public void gameViewSizeChanged(GameView gameView, int viewWidth, int viewHeight) {
         Log.i(LOG_SRC, "onGameViewSizeChanged(" + viewWidth + ", " + + viewHeight + ")");
-        
+
         mViewWidth  = viewWidth;
         mViewHeight = viewHeight;
-        mDisplayDensity = mWorld.getActivity().getResources().getDisplayMetrics().density;
+        mDisplayDensity = gameView.getContext().getResources().getDisplayMetrics().density;
 
         updateWorldBoundaries();
     }
