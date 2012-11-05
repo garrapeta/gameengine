@@ -54,15 +54,6 @@ public abstract class Box2DActor extends Actor {
 
     // ------------------------------------------------- M�todos propios
 
-    void doOnRemovedFromWorld() {
-        super.doOnRemovedFromWorld();
-        // TODO: delegate this to the world using visitor pattern
-        int l = mBodies.size();
-        for (int i = l - 1; i >= 0; i--) {
-            ((Box2DWorld) mGameWorld).destroyBody(this, mBodies.get(i));
-        }
-    }
-
     public float getMass() {
         float mass = 0;
 
@@ -140,11 +131,11 @@ public abstract class Box2DActor extends Actor {
                 Body body = mBodies.get(i);
                 for (Fixture fixture : body.getFixtureList()) {
                     Vector2 worldPos = body.getWorldCenter();
-                    PointF screenPos = mGameWorld.viewport.worldToScreen(worldPos.x, worldPos.y);
+                    PointF screenPos = mGameWorld.mViewport.worldToScreen(worldPos.x, worldPos.y);
                     canvas.save();
                     canvas.translate(screenPos.x, screenPos.y);
                     canvas.rotate(-(float) Math.toDegrees(body.getAngle()));
-                    ShapeDrawer.draw(canvas, mGameWorld.viewport, fixture.getShape());
+                    ShapeDrawer.draw(canvas, mGameWorld.mViewport, fixture.getShape());
                     canvas.restore();
                 }
             }
@@ -210,11 +201,25 @@ public abstract class Box2DActor extends Actor {
 
     @Override
     protected void dispose() {
-        super.dispose();
-        for (Body body : mBodies) {
-            body.setUserData(null);
+        if (mJoints != null) {
+            int l = mJoints.size();
+            for (int i = l - 1; i >= 0; i--) {
+                ((Box2DWorld) mGameWorld).destroyJoint(this, mJoints.get(i));
+            }
+            mJoints.clear();
+            mJoints = null;
         }
-        mBodies = null;
-        mJoints = null;
+
+        if (mBodies != null) {
+            int l = mBodies.size();
+            for (int i = l - 1; i >= 0; i--) {
+                ((Box2DWorld) mGameWorld).destroyBody(this, mBodies.get(i));
+            }
+            mBodies.clear();
+            mBodies = null;
+        }
+
+        super.dispose();
     }
+
 }

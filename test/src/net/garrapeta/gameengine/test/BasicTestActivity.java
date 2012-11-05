@@ -45,7 +45,7 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            PointF worldPos = mWorld.viewport.screenToWorld(event.getX(), event.getY());
+            PointF worldPos = mWorld.mViewport.screenToWorld(event.getX(), event.getY());
             mWorld.createCircleActor(worldPos);
         }
         return true;
@@ -59,10 +59,10 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
         private static final float WORLD_HEIGHT = 14f;
 
         public BasicTestBox2DWorld(Activity activity, GameView gameView) {
-            super(activity, gameView);
+            super(gameView);
             setGravityY(-SensorManager.GRAVITY_EARTH);
             setDrawDebugInfo(true);
-            viewport.setWorldHeight(WORLD_HEIGHT);
+            mViewport.setWorldHeight(WORLD_HEIGHT);
         }
 
         @Override
@@ -80,7 +80,7 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
 
                 @Override
                 public void doInGameLoop(GameWorld world) {
-                    RectF vb = viewport.getWorldBoundaries();
+                    RectF vb = mViewport.getWorldBoundaries();
 
 
                     float margin = 0.5f;

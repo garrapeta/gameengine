@@ -103,13 +103,13 @@ public class TimingTestActivity extends Activity {
         private SimpleActor mSimpleActor;
         
         public TimingBox2DWorld(Activity activity, GameView gameView) {
-            super(activity, gameView);            
+            super(gameView);            
         }
 
         @Override
         public void onGameViewSizeChanged(int width, int height) {
             Log.i(TimingTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
-            viewport.setWorldWidth(10);
+            mViewport.setWorldWidth(10);
             start();
         }
  
@@ -126,9 +126,9 @@ public class TimingTestActivity extends Activity {
                 public void doInGameLoop(GameWorld world) {
                     removeAllActors();
 
-                    RectF vb = viewport.getWorldBoundaries();
+                    RectF vb = mViewport.getWorldBoundaries();
 
-                    float margin = viewport.pixelsToWorldUnits(1);
+                    float margin = mViewport.pixelsToWorldUnits(1);
                     float left   = vb.left + margin;
                     float bottom = vb.bottom + margin ;
                     float right  = vb.right - margin;
@@ -150,7 +150,7 @@ public class TimingTestActivity extends Activity {
         @Override
         public boolean processFrame(float lastFrameLength) {
             if (mBox2DActor != null) {
-                if (mBox2DActor.getBodies().get(0).getWorldCenter().x >= viewport.getWorldBoundaries().right - (mRadius * 2)) {
+                if (mBox2DActor.getBodies().get(0).getWorldCenter().x >= mViewport.getWorldBoundaries().right - (mRadius * 2)) {
                     removeActor(mBox2DActor);
                     mBox2DActor = null;
                 }
@@ -159,7 +159,7 @@ public class TimingTestActivity extends Activity {
             }
             
             if (mSimpleActor != null) {
-                if (mSimpleActor.getWorldPos().x >= viewport.getWorldBoundaries().right - (mRadius * 2)) {
+                if (mSimpleActor.getWorldPos().x >= mViewport.getWorldBoundaries().right - (mRadius * 2)) {
                     removeActor(mSimpleActor);
                     mSimpleActor = null;
                 }
@@ -171,7 +171,7 @@ public class TimingTestActivity extends Activity {
         
 
         private void createBox2DActor() {
-            RectF wb = viewport.getWorldBoundaries();
+            RectF wb = mViewport.getWorldBoundaries();
             PointF worldPos = new PointF(wb.left + mRadius, (wb.top - wb.bottom)  / 3);
             mBox2DActor = new Box2DCircleActor(this, worldPos, mRadius, true);
             mBox2DActor.getBodies().get(0).setLinearVelocity(mVelX, 0);
@@ -179,17 +179,17 @@ public class TimingTestActivity extends Activity {
         }
 
         private void createSimpleActor() {
-            RectF wb = viewport.getWorldBoundaries();
+            RectF wb = mViewport.getWorldBoundaries();
             PointF worldPos = new PointF(wb.left + mRadius, ((wb.top - wb.bottom)  / 3) * 2);
             mSimpleActor = new SimpleActor(this, worldPos.x, worldPos.y) {
 
                 @Override
                 public void draw(Canvas canvas) {
                     PointF worldPos = getWorldPos();
-                    PointF screenPos = viewport.worldToScreen(worldPos);
+                    PointF screenPos = mViewport.worldToScreen(worldPos);
                     Paint paint = new Paint();
                     paint.setColor(Color.MAGENTA);
-                    canvas.drawCircle(screenPos.x, screenPos.y, viewport.worldUnitsToPixels(mRadius), paint);
+                    canvas.drawCircle(screenPos.x, screenPos.y, mViewport.worldUnitsToPixels(mRadius), paint);
                 }
 
             };

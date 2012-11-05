@@ -45,7 +45,7 @@ public class WorldSizeTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.viewport.setWorldSize(5, 10, 40);
+                    mWorld.mViewport.setWorldSize(5, 10, 40);
                 }
             });
         }
@@ -56,7 +56,7 @@ public class WorldSizeTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.viewport.setWorldSize(5, 10, 20);
+                    mWorld.mViewport.setWorldSize(5, 10, 20);
                 }
             });
         }
@@ -67,7 +67,7 @@ public class WorldSizeTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.viewport.setWorldSize(5, 10, Viewport.ProjectionMode.FIT_WIDTH);
+                    mWorld.mViewport.setWorldSize(5, 10, Viewport.ProjectionMode.FIT_WIDTH);
                 }
             });
         }
@@ -78,7 +78,7 @@ public class WorldSizeTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.viewport.setWorldSize(5, 10, Viewport.ProjectionMode.FIT_HEIGHT);
+                    mWorld.mViewport.setWorldSize(5, 10, Viewport.ProjectionMode.FIT_HEIGHT);
                 }
             });
         }
@@ -89,7 +89,7 @@ public class WorldSizeTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.viewport.setWorldWidth(5, 40);
+                    mWorld.mViewport.setWorldWidth(5, 40);
                 }
             });
         }
@@ -100,7 +100,7 @@ public class WorldSizeTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.viewport.setWorldWidth(5, 20);
+                    mWorld.mViewport.setWorldWidth(5, 20);
                 }
             });
         }
@@ -111,7 +111,7 @@ public class WorldSizeTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.viewport.setWorldHeight(10, 40);
+                    mWorld.mViewport.setWorldHeight(10, 40);
                 }
             });
         }
@@ -122,7 +122,7 @@ public class WorldSizeTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.viewport.setWorldHeight(10, 20);
+                    mWorld.mViewport.setWorldHeight(10, 20);
                 }
             });
         }
@@ -133,7 +133,7 @@ public class WorldSizeTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.viewport.setWorldWidth(5);
+                    mWorld.mViewport.setWorldWidth(5);
                 }
             });
         }
@@ -144,7 +144,7 @@ public class WorldSizeTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.viewport.setWorldHeight(10);
+                    mWorld.mViewport.setWorldHeight(10);
                 }
             });
         }
@@ -156,7 +156,7 @@ public class WorldSizeTestActivity extends Activity {
     class WorldSizeBox2DWorld extends Box2DWorld {
 
         public WorldSizeBox2DWorld(Activity activity, GameView gameView) {
-            super(activity, gameView);
+            super(gameView);
         }
 
         @Override
@@ -179,9 +179,9 @@ public class WorldSizeTestActivity extends Activity {
                     removeAllActors();
 
 
-                    RectF vb = viewport.getWorldBoundaries();
+                    RectF vb = mViewport.getWorldBoundaries();
 
-                    float margin = viewport.pixelsToWorldUnits(1);
+                    float margin = mViewport.pixelsToWorldUnits(1);
                     float left   = vb.left + margin;
                     float bottom = vb.bottom + margin ;
                     float right  = vb.right - margin;

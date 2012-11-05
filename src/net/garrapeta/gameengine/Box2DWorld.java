@@ -1,6 +1,5 @@
 package net.garrapeta.gameengine;
 
-import android.app.Activity;
 import android.graphics.PointF;
 import android.util.Log;
 
@@ -124,7 +123,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     // M�todos relativos a unidades l�gicas / pantalla
 
     @Override
-    public void dispose() {
+    protected void dispose() {
         super.dispose();
         mBox2dWorld.dispose();
     }
@@ -154,6 +153,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
     public void destroyBody(Box2DActor actor, Body body) {
         checkExecutedInGameLoopThread();
+        body.setUserData(null);
         mBox2dWorld.destroyBody(body);
     }
 

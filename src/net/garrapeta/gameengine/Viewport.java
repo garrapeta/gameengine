@@ -266,4 +266,12 @@ public class Viewport {
 
     }
 
+    /**
+     * Frees resources
+     */
+    public void dispose() {
+        mWorld = null;
+        mWorldBoundaries = null;
+    }
+
 }

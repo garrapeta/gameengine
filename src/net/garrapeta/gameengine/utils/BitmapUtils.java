@@ -15,7 +15,7 @@ public class BitmapUtils {
      * @return bitmap with the snapshot
      */
     public Bitmap getSnapShot(GameWorld world, Bitmap.Config config) {
-        Bitmap bitmap = Bitmap.createBitmap(world.mView.getWidth(), world.mView.getHeight(), config);
+        Bitmap bitmap = Bitmap.createBitmap(world.mGameView.getWidth(), world.mGameView.getHeight(), config);
         Canvas canvas = new Canvas(bitmap);
         world.drawWorld(canvas);
         return bitmap;

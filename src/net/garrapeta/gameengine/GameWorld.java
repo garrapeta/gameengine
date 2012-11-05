@@ -6,12 +6,12 @@ import java.util.Vector;
 
 import net.garrapeta.gameengine.module.BitmapManager;
 import net.garrapeta.gameengine.module.SoundManager;
+import net.garrapeta.gameengine.module.VibratorManager;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 /**
@@ -37,10 +37,10 @@ public abstract class GameWorld {
     // --------------------------------------------------------------- Variables
 
     /** SurfaceView donde se renderiza el juego. */
-    public GameView mView;
+    public GameView mGameView;
 
     /** Viewport activo */
-    public Viewport viewport;
+    public Viewport mViewport;
 
     /** Hilo con el loop principal */
     private Thread mGameLoopThread;
@@ -87,7 +87,7 @@ public abstract class GameWorld {
      * Constructor privado
      */
     private GameWorld() {
-        viewport = new Viewport(this);
+        mViewport = new Viewport(this);
 
         mCurrentGameMillis = 0;
 
@@ -109,18 +109,18 @@ public abstract class GameWorld {
     /**
      * Constructor
      * 
-     * @param view vista del juego
+     * @param view
+     *            vista del juego
      */
     public GameWorld(GameView view) {
         this();
-        mView = view;
+        mGameView = view;
         view.setGameWorld(this);
     }
 
     // -------------------------------------------------------- Getters y
     // Setters
 
-    
     /**
      * @return the BitmapManager
      */
@@ -298,7 +298,7 @@ public abstract class GameWorld {
                     mMessages.remove(index);
                     message.doInGameLoop(this);
                 } else {
-                    index ++;
+                    index++;
                 }
             }
         }
@@ -423,7 +423,7 @@ public abstract class GameWorld {
      */
     protected void drawBackground(Canvas canvas) {
         canvas.drawColor(Color.BLACK);
-        viewport.drawBoundaries(canvas, mDebugPaint);
+        mViewport.drawBoundaries(canvas, mDebugPaint);
     }
 
     protected void drawActors(Canvas canvas) {
@@ -443,7 +443,7 @@ public abstract class GameWorld {
     private final void drawDebugInfo(Canvas canvas, Paint debugPaint) {
         // se pintan los FPS actuales
         debugPaint.setTextAlign(Align.RIGHT);
-        canvas.drawText(getDebugString(), mView.getWidth(), mView.getHeight() - 20, debugPaint);
+        canvas.drawText(getDebugString(), mGameView.getWidth(), mGameView.getHeight() - 20, debugPaint);
     }
 
     protected String getDebugString() {
@@ -451,13 +451,29 @@ public abstract class GameWorld {
     }
 
     /**
-     * Stops the game loop and disposed the world. This method does not block
+     * Stops the game loop and disposes the world. This method does not block
      * until the world is disposed.
      */
-    void dispose() {
+    protected void dispose() {
         Log.i(LOG_SRC, "GameWorld.dispose()");
+
+        mGameView = null;
+        mViewport.dispose();
+        mViewport = null;
+        for (Actor actor : mActors) {
+            actor.dispose();
+        }
+        mActors.clear();
+        mActors = null;
+        mMessages = null;
+        mDebugPaint = null;
         mBitmapManager.releaseAll();
+        mBitmapManager = null;
         mSoundManager.releaseAll();
+        mSoundManager = null;
+        // TODO: code the same access to the vibrator manager thatn in the other managers
+        VibratorManager.getInstance().dispose();
+        mGameLoopThread = null;
     }
 
     // ---------------------------------- M�todos relativos a la interacci�n
@@ -465,7 +481,7 @@ public abstract class GameWorld {
     final void gameViewSizeChanged(GameView gameView, int width, int height) {
         Log.i(LOG_SRC, "surfaceChanged (" + width + ", " + height + ")");
         onGameViewSizeChanged(width, height);
-        viewport.gameViewSizeChanged(gameView, width, height);
+        mViewport.gameViewSizeChanged(gameView, width, height);
     }
 
     /**
@@ -522,7 +538,7 @@ public abstract class GameWorld {
 
                 long begin = System.currentTimeMillis();
                 doProcessFrame(lastFrameLength);
-                mView.draw();
+                mGameView.draw();
 
                 long end = System.currentTimeMillis();
                 long elapsed = end - begin;
@@ -561,6 +577,5 @@ public abstract class GameWorld {
             Log.i(LOG_SRC, "Game loop thread ended");
         }
     }
-
 
 }

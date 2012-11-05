@@ -3,7 +3,6 @@ package net.garrapeta.gameengine;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -28,7 +27,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     /**
      * Holder del la SurfaceView
      */
-    private final SurfaceHolder mHolder;
+    private SurfaceHolder mHolder;
 
 
     // private boolean waitingForDrawingDispatched = false;
@@ -59,7 +58,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
      * @param gameWorld
      */
     final void setGameWorld(GameWorld gameWorld) {
-        this.mWorld = gameWorld;
+        mWorld = gameWorld;
     }
 
     /**
@@ -96,7 +95,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public final void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         Log.i(LOG_SRC, "surfaceChanged (" + width + ", " + height + ")");
-        mWorld.gameViewSizeChanged(this, width, height);
+        if (mWorld != null) {
+            mWorld.gameViewSizeChanged(this, width, height);
+        }
     }
 
     @Override
