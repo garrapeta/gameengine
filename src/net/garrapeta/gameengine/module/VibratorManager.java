@@ -73,7 +73,7 @@ public class VibratorManager {
     }
 
     /**
-     * Reproduce uno de los samples identificados con sampleId
+     * Play one of the samples mapped to the passed Id
      * 
      * @param patternId
      */
@@ -92,7 +92,6 @@ public class VibratorManager {
     public void dispose() {
         if (mPatterns != null) {
             mPatterns.clear();
-            mPatterns = null;
             mVibrator = null;
         }
     }
