@@ -8,6 +8,7 @@ import net.garrapeta.gameengine.module.BitmapManager;
 import net.garrapeta.gameengine.module.SoundManager;
 import net.garrapeta.gameengine.module.VibratorManager;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -84,10 +85,14 @@ public abstract class GameWorld {
     // Constructor
 
     /**
-     * Constructor privado
+     * Constructor
+     * 
+     * @param view
+     *            vista del juego
+     * @param context 
      */
-    private GameWorld() {
-        mViewport = new Viewport(this);
+    public GameWorld(GameView view, Context context) {
+        mViewport = new Viewport(this, context.getResources().getDisplayMetrics());
 
         mCurrentGameMillis = 0;
 
@@ -104,16 +109,6 @@ public abstract class GameWorld {
 
         mBitmapManager = new BitmapManager();
         mSoundManager = new SoundManager();
-    }
-
-    /**
-     * Constructor
-     * 
-     * @param view
-     *            vista del juego
-     */
-    public GameWorld(GameView view) {
-        this();
         mGameView = view;
         view.setGameWorld(this);
     }

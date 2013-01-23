@@ -4,9 +4,9 @@ import net.garrapeta.gameengine.Box2DWorld;
 import net.garrapeta.gameengine.SyncGameMessage;
 import net.garrapeta.gameengine.GameView;
 import net.garrapeta.gameengine.GameWorld;
-import net.garrapeta.gameengine.Viewport;
 import net.garrapeta.gameengine.actor.Box2DLoopActor;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Bundle;
@@ -35,7 +35,7 @@ public class WorldSizeTestActivity extends Activity {
 
         setContentView(R.layout.world_size_test);
         mGameView = (GameView) findViewById(R.id.game_surface);
-        mWorld = new WorldSizeBox2DWorld(this, mGameView);
+        mWorld = new WorldSizeBox2DWorld(this, mGameView, this);
         mWorld.setDrawDebugInfo(true);
         
         
@@ -67,7 +67,7 @@ public class WorldSizeTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.mViewport.setWorldSize(5, 10, Viewport.ProjectionMode.FIT_WIDTH);
+                    mWorld.mViewport.setWorldSizeAndFitWidth(5, 10);
                 }
             });
         }
@@ -78,7 +78,7 @@ public class WorldSizeTestActivity extends Activity {
                 
                 @Override
                 public void onClick(View view) {
-                    mWorld.mViewport.setWorldSize(5, 10, Viewport.ProjectionMode.FIT_HEIGHT);
+                    mWorld.mViewport.setWorldSizeAndFitHeight(5, 10);
                 }
             });
         }
@@ -148,6 +148,17 @@ public class WorldSizeTestActivity extends Activity {
                 }
             });
         }
+        
+        {
+            Button button = (Button)findViewById(R.id.btn11);
+            button.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View view) {
+                    mWorld.mViewport.setWorldSizeGivenWorldUnitsPerInchX(1);
+                }
+            });
+        }
     }
 
     /**
@@ -155,8 +166,8 @@ public class WorldSizeTestActivity extends Activity {
      */
     class WorldSizeBox2DWorld extends Box2DWorld {
 
-        public WorldSizeBox2DWorld(Activity activity, GameView gameView) {
-            super(gameView);
+        public WorldSizeBox2DWorld(Activity activity, GameView gameView, Context context) {
+            super(gameView, context);
         }
 
         @Override

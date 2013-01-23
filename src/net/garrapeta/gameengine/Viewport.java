@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
@@ -19,7 +20,7 @@ public class Viewport {
     
     // ------------------------------------------------------------ Types
     
-    public enum ProjectionMode {EXPLICIT, FIT_WIDTH,FIT_HEIGHT};
+    private enum ProjectionMode {EXPLICIT, FIT_WIDTH,FIT_HEIGHT};
 
     // ----------------------------------------------- Instance variables
 
@@ -46,11 +47,11 @@ public class Viewport {
     /** Visible world boundaries */
     private RectF mWorldBoundaries = new RectF();
 
-    /** Logic density of the display */
-    private float mDisplayDensity;
-
     /** Current projection mode */
     private ProjectionMode mProjectionMode;
+    
+    /** Display metrics  */
+    private DisplayMetrics mDisplayMetrics;
     // -------------------------------------------------- Static methods
 
     public static Vector2 pointFToVector2(PointF pf) {
@@ -86,8 +87,9 @@ public class Viewport {
     /**
      * @param world
      */
-    public Viewport(GameWorld world) {
-        this.mWorld = world;
+    public Viewport(GameWorld world, DisplayMetrics displayMetrics) {
+        mWorld = world;
+        mDisplayMetrics = displayMetrics;
     }
 
     // ------------------------------------------------ Instance methods
@@ -97,8 +99,6 @@ public class Viewport {
 
         mViewWidth  = viewWidth;
         mViewHeight = viewHeight;
-        mDisplayDensity = gameView.getContext().getResources().getDisplayMetrics().density;
-
         updateWorldBoundaries();
     }
 
@@ -106,8 +106,12 @@ public class Viewport {
         setWorldSize(width, height, dpsInWorldUnit, ProjectionMode.EXPLICIT);
     }
 
-    public void setWorldSize(float width, float height, ProjectionMode mode) {
-        setWorldSize(width, height, Float.MIN_VALUE, mode);
+    public void setWorldSizeAndFitWidth(float width, float height) {
+        setWorldSize(width, height, Float.MIN_VALUE, ProjectionMode.FIT_WIDTH);
+    }
+
+    public void setWorldSizeAndFitHeight(float width, float height) {
+        setWorldSize(width, height, Float.MIN_VALUE, ProjectionMode.FIT_HEIGHT);
     }
 
     public void setWorldWidth(float width, float dpsInWorldUnit) {
@@ -124,6 +128,12 @@ public class Viewport {
     
     public void setWorldHeight(float height) {
         setWorldSize(Float.MIN_VALUE, height, Float.MIN_VALUE, ProjectionMode.FIT_HEIGHT);
+    }
+    
+    public void setWorldSizeGivenWorldUnitsPerInchX(float worldUnitsPerInchX) {
+        float inchesX =  mDisplayMetrics.widthPixels / mDisplayMetrics.xdpi;;
+        float  width = inchesX * worldUnitsPerInchX;
+        setWorldWidth(width);
     }
     
     private void setWorldSize(float width, float height, float dpsInWorldUnit, ProjectionMode mode) {
@@ -202,11 +212,11 @@ public class Viewport {
     }
 
     public float pixelsToDps(float pixels) {
-        return pixels / mDisplayDensity;
+        return pixels / mDisplayMetrics.density;
     }
 
     public float dpsToPixels(float dps) {
-        return dps * mDisplayDensity;
+        return dps * mDisplayMetrics.density;
     }
 
     // Coordinate conversion methods
@@ -272,6 +282,7 @@ public class Viewport {
     public void dispose() {
         mWorld = null;
         mWorldBoundaries = null;
+        mDisplayMetrics = null;
     }
 
 }

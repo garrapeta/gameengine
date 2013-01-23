@@ -1,5 +1,6 @@
 package net.garrapeta.gameengine;
 
+import android.content.Context;
 import android.graphics.PointF;
 import android.util.Log;
 
@@ -54,8 +55,8 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     // -------------------------------------------------------------
     // Constructores
 
-    public Box2DWorld( GameView gameView) {
-        super(gameView);
+    public Box2DWorld( GameView gameView, Context context) {
+        super(gameView, context);
 
         // Step 1: Create Physics World Boundaries
         // worldAABB = new AABB();

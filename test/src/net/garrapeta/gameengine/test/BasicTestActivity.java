@@ -10,6 +10,7 @@ import net.garrapeta.gameengine.actor.Box2DPolygonActor;
 import net.garrapeta.gameengine.actor.Box2DLoopActor;
 import net.garrapeta.gameengine.actor.Box2DOpenChainActor;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.hardware.SensorManager;
@@ -39,7 +40,7 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
         setContentView(R.layout.basic_test);
         mGameView = (GameView) findViewById(R.id.game_surface);
         mGameView.setOnTouchListener(this);
-        mWorld = new BasicTestBox2DWorld(this, mGameView);
+        mWorld = new BasicTestBox2DWorld(this, mGameView, this);
     }
 
     @Override
@@ -58,8 +59,8 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
 
         private static final float WORLD_HEIGHT = 14f;
 
-        public BasicTestBox2DWorld(Activity activity, GameView gameView) {
-            super(gameView);
+        public BasicTestBox2DWorld(Activity activity, GameView gameView, Context context) {
+            super(gameView, context);
             setGravityY(-SensorManager.GRAVITY_EARTH);
             setDrawDebugInfo(true);
             mViewport.setWorldHeight(WORLD_HEIGHT);

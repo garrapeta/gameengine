@@ -9,6 +9,7 @@ import net.garrapeta.gameengine.actor.Box2DCircleActor;
 import net.garrapeta.gameengine.actor.Box2DLoopActor;
 import net.garrapeta.gameengine.actor.SimpleActor;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -41,7 +42,7 @@ public class TimingTestActivity extends Activity {
 
         setContentView(R.layout.timing_test);
         mGameView = (GameView) findViewById(R.id.game_surface);
-        mWorld = new TimingBox2DWorld(this, mGameView);
+        mWorld = new TimingBox2DWorld(this, mGameView, this);
         mWorld.setFPS(33);
         mWorld.setDrawDebugInfo(true);
 
@@ -102,8 +103,8 @@ public class TimingTestActivity extends Activity {
         private Box2DActor  mBox2DActor;
         private SimpleActor mSimpleActor;
         
-        public TimingBox2DWorld(Activity activity, GameView gameView) {
-            super(gameView);            
+        public TimingBox2DWorld(Activity activity, GameView gameView, Context context) {
+            super(gameView, context);
         }
 
         @Override
