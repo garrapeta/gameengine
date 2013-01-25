@@ -136,7 +136,7 @@ public class TimingTestActivity extends Activity {
                     float top    = vb.top - margin;
 
                     // box
-                    addActor(new Box2DLoopActor(mWorld, 
+                    Box2DLoopActor box = (new Box2DLoopActor(mWorld, 
                                                  new PointF(0, 0),
                                                  new PointF[] {
                                                     new PointF(left,   bottom),
@@ -145,6 +145,8 @@ public class TimingTestActivity extends Activity {
                                                     new PointF(right,  bottom),
                                                  },
                                                  false));
+                    box.setInitted();
+                    addActor(box);
                 }});
         }
 
@@ -176,6 +178,7 @@ public class TimingTestActivity extends Activity {
             PointF worldPos = new PointF(wb.left + mRadius, (wb.top - wb.bottom)  / 3);
             mBox2DActor = new Box2DCircleActor(this, worldPos, mRadius, true);
             mBox2DActor.getBodies().get(0).setLinearVelocity(mVelX, 0);
+            mBox2DActor.setInitted();
             addActor(mBox2DActor);
         }
 
@@ -195,6 +198,7 @@ public class TimingTestActivity extends Activity {
 
             };
             mSimpleActor.setLinearVelocity(mVelX, 0);
+            mSimpleActor.setInitted();
             addActor(mSimpleActor);
         }
         

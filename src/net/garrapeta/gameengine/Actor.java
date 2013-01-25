@@ -1,13 +1,17 @@
 package net.garrapeta.gameengine;
 
+
+import com.badlogic.gdx.utils.Pool.Poolable;
+
 import android.graphics.Canvas;
+
 
 /**
  * Actor del juego
  * 
  * @author GaRRaPeTa
  */
-public abstract class Actor {
+public abstract class Actor implements Poolable {
 
     // --------------------------------------------------- Variables
 
@@ -18,6 +22,11 @@ public abstract class Actor {
      * Z-index del actor. Cuanto mayor, m�s en primer plano.
      */
     private int mZIndex = 0;
+
+    /**
+     * If the actor is initialised. EveryActor needs to be initialised before being added to the world. 
+     */
+    boolean mIsInitted = false;
 
     // ----------------------------------------------- Constructores
 
@@ -38,7 +47,25 @@ public abstract class Actor {
 
     // ------------------------------------------- Getters y Setters
 
-    // ----------------------------------------------------- M�todos
+    // ----------------------------------------------------- Methods
+
+    /**
+     * Sets the actor as initialised, so it is ready to be added to the world.
+     * This method has to be called before the actor is added to the world.
+     * This should be called from any method used to initialise the actor in a custom way.
+     * 
+     * @return this actor
+     * @throws IllegalStateException if the actor was already initialised
+     */
+    public final Actor setInitted() {
+        if (mIsInitted) {
+            throw new IllegalStateException(this + " was already initialised");
+        }
+        mIsInitted = true;
+        return this;
+    }
+ 
+
     /**
      * Pinta el actor
      * 
@@ -60,7 +87,8 @@ public abstract class Actor {
 
     void doOnRemovedFromWorld() {
         onRemovedFromWorld();
-        dispose();
+        // Do not call dispose here, as the pool may recycle it.
+        //  dispose();
     }
 
     
@@ -86,6 +114,17 @@ public abstract class Actor {
      */
     protected void dispose() {
         mGameWorld = null;
+    }
+
+   // ----------------------------------------------- Methods from Poolable
+
+    @Override
+    public final void reset() {
+        if (!mIsInitted) {
+            throw new IllegalStateException(this + " was not initialised");
+        }
+        mIsInitted = false;
+        // TODO: notify some kind of "onResettedByPool"
     }
 
 }

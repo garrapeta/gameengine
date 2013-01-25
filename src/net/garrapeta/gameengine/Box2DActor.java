@@ -200,7 +200,8 @@ public abstract class Box2DActor extends Actor {
     }
 
     @Override
-    protected void dispose() {
+    void doOnRemovedFromWorld() {
+        super.doOnRemovedFromWorld();
         if (mJoints != null) {
             int l = mJoints.size();
             for (int i = l - 1; i >= 0; i--) {
@@ -218,8 +219,6 @@ public abstract class Box2DActor extends Actor {
             mBodies.clear();
             mBodies = null;
         }
-
-        super.dispose();
     }
 
 }

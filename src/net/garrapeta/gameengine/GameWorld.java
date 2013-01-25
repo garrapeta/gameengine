@@ -300,12 +300,18 @@ public abstract class GameWorld {
     }
 
     /**
-     * A�ade un actor
+     * Adds an actor
      * 
      * @param actor
+     * 
+     * @throws IllegalStateException if the actor is not initilialised
      */
     public final void addActor(final Actor actor) {
         Log.d(LOG_SRC, "GameWorld.addActor(" + actor + "). Thread: " + Thread.currentThread().getName());
+
+        if (!actor.mIsInitted) {
+            throw new IllegalStateException(this + " has to be initialised before being added to the world");
+        }
 
         // TODO: let adding an actor in same frame?
         // if user catches MotionEvent, post a message to handle it, and it

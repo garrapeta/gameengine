@@ -199,7 +199,7 @@ public class WorldSizeTestActivity extends Activity {
                     float top    = vb.top - margin;
 
                     // box
-                    addActor(new Box2DLoopActor(mWorld, 
+                    Box2DLoopActor box = new Box2DLoopActor(mWorld, 
                                                  new PointF(0, 0),
                                                  new PointF[] {
                                                     new PointF(left,   bottom),
@@ -207,10 +207,10 @@ public class WorldSizeTestActivity extends Activity {
                                                     new PointF(right,  top),
                                                     new PointF(right,  bottom),
                                                  },
-                                                 false));
-
+                                                 false);
+                    box.setInitted();
+                    addActor(box);
                 }
-                
             });
         }
     }

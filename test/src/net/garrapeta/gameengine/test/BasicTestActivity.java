@@ -91,17 +91,18 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
                     float top    = vb.top - margin;
 
                     // box
-                    addActor(new Box2DLoopActor(mWorld, 
-                                                 new PointF(0, 0),
-                                                 new PointF[] {
-                                                    new PointF(left,   bottom),
-                                                    new PointF(left,   top),
-                                                    new PointF(right,  top),
-                                                    new PointF(right,  bottom),
-                                                 },
-                                                 false));
-                    
-                    
+                    Box2DLoopActor box = new Box2DLoopActor(mWorld, 
+                            new PointF(0, 0),
+                            new PointF[] {
+                               new PointF(left,   bottom),
+                               new PointF(left,   top),
+                               new PointF(right,  top),
+                               new PointF(right,  bottom),
+                            },
+                            false);
+                    box.setInitted();
+                    addActor(box);
+
                     // shared vertexes
                     PointF[] vertexes = new PointF[] {
                             new PointF(5, 0),
@@ -111,22 +112,24 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
                     
                     // loop Actor
                     Box2DLoopActor loop = new Box2DLoopActor(mWorld, new PointF(0, 4), vertexes, false);
+                    loop.setInitted();
                     addActor(loop);
                     
                     // open chain actor
                     Box2DOpenChainActor openChain = new Box2DOpenChainActor(mWorld, new PointF(5, 4), vertexes, false);
+                    openChain.setInitted();
                     addActor(openChain);
 
                     // edge actor
                     Box2DEdgeActor edge = new Box2DEdgeActor(mWorld, new PointF(10, 4), vertexes[0], vertexes[1], false);
+                    edge.setInitted();
                     addActor(edge);
 
                     // polygon actor
                     Box2DPolygonActor polygon = new Box2DPolygonActor(mWorld, new PointF(15, 4), vertexes, false);
+                    polygon.setInitted();
                     addActor(polygon);
                 }});
-            
-            
         }
         
 
@@ -136,6 +139,7 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
                 public void doInGameLoop(GameWorld world) {
                     float radius = 0.5f;
                     Box2DCircleActor actor = new Box2DCircleActor(mWorld, worldPos, radius, true);
+                    actor.setInitted();
                     addActor(actor);
                 }});
 
