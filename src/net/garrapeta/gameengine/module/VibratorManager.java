@@ -29,7 +29,7 @@ public class VibratorManager {
         mPatterns = new SparseArray<long[]>();
     }
 
-    // --------------------------------------------- M�todos est�ticos
+    // --------------------------------------------- métodos est�ticos
 
     /**
      * @return instancia de VibratorManager
@@ -41,7 +41,7 @@ public class VibratorManager {
         return sInstance;
     }
 
-    // ------------------------------------------ M�todos de instancia
+    // ------------------------------------------ métodos de instancia
 
     /**
      * Inicializaci�n

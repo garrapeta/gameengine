@@ -15,11 +15,11 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.Shape;
 
 /**
- * Actor de un mundo f�sico Box2D
+ * Actor de un mundo físico Box2D
  * 
  * @author GaRRaPeTa
  */
-public abstract class Box2DActor extends Actor {
+public abstract class Box2DActor<T extends Box2DWorld> extends Actor<T> {
 
     // --------------------------------------------------- Variables
     /**
@@ -37,22 +37,22 @@ public abstract class Box2DActor extends Actor {
     /**
      * @param world
      * @param worldPos
-     *            , posici�n en el mundo, en unidades del mundo
+     *            , posición en el mundo, en unidades del mundo
      */
-    public Box2DActor(Box2DWorld gameWorld) {
-        this(gameWorld, 0);
+    public Box2DActor(T world) {
+        this(world, 0);
     }
 
     /**
      * @param world
      * @param worldPos
-     *            , posici�n en el mundo, en unidades del mundo
+     *            , posición en el mundo, en unidades del mundo
      */
-    public Box2DActor(Box2DWorld gameWorld, int zIndex) {
-        super(gameWorld, zIndex);
+    public Box2DActor(T world, int zIndex) {
+        super(world, zIndex);
     }
 
-    // ------------------------------------------------- M�todos propios
+    // ------------------------------------------------- métodos propios
 
     public float getMass() {
         float mass = 0;
@@ -73,7 +73,7 @@ public abstract class Box2DActor extends Actor {
      *            body del otro actor que ha contactado
      * @param contact
      */
-    public void onBeginContact(Body thisBody, Box2DActor other, Body otherBody, Contact contact) {
+    public void onBeginContact(Body thisBody, Box2DActor<T> other, Body otherBody, Contact contact) {
     }
 
     /**
@@ -83,7 +83,7 @@ public abstract class Box2DActor extends Actor {
      * @param contact
      * @param oldManifold
      */
-    public void onPreSolveContact(Body bodyA, Box2DActor actorB, Body bodyB, Contact contact, Manifold oldManifold) {
+    public void onPreSolveContact(Body bodyA, Box2DActor<T> actorB, Body bodyB, Contact contact, Manifold oldManifold) {
     }
 
     /**
@@ -93,7 +93,7 @@ public abstract class Box2DActor extends Actor {
      * @param contact
      * @param impulse
      */
-    public void onPostSolveContact(Body bodyA, Box2DActor actorB, Body bodyB, Contact contact, ContactImpulse impulse) {
+    public void onPostSolveContact(Body bodyA, Box2DActor<T> actorB, Body bodyB, Contact contact, ContactImpulse impulse) {
     }
 
     /**
@@ -106,10 +106,10 @@ public abstract class Box2DActor extends Actor {
      * @param otherBody
      *            body del otro actor que ha contactado
      */
-    public void onEndContact(Body bodyA, Box2DActor actorB, Body bodyB, Contact contact) {
+    public void onEndContact(Body bodyA, Box2DActor<T> actorB, Body bodyB, Contact contact) {
     }
 
-    // --------------------------------------------------- M�todos de Actor
+    // --------------------------------------------------- métodos de Actor
 
     @Override
     public void draw(Canvas canvas) {
@@ -131,11 +131,11 @@ public abstract class Box2DActor extends Actor {
                 Body body = mBodies.get(i);
                 for (Fixture fixture : body.getFixtureList()) {
                     Vector2 worldPos = body.getWorldCenter();
-                    PointF screenPos = mGameWorld.mViewport.worldToScreen(worldPos.x, worldPos.y);
+                    PointF screenPos = getWorld().mViewport.worldToScreen(worldPos.x, worldPos.y);
                     canvas.save();
                     canvas.translate(screenPos.x, screenPos.y);
                     canvas.rotate(-(float) Math.toDegrees(body.getAngle()));
-                    ShapeDrawer.draw(canvas, mGameWorld.mViewport, fixture.getShape());
+                    ShapeDrawer.draw(canvas, getWorld().mViewport, fixture.getShape());
                     canvas.restore();
                 }
             }
@@ -147,8 +147,9 @@ public abstract class Box2DActor extends Actor {
             mBodies = new ArrayList<Body>();
         }
 
-        // si este body pertenec�a a otro actor, se le quita como body
-        Box2DActor oldActor = (Box2DActor) body.getUserData();
+        // si este body pertenecán a otro actor, se le quita como body
+        @SuppressWarnings("unchecked")
+        Box2DActor<T> oldActor = (Box2DActor<T>) body.getUserData();
         if (oldActor != null) {
             oldActor.removeBody(body);
         }
@@ -205,7 +206,7 @@ public abstract class Box2DActor extends Actor {
         if (mJoints != null) {
             int l = mJoints.size();
             for (int i = l - 1; i >= 0; i--) {
-                ((Box2DWorld) mGameWorld).destroyJoint(this, mJoints.get(i));
+                getWorld().destroyJoint(this, mJoints.get(i));
             }
             mJoints.clear();
             mJoints = null;
@@ -214,7 +215,7 @@ public abstract class Box2DActor extends Actor {
         if (mBodies != null) {
             int l = mBodies.size();
             for (int i = l - 1; i >= 0; i--) {
-                ((Box2DWorld) mGameWorld).destroyBody(this, mBodies.get(i));
+                getWorld().destroyBody(this, mBodies.get(i));
             }
             mBodies.clear();
             mBodies = null;

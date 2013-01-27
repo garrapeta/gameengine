@@ -79,7 +79,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     }
 
 
-    // ------------------------------------------------------ M�todos de
+    // ------------------------------------------------------ métodos de
     // GameWorld
 
     protected String getDebugString() {
@@ -121,7 +121,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         mBox2dWorld.clearForces();
     }
     
-    // M�todos relativos a unidades l�gicas / pantalla
+    // métodos relativos a unidades l�gicas / pantalla
 
     @Override
     protected void dispose() {
@@ -129,10 +129,10 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         mBox2dWorld.dispose();
     }
 
-    // ---------------------------------------------------------- M�todos
+    // ---------------------------------------------------------- Métodos
     // propios
 
-    public Body createBody(Box2DActor actor, PointF worldPos, boolean dynamic) {
+    public Body createBody(Box2DActor<?> actor, PointF worldPos, boolean dynamic) {
         checkExecutedInGameLoopThread();
         
         BodyDef bodyDef = new BodyDef();
@@ -152,18 +152,18 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
     }
 
-    public void destroyBody(Box2DActor actor, Body body) {
+    public void destroyBody(Box2DActor<?> actor, Body body) {
         checkExecutedInGameLoopThread();
         body.setUserData(null);
         mBox2dWorld.destroyBody(body);
     }
 
-    public void createJoint(Box2DActor actor, JointDef jointDef) {
+    public void createJoint(Box2DActor<?> actor, JointDef jointDef) {
         Joint joint = mBox2dWorld.createJoint(jointDef);
         actor.addJoint(joint);
     }
 
-    public void destroyJoint(Box2DActor actor, Joint joint) {
+    public void destroyJoint(Box2DActor<?> actor, Joint joint) {
         mBox2dWorld.destroyJoint(joint);
         actor.removeJoint(joint);
     }
@@ -209,18 +209,19 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         }
     }
 
-    // ----------------------------------------------- M�todos de
+    // ----------------------------------------------- métodos de
     // ContactListener
 
+    @SuppressWarnings("unchecked")
     @Override
     public void beginContact(Contact contact) {
         Body bodyA = contact.getFixtureA().getBody();
         Body bodyB = contact.getFixtureB().getBody();
 
-        Box2DActor actorA = (Box2DActor) bodyA.getUserData();
+        Box2DActor<Box2DWorld> actorA = (Box2DActor<Box2DWorld>) bodyA.getUserData();
 
         if (actorA != null) {
-            Box2DActor actorB = (Box2DActor) bodyB.getUserData();
+            Box2DActor<Box2DWorld> actorB = (Box2DActor<Box2DWorld>) bodyB.getUserData();
             if (actorB != null) {
                actorA.onBeginContact(bodyA, actorB, bodyB, contact);
                actorB.onBeginContact(bodyB, actorA, bodyA, contact);
@@ -228,15 +229,16 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void endContact(Contact contact) {
         Body bodyA = contact.getFixtureA().getBody();
         Body bodyB = contact.getFixtureB().getBody();
 
-        Box2DActor actorA = (Box2DActor) bodyA.getUserData();
+        Box2DActor<Box2DWorld> actorA = (Box2DActor<Box2DWorld>) bodyA.getUserData();
 
         if (actorA != null) {
-            Box2DActor actorB = (Box2DActor) bodyB.getUserData();
+            Box2DActor<Box2DWorld> actorB = (Box2DActor<Box2DWorld>) bodyB.getUserData();
             if (actorB != null) {
                 actorA.onEndContact(bodyA, actorB, bodyB, contact);
                 actorB.onEndContact(bodyB, actorA, bodyA, contact);
@@ -244,14 +246,15 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
         Body bodyA = contact.getFixtureA().getBody();
         Body bodyB = contact.getFixtureB().getBody();
 
-        Box2DActor actorA = (Box2DActor) bodyA.getUserData();
+        Box2DActor<Box2DWorld> actorA = (Box2DActor<Box2DWorld>) bodyA.getUserData();
         if (actorA != null) {
-            Box2DActor actorB = (Box2DActor) bodyB.getUserData();
+            Box2DActor<Box2DWorld> actorB = (Box2DActor<Box2DWorld>) bodyB.getUserData();
             if (actorB != null) {
                 actorA.onPreSolveContact(bodyA, actorB, bodyB, contact, oldManifold);
                 actorB.onPreSolveContact(bodyB, actorA, bodyA, contact, oldManifold);
@@ -259,14 +262,15 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
         Body bodyA = contact.getFixtureA().getBody();
         Body bodyB = contact.getFixtureB().getBody();
 
-        Box2DActor actorA = (Box2DActor) bodyA.getUserData();
+        Box2DActor<Box2DWorld> actorA = (Box2DActor<Box2DWorld>) bodyA.getUserData();
         if (actorA != null) {
-            Box2DActor actorB = (Box2DActor) bodyB.getUserData();
+            Box2DActor<Box2DWorld> actorB = (Box2DActor<Box2DWorld>) bodyB.getUserData();
             if (actorB != null) {
                 actorA.onPostSolveContact(bodyA, actorB, bodyB, contact, impulse);
                 actorB.onPostSolveContact(bodyB, actorA, bodyA, contact, impulse);

@@ -11,12 +11,12 @@ import android.graphics.Canvas;
  * 
  * @author GaRRaPeTa
  */
-public abstract class Actor implements Poolable {
+public abstract class Actor<T extends GameWorld> implements Poolable {
 
     // --------------------------------------------------- Variables
 
     /** Mundo del actor */
-    protected GameWorld mGameWorld;
+    private T mWorld;
 
     /**
      * Z-index del actor. Cuanto mayor, m�s en primer plano.
@@ -31,23 +31,30 @@ public abstract class Actor implements Poolable {
     // ----------------------------------------------- Constructores
 
     /**
-     * Constructor protegido
+     * Constructor
      */
-    protected Actor(GameWorld gameWorld) {
-        this(gameWorld, 0);
+    public Actor(T world) {
+        this(world, 0);
     }
 
     /**
-     * Constructor protegido
+     * Constructor
      */
-    protected Actor(GameWorld gameWorld, int zIndex) {
-        this.mGameWorld = gameWorld;
-        this.mZIndex = zIndex;
+    public Actor(T world, int zIndex) {
+        mWorld = world;
+        mZIndex = zIndex;
     }
 
     // ------------------------------------------- Getters y Setters
 
     // ----------------------------------------------------- Methods
+
+    /**
+     * @return the world of the actor
+     */
+    public T getWorld() {
+        return mWorld;
+    }
 
     /**
      * Sets the actor as initialised, so it is ready to be added to the world.
@@ -57,7 +64,7 @@ public abstract class Actor implements Poolable {
      * @return this actor
      * @throws IllegalStateException if the actor was already initialised
      */
-    public final Actor setInitted() {
+    public final Actor<T> setInitted() {
         if (mIsInitted) {
             throw new IllegalStateException(this + " was already initialised");
         }
@@ -81,7 +88,7 @@ public abstract class Actor implements Poolable {
      */
     protected abstract void processFrame(float gameTimeStep);
 
-    /** M�todo ejecutado cuando el actor entra en el mundo */
+    /** método ejecutado cuando el actor entra en el mundo */
     protected void onAddedToWorld() {
     }
 
@@ -93,7 +100,7 @@ public abstract class Actor implements Poolable {
 
     
     /**
-     * M�todo dispose, ejecutado cuando el actor se quita del mundo
+     * método dispose, ejecutado cuando el actor se quita del mundo
      */
     public void onRemovedFromWorld() {
     }
@@ -113,7 +120,7 @@ public abstract class Actor implements Poolable {
      * Frees resources and nullifies references
      */
     protected void dispose() {
-        mGameWorld = null;
+        mWorld = null;
     }
 
    // ----------------------------------------------- Methods from Poolable

@@ -8,33 +8,33 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
-public class Box2DPolygonActor extends Box2DAtomicActor {
+public class Box2DPolygonActor<T extends Box2DWorld> extends Box2DAtomicActor<T> {
 
     // -------------------------------------------------- Constructor
 
     /**
      * @param world
      * @param mWorldPos
-     *            , posici�n en el mundo, en unidades del mundo
+     *            , posición en el mundo, en unidades del mundo
      * @param vertexes
      *            vertices, EN EL SENTIDO CONTRARIO A LAS AGUJAS DEL RELOJ, en
      *            unidades del mundo
      * @param dynamic
      */
-    public Box2DPolygonActor(Box2DWorld world) {
+    public Box2DPolygonActor(T world) {
         super(world);
     }
 
     /**
      * @param world
      * @param worldPos
-     *            , posici�n en el mundo, en unidades del mundo
+     *            , posición en el mundo, en unidades del mundo
      * @param vertexes
      *            vertices, EN EL SENTIDO CONTRARIO A LAS AGUJAS DEL RELOJ, en
      *            unidades del mundo
      * @param dynamic
      */
-    public Box2DPolygonActor(Box2DWorld world, PointF worldPos, PointF[] vertexes, boolean dynamic) {
+    public Box2DPolygonActor(T world, PointF worldPos, PointF[] vertexes, boolean dynamic) {
         this(world);
 
         // Create Shape with Properties
@@ -49,14 +49,14 @@ public class Box2DPolygonActor extends Box2DAtomicActor {
     /**
      * @param world
      * @param worldPos
-     *            , posici�n en el mundo, en unidades del mundo
+     *            , posición en el mundo, en unidades del mundo
      * @param halfWidth
      *            en unidades del mundo
      * @param halfHeight
      *            en unidades del mundo
      * @param dynamic
      */
-    public Box2DPolygonActor(Box2DWorld world, PointF worldPos, float halfWidth, float halfHeight, boolean dynamic) {
+    public Box2DPolygonActor(T world, PointF worldPos, float halfWidth, float halfHeight, boolean dynamic) {
         this(world);
 
         // Create Shape with Properties
@@ -73,7 +73,7 @@ public class Box2DPolygonActor extends Box2DAtomicActor {
     /**
      * @param world
      * @param worldPos
-     *            , posici�n en el mundo, en unidades del mundo
+     *            , posición en el mundo, en unidades del mundo
      * @param halfWidth
      *            en unidades del mundo
      * @param halfHeight
@@ -81,7 +81,7 @@ public class Box2DPolygonActor extends Box2DAtomicActor {
      * @param angle
      * @param dynamic
      */
-    public Box2DPolygonActor(Box2DWorld world, PointF worldPos, float halfWidth, float halfHeight, float angle, boolean dynamic) {
+    public Box2DPolygonActor(T world, PointF worldPos, float halfWidth, float halfHeight, float angle, boolean dynamic) {
         this(world);
 
         // Create Shape with Properties

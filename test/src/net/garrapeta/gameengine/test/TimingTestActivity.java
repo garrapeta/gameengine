@@ -100,8 +100,8 @@ public class TimingTestActivity extends Activity {
         private float mVelX = 1;
         private float mRadius = 0.5f;
         
-        private Box2DActor  mBox2DActor;
-        private SimpleActor mSimpleActor;
+        private Box2DActor<TimingBox2DWorld>  mBox2DActor;
+        private SimpleActor<TimingBox2DWorld> mSimpleActor;
         
         public TimingBox2DWorld(Activity activity, GameView gameView, Context context) {
             super(gameView, context);
@@ -136,7 +136,7 @@ public class TimingTestActivity extends Activity {
                     float top    = vb.top - margin;
 
                     // box
-                    Box2DLoopActor box = (new Box2DLoopActor(mWorld, 
+                    Box2DLoopActor<TimingBox2DWorld> box = (new Box2DLoopActor<TimingBox2DWorld>(mWorld, 
                                                  new PointF(0, 0),
                                                  new PointF[] {
                                                     new PointF(left,   bottom),
@@ -176,7 +176,7 @@ public class TimingTestActivity extends Activity {
         private void createBox2DActor() {
             RectF wb = mViewport.getWorldBoundaries();
             PointF worldPos = new PointF(wb.left + mRadius, (wb.top - wb.bottom)  / 3);
-            mBox2DActor = new Box2DCircleActor(this, worldPos, mRadius, true);
+            mBox2DActor = new Box2DCircleActor<TimingBox2DWorld>(this, worldPos, mRadius, true);
             mBox2DActor.getBodies().get(0).setLinearVelocity(mVelX, 0);
             mBox2DActor.setInitted();
             addActor(mBox2DActor);
@@ -185,7 +185,7 @@ public class TimingTestActivity extends Activity {
         private void createSimpleActor() {
             RectF wb = mViewport.getWorldBoundaries();
             PointF worldPos = new PointF(wb.left + mRadius, ((wb.top - wb.bottom)  / 3) * 2);
-            mSimpleActor = new SimpleActor(this, worldPos.x, worldPos.y) {
+            mSimpleActor = new SimpleActor<TimingBox2DWorld>(this, worldPos.x, worldPos.y) {
 
                 @Override
                 public void draw(Canvas canvas) {

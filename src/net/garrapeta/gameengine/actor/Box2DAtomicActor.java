@@ -10,10 +10,10 @@ import com.badlogic.gdx.math.Vector2;
 
 
 /**
- * Actor de un mundo f�sico Box2D
+ * Actor de un mundo físico Box2D
  * @author GaRRaPeTa
  */
-public abstract class Box2DAtomicActor extends Box2DActor implements IAtomicActor {
+public abstract class Box2DAtomicActor<T extends Box2DWorld> extends Box2DActor<T> implements IAtomicActor {
 
 	// --------------------------------------------------- Constructor
 	
@@ -21,24 +21,24 @@ public abstract class Box2DAtomicActor extends Box2DActor implements IAtomicActo
 	 * @param world
 	 * @param dynamic
 	 */
-	public Box2DAtomicActor(Box2DWorld gameWorld) {
-		this(gameWorld, 0);
+	public Box2DAtomicActor(T world) {
+		this(world, 0);
 	}
 	
 	/**
 	 * @param world
 	 * @param dynamic
 	 */
-	public Box2DAtomicActor(Box2DWorld gameWorld, int zIndex) {
-		super(gameWorld, zIndex);
+	public Box2DAtomicActor(T world, int zIndex) {
+		super(world, zIndex);
 	}
 
-	// --------------------------------------------------- M�todos de Actor
+	// --------------------------------------------------- métodos de Actor
 	
 	@Override
 	public void processFrame(float gameTimeStep) {}
 	
-	// ------------------------------------------- M�todos de IAtomicActor
+	// ------------------------------------------- métodos de IAtomicActor
 
 
 	@Override
@@ -52,7 +52,7 @@ public abstract class Box2DAtomicActor extends Box2DActor implements IAtomicActo
 		Log.e("world", "setWorldPos");
 	}
 	
-	// ------------------------------------------------- M�todos propios
+	// ------------------------------------------------- métodos propios
 	
 	public PointF getLinearVelocity () {
 		return Viewport.vector2ToPointF(mBodies.get(0).getLinearVelocity());

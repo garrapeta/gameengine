@@ -7,11 +7,11 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 
 /**
- * Actor basado en un c�rculo
+ * Actor basado en un círculo
  * 
  * @author GaRRaPeTa
  */
-public class Box2DCircleActor extends Box2DAtomicActor {
+public class Box2DCircleActor<T extends Box2DWorld> extends Box2DAtomicActor<T> {
 
 
     // -------------------------------------------------- Constructor
@@ -21,12 +21,12 @@ public class Box2DCircleActor extends Box2DAtomicActor {
      * 
      * @param world
      * @param worldPos
-     *            , posici�n en el mundo, en unidades del mundo
+     *            , posición en el mundo, en unidades del mundo
      * @param radius
      *            , radio en unidades del mundo
      * @param dynamic
      */
-    public Box2DCircleActor(Box2DWorld world, PointF worldPos, float radius, boolean dynamic) {
+    public Box2DCircleActor(T world, PointF worldPos, float radius, boolean dynamic) {
         super(world);
 
         // Create Shape with Properties

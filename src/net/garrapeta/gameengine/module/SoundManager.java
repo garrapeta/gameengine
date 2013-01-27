@@ -36,7 +36,7 @@ public class SoundManager implements OnCompletionListener {
         mPlayerSets = new SparseArray<PlayerSet>();
     }
 
-    // ------------------------------------------ M�todos de instancia
+    // ------------------------------------------ métodos de instancia
 
     /**
      * @return if the sound is enabled
@@ -211,7 +211,7 @@ public class SoundManager implements OnCompletionListener {
 
 
     /**
-     * M�todo que encapsula diferentes players que pueden estar referenciados
+     * método que encapsula diferentes players que pueden estar referenciados
      * por un mismo id
      * 
      * @author GaRRaPeTa
@@ -223,7 +223,7 @@ public class SoundManager implements OnCompletionListener {
         private MediaPlayer mPlayer = null;
         private ArrayList<MediaPlayer> mPlayers = null;
 
-        // ----------------------------- M�todos
+        // ----------------------------- métodos
 
         /**
          * A�ade un player

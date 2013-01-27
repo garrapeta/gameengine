@@ -47,7 +47,7 @@ public abstract class GameWorld {
     private Thread mGameLoopThread;
 
     /** Actores del juego */
-    public Vector<Actor> mActors;
+    public Vector<Actor<?>> mActors;
 
     private List<GameMessage> mMessages;
 
@@ -96,7 +96,7 @@ public abstract class GameWorld {
 
         mCurrentGameMillis = 0;
 
-        mActors = new Vector<Actor>();
+        mActors = new Vector<Actor<?>>();
 
         mMessages = new ArrayList<GameMessage>();
 
@@ -175,7 +175,7 @@ public abstract class GameWorld {
         this.drawDebugInfo = printDebugInfo;
     }
 
-    // ---------------------------------------- M�todos relativos al ciclo de
+    // ---------------------------------------- métodos relativos al ciclo de
     // vida
 
     /**
@@ -258,7 +258,7 @@ public abstract class GameWorld {
         return mPaused;
     }
 
-    // ----------------------------------- M�todos relativos a la l�gica del
+    // ----------------------------------- métodos relativos a la l�gica del
     // juego
 
     public void post(GameMessage message) {
@@ -306,7 +306,7 @@ public abstract class GameWorld {
      * 
      * @throws IllegalStateException if the actor is not initilialised
      */
-    public final void addActor(final Actor actor) {
+    public final void addActor(final Actor<?> actor) {
         Log.d(LOG_SRC, "GameWorld.addActor(" + actor + "). Thread: " + Thread.currentThread().getName());
 
         if (!actor.mIsInitted) {
@@ -324,7 +324,7 @@ public abstract class GameWorld {
                 int index = length;
 
                 while (index > 0) {
-                    Actor aux = mActors.get(index - 1);
+                    Actor<?> aux = mActors.get(index - 1);
                     if (aux.getZIndex() <= actor.getZIndex()) {
                         break;
                     }
@@ -338,10 +338,10 @@ public abstract class GameWorld {
         });
     }
 
-    public void onActorAdded(Actor actor) {
+    public void onActorAdded(Actor<?> actor) {
     }
 
-    public final void removeActor(final Actor actor) {
+    public final void removeActor(final Actor<?> actor) {
         Log.d(LOG_SRC, "GameWorld.removeActor(" + actor + "). Thread: " + Thread.currentThread().getName());
         post(new SyncGameMessage(GameMessage.MESSAGE_PRIORITY_MAX) {
             @Override
@@ -355,7 +355,7 @@ public abstract class GameWorld {
         });
     }
 
-    public void onActorRemoved(Actor actor) {
+    public void onActorRemoved(Actor<?> actor) {
     }
 
     /**
@@ -365,7 +365,7 @@ public abstract class GameWorld {
      */
     // TODO message for this?
     public void removeAllActors() {
-        for (Actor actor : mActors) {
+        for (Actor<?>actor : mActors) {
             removeActor(actor);
         }
     }
@@ -392,7 +392,7 @@ public abstract class GameWorld {
     protected void onBeforeRunning() {
     }
 
-    // ---------------------------------------------- M�todos relativos al
+    // ---------------------------------------------- métodos relativos al
     // pintado
 
     final void doDrawWorld(Canvas canvas) {
@@ -430,7 +430,7 @@ public abstract class GameWorld {
     protected void drawActors(Canvas canvas) {
         int l = mActors.size();
         for (int i = 0; i < l; i++) {
-            Actor actor = mActors.elementAt(i);
+            Actor<?> actor = mActors.elementAt(i);
             actor.draw(canvas);
         }
     }
@@ -461,7 +461,7 @@ public abstract class GameWorld {
         mGameView = null;
         mViewport.dispose();
         mViewport = null;
-        for (Actor actor : mActors) {
+        for (Actor<?> actor : mActors) {
             actor.dispose();
         }
         mActors.clear();
@@ -477,7 +477,7 @@ public abstract class GameWorld {
         mGameLoopThread = null;
     }
 
-    // ---------------------------------- M�todos relativos a la interacci�n
+    // ---------------------------------- métodos relativos a la interacci�n
 
     final void gameViewSizeChanged(GameView gameView, int width, int height) {
         Log.i(LOG_SRC, "surfaceChanged (" + width + ", " + height + ")");

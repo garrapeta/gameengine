@@ -6,7 +6,7 @@ import android.graphics.PointF;
 
 
 /**
- * Funciones matemáticas de utilidad 
+ * Funciones matemï¿½ticas de utilidad 
  * @author GaRRaPeTa
  */
 public class MathUtils {
@@ -38,7 +38,7 @@ public class MathUtils {
 	 * @param circleX
 	 * @param circleY
 	 * @param radius
-	 * @return Si un punto está dentro de un círculo
+	 * @return Si un punto estï¿½ dentro de un cï¿½rculo
 	 */
 	public static boolean isPointInCicle(float pointX, float pointY, 
 			                             float circleX, float circleY, float radius) {
@@ -77,7 +77,7 @@ public class MathUtils {
 	 * @param b0y
 	 * @param b1x
 	 * @param b1y 
-	 * @return Intersección entre dos segmentos
+	 * @return Intersecciï¿½n entre dos segmentos
 	 */
 	public static PointF segmentsIntersection(float a0x, float a0y, float a1x, float a1y, 
 			                              float b0x, float b0y, float b1x, float b1y) {
@@ -157,7 +157,7 @@ public class MathUtils {
 	 * @param rectY
 	 * @param rectWidth
 	 * @param rectHeight
-	 * @return Si un círculo interseca un rectángulo
+	 * @return Si un cï¿½rculo interseca un rectï¿½ngulo
 	 */
 	public static boolean circleIntersectsRectagle(float circleX, float circleY, float circleRadius,
 			                                       float rectX, float rectY, float rectWidth, float rectHeight)
@@ -187,7 +187,7 @@ public class MathUtils {
 	 * @param rectX1
 	 * @param rectY1
 	 * @param distance
-	 * @return Si un círculo interseca una recta
+	 * @return Si un cï¿½rculo interseca una recta
 	 */
 	public static boolean circleIntersectsLine(float circleX, float circleY, float circleRadius,
                                                float rectX0, float rectY0, 
@@ -215,7 +215,7 @@ public class MathUtils {
 	 * @param count
 	 * @param xt
 	 * @param yt
-	 * @return si un punto está dentro de un polígono
+	 * @return si un punto estï¿½ dentro de un polï¿½gono
 	 */ 
 	public static  boolean isPointInsidePolygon(Vector<PointF> points, int offset, int count, float xt, float yt) {
 		float xnew,ynew;
@@ -262,7 +262,7 @@ public class MathUtils {
 	 * @param cy
 	 * @param radius
 	 * @param sides
-	 * @return obtiene los vértices de un polígono regular
+	 * @return obtiene los vÃ©rtices de un polï¿½gono regular
 	 */
 	public static float[][] getPolyconVertexes(float cx, float cy, float radius, int sides) {
 		

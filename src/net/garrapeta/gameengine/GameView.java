@@ -51,7 +51,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         requestFocus();
     }
 
-    // ----------------------------------------------------------- M�todos
+    // ----------------------------------------------------------- métodos
     // propios
 
     /**
@@ -82,7 +82,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    // ------------------------------------------ M�todos de
+    // ------------------------------------------ métodos de
     // SurfaceHolder.Callback
 
     @Override

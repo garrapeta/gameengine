@@ -1,7 +1,7 @@
 package net.garrapeta.gameengine.utils;
 
 /**
- * M�todos de utilidad de f�sicas
+ * métodos de utilidad de f�sicas
  * @author GaRRaPeTa
  */
 public class PhysicsUtils {

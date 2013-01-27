@@ -9,12 +9,12 @@ import android.graphics.PointF;
  * 
  * @author GaRRaPeTa
  */
-public abstract class SimpleActor extends Actor implements IAtomicActor {
+public abstract class SimpleActor<T extends GameWorld> extends Actor<T> implements IAtomicActor {
 
     // --------------------------------------------------- Variables
 
     /**
-     * Posici�n en el mundo, en las unidades propias del mundo
+     * posición en el mundo, en las unidades propias del mundo
      */
     protected PointF mWorldPos;
 
@@ -29,32 +29,32 @@ public abstract class SimpleActor extends Actor implements IAtomicActor {
     /**
      * Constructor protegido
      */
-    protected SimpleActor(GameWorld gameWorld) {
-        this(gameWorld, 0, 0, 0);
+    protected SimpleActor(T world) {
+        this(world, 0, 0, 0);
     }
 
     /**
      * Constructor
      * 
      * @param worldPosX
-     *            posici�n X en el mundo, en las unidades del mundo
+     *            posición X en el mundo, en las unidades del mundo
      * @param worldPosY
-     *            posici�n Y en el mundo, en las unidades del mundo
+     *            posición Y en el mundo, en las unidades del mundo
      */
-    public SimpleActor(GameWorld gameWorld, float worldPosX, float worldPosY) {
-        this(gameWorld, 0, worldPosX, worldPosY);
+    public SimpleActor(T world, float worldPosX, float worldPosY) {
+        this(world, 0, worldPosX, worldPosY);
     }
 
     /**
      * Constructor
      * 
      * @param worldPosX
-     *            posici�n X en el mundo, en las unidades del mundo
+     *            posición X en el mundo, en las unidades del mundo
      * @param worldPosY
-     *            posici�n Y en el mundo, en las unidades del mundo
+     *            posición Y en el mundo, en las unidades del mundo
      */
-    public SimpleActor(GameWorld gameWorld, int zIndex, float worldPosX, float worldPosY) {
-        super(gameWorld, zIndex);
+    public SimpleActor(T world, int zIndex, float worldPosX, float worldPosY) {
+        super(world, zIndex);
 
         mWorldPos = new PointF();
         mWorldLinearVelocity = new PointF();
@@ -63,14 +63,14 @@ public abstract class SimpleActor extends Actor implements IAtomicActor {
         mWorldPos.y = worldPosY;
     }
 
-    // -------------------------------------------M�todos de Actor
+    // -------------------------------------------métodos de Actor
 
     @Override
     public void processFrame(float frameTime) {
         updatePosition(frameTime);
     }
 
-    // ------------------------------------------- M�todos de IAtomicActor
+    // ------------------------------------------- métodos de IAtomicActor
     @Override
     public PointF getWorldPos() {
         return mWorldPos;
@@ -89,7 +89,7 @@ public abstract class SimpleActor extends Actor implements IAtomicActor {
         mWorldLinearVelocity = null;
     }
 
-    // -------------------------------------------M�todos propios
+    // -------------------------------------------métodos propios
 
     public void setLinearVelocity(float xVel, float yVel) {
         mWorldLinearVelocity.x = xVel;
@@ -97,7 +97,7 @@ public abstract class SimpleActor extends Actor implements IAtomicActor {
     }
 
     /**
-     * Actualiza la posici�n, teniendo en cuenta la velocidad del actor y el
+     * Actualiza la posición, teniendo en cuenta la velocidad del actor y el
      * tiempo transcurrido
      * 
      * @param frameTime

@@ -7,15 +7,15 @@ import android.graphics.PointF;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.ChainShape;
 
-public class Box2DOpenChainActor extends Box2DAtomicActor {
+public class Box2DOpenChainActor<T extends Box2DWorld> extends Box2DAtomicActor<T> {
 
      /**
      * @param world
-     * @param worldPos, posici�n en el mundo, en unidades del mundo
-     * @param vertexes, v�rtices, en unidades del mundo
+     * @param worldPos, posición en el mundo, en unidades del mundo
+     * @param vertexes, vértices, en unidades del mundo
      * @param dynamic
      */
-    public Box2DOpenChainActor(Box2DWorld world, PointF worldPos, PointF[] vertexes, boolean dynamic) {
+    public Box2DOpenChainActor(T world, PointF worldPos, PointF[] vertexes, boolean dynamic) {
         super(world);
         
         Body body = world.createBody(this, worldPos, dynamic);
