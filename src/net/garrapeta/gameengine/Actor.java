@@ -129,7 +129,7 @@ public abstract class Actor<T extends GameWorld> {
     /**
      * método dispose, ejecutado cuando el actor se quita del mundo
      */
-    public void onRemovedFromWorld() {
+    protected void onRemovedFromWorld() {
     }
 
     /**
