@@ -5,11 +5,12 @@ import com.badlogic.gdx.utils.Array;
 
 /**
  * 
- * Wrapper of {@link com.badlogic.gdx.utils.Pool} to add debug methods
+ * Wrapper of {@link com.badlogic.gdx.utils.Pool} to add debug methods and
+ * to force all the clients object to be {@link com.badlogic.gdx.utils.Pool.Poolable}
  *
  * @param <T>
  */
-public abstract class Pool<T> {
+public abstract class Pool<T extends  com.badlogic.gdx.utils.Pool.Poolable> {
 
     private final com.badlogic.gdx.utils.Pool<T> mPool;
 

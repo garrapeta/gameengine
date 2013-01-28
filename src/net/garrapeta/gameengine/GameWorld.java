@@ -309,9 +309,7 @@ public abstract class GameWorld {
     public final void addActor(final Actor<?> actor) {
         Log.d(LOG_SRC, "GameWorld.addActor(" + actor + "). Thread: " + Thread.currentThread().getName());
 
-        if (!actor.mIsInitted) {
-            throw new IllegalStateException(this + " has to be initialised before being added to the world");
-        }
+        actor.assertInnited();
 
         // TODO: let adding an actor in same frame?
         // if user catches MotionEvent, post a message to handle it, and it

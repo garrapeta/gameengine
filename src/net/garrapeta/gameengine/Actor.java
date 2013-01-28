@@ -1,7 +1,6 @@
 package net.garrapeta.gameengine;
 
 
-import com.badlogic.gdx.utils.Pool.Poolable;
 
 import android.graphics.Canvas;
 
@@ -11,7 +10,7 @@ import android.graphics.Canvas;
  * 
  * @author GaRRaPeTa
  */
-public abstract class Actor<T extends GameWorld> implements Poolable {
+public abstract class Actor<T extends GameWorld> {
 
     // --------------------------------------------------- Variables
 
@@ -26,7 +25,7 @@ public abstract class Actor<T extends GameWorld> implements Poolable {
     /**
      * If the actor is initialised. EveryActor needs to be initialised before being added to the world. 
      */
-    boolean mIsInitted = false;
+    private boolean mIsInitted = false;
 
     // ----------------------------------------------- Constructores
 
@@ -65,14 +64,42 @@ public abstract class Actor<T extends GameWorld> implements Poolable {
      * @throws IllegalStateException if the actor was already initialised
      */
     public final Actor<T> setInitted() {
-        if (mIsInitted) {
-            throw new IllegalStateException(this + " was already initialised");
-        }
+        assertNotInnited();
         mIsInitted = true;
         return this;
     }
- 
 
+    /**
+     * Sets the actor as not initialised, so it is ready to be reused.
+     * 
+     * @return this actor
+     * @throws IllegalStateException if the actor was not initialised
+     */
+    public final Actor<T> setNotInitted() {
+        assertInnited();
+        mIsInitted = false;
+        return this;
+    }
+
+    /**
+     * Asserts the actor is initted.
+     * @throws IllegalStateException if the actor was not initialised
+     */
+    public final void assertInnited() {
+        if (!mIsInitted) {
+            throw new IllegalStateException(this + " is  not initialised yet");
+        }
+    }
+
+    /**
+     * Asserts the actor is not initted.
+     * @throws IllegalStateException if the actor was initialised
+     */
+    public final void assertNotInnited() {
+        if (mIsInitted) {
+            throw new IllegalStateException(this + " was already initialised");
+        }
+    }
     /**
      * Pinta el actor
      * 
@@ -121,17 +148,6 @@ public abstract class Actor<T extends GameWorld> implements Poolable {
      */
     protected void dispose() {
         mWorld = null;
-    }
-
-   // ----------------------------------------------- Methods from Poolable
-
-    @Override
-    public final void reset() {
-        if (!mIsInitted) {
-            throw new IllegalStateException(this + " was not initialised");
-        }
-        mIsInitted = false;
-        // TODO: notify some kind of "onResettedByPool"
     }
 
 }
