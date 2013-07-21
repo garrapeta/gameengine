@@ -1,4 +1,4 @@
-package net.garrapeta.gameengine.actor;
+package com.garrapeta.gameengine.actor;
 
 import android.graphics.PointF;
 

@@ -1,4 +1,4 @@
-package net.garrapeta.gameengine.utils;
+package com.garrapeta.gameengine.utils;
 
 /**
  * métodos de utilidad de f�sicas

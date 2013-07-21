@@ -1,4 +1,4 @@
-package net.garrapeta.gameengine.module;
+package com.garrapeta.gameengine.module;
 
 import android.os.Vibrator;
 import android.util.SparseArray;

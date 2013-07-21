@@ -1,4 +1,4 @@
-package net.garrapeta.gameengine.utils;
+package com.garrapeta.gameengine.utils;
 
 import com.badlogic.gdx.utils.Array;
 

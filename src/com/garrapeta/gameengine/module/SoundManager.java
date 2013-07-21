@@ -1,4 +1,4 @@
-package net.garrapeta.gameengine.module;
+package com.garrapeta.gameengine.module;
 
 import java.io.IOException;
 import java.util.ArrayList;

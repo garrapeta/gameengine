@@ -1,7 +1,7 @@
-package net.garrapeta.gameengine.actor;
+package com.garrapeta.gameengine.actor;
 
-import net.garrapeta.gameengine.Box2DWorld;
-import net.garrapeta.gameengine.Viewport;
+import com.garrapeta.gameengine.Box2DWorld;
+import com.garrapeta.gameengine.Viewport;
 import android.graphics.PointF;
 
 import com.badlogic.gdx.physics.box2d.Body;

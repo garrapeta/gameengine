@@ -1,7 +1,7 @@
-package net.garrapeta.gameengine.actor;
+package com.garrapeta.gameengine.actor;
 
-import net.garrapeta.gameengine.Actor;
-import net.garrapeta.gameengine.GameWorld;
+import com.garrapeta.gameengine.Actor;
+import com.garrapeta.gameengine.GameWorld;
 import android.graphics.PointF;
 
 /**

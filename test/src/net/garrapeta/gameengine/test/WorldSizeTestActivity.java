@@ -1,10 +1,10 @@
-package net.garrapeta.gameengine.test;
+package com.garrapeta.gameengine.test;
 
-import net.garrapeta.gameengine.Box2DWorld;
-import net.garrapeta.gameengine.SyncGameMessage;
-import net.garrapeta.gameengine.GameView;
-import net.garrapeta.gameengine.GameWorld;
-import net.garrapeta.gameengine.actor.Box2DLoopActor;
+import com.garrapeta.gameengine.Box2DWorld;
+import com.garrapeta.gameengine.SyncGameMessage;
+import com.garrapeta.gameengine.GameView;
+import com.garrapeta.gameengine.GameWorld;
+import com.garrapeta.gameengine.actor.Box2DLoopActor;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.PointF;

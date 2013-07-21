@@ -1,6 +1,6 @@
-package net.garrapeta.gameengine.utils;
+package com.garrapeta.gameengine.utils;
 
-import net.garrapeta.gameengine.GameWorld;
+import com.garrapeta.gameengine.GameWorld;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 

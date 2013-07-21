@@ -1,12 +1,12 @@
-package net.garrapeta.gameengine;
+package com.garrapeta.gameengine;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import net.garrapeta.gameengine.module.BitmapManager;
-import net.garrapeta.gameengine.module.SoundManager;
-import net.garrapeta.gameengine.module.VibratorManager;
+import com.garrapeta.gameengine.module.BitmapManager;
+import com.garrapeta.gameengine.module.SoundManager;
+import com.garrapeta.gameengine.module.VibratorManager;
 
 import android.content.Context;
 import android.graphics.Canvas;

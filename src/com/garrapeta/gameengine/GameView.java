@@ -1,4 +1,4 @@
-package net.garrapeta.gameengine;
+package com.garrapeta.gameengine;
 
 import android.content.Context;
 import android.graphics.Canvas;

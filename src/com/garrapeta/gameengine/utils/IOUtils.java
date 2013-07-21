@@ -1,4 +1,4 @@
-package net.garrapeta.gameengine.utils;
+package com.garrapeta.gameengine.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package net.garrapeta.gameengine;
+package com.garrapeta.gameengine;
 
 public abstract class GameMessage {
 

@@ -1,4 +1,4 @@
-package net.garrapeta.gameengine;
+package com.garrapeta.gameengine;
 
 import java.util.ArrayList;
 

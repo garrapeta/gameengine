@@ -1,4 +1,4 @@
-package net.garrapeta;
+package com.garrapeta;
 
 import java.util.Vector;
 
