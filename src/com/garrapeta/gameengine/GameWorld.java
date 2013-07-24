@@ -514,6 +514,15 @@ public abstract class GameWorld {
             throw new IllegalStateException("This operation needs to be executed in the game loop thread");
         }
     }
+    
+    /**
+     * Method that can be overriden to receive errors that can happen in the 
+     * processing of the games
+     * 
+     * @param Throwable error
+     */
+    public void onError(Throwable error) {
+    }
 
     // -------------------------------------- Clases internas
 
@@ -526,55 +535,61 @@ public abstract class GameWorld {
 
         @Override
         public void run() {
-            Log.i(LOG_SRC, "Game loop thread started. Thread: " + Thread.currentThread().getName());
+        	try {
+	            Log.i(LOG_SRC, "Game loop thread started. Thread: " + Thread.currentThread().getName());
+	
+	            float lastFrameLength = 0;
+	
+	            loadResources();
+	            onBeforeRunning();
+	
+	            while (mRunning) {
+	
+	                long begin = System.currentTimeMillis();
+	                doProcessFrame(lastFrameLength);
+	                mGameView.draw();
+	
+	                long end = System.currentTimeMillis();
+	                long elapsed = end - begin;
+	
+	                long diff = (long) (mspf - elapsed);
+	                if (diff > 0) {
+	                    try {
+	                        Thread.sleep(diff);
+	                    } catch (InterruptedException e) {
+	                        e.printStackTrace();
+	                    }
+	
+	                }
+	                lastFrameLength = System.currentTimeMillis() - begin;
+	                mCurrentGameMillis += lastFrameLength;
+	                mCurrentFps = 1000 / lastFrameLength;
+	                Log.v(LOG_SRC, "Game loop frame. Desired FPS: " + mFps + " Actual: " + mCurrentFps);
+	                Thread.yield();
+	
+	                synchronized (mGameLoopThread) {
+	                    if (mPaused) {
+	                        Log.d(LOG_SRC, "Game loop paused.");
+	                        onPaused();
+	                        try {
+	                            mGameLoopThread.wait();
+	                            Log.v(LOG_SRC, "Game loop resumed.");
+	                            onResumed();
+	                        } catch (InterruptedException e) {
+	                        }
+	                    }
+	                }
+	            }
+	
 
-            float lastFrameLength = 0;
-
-            loadResources();
-            onBeforeRunning();
-
-            while (mRunning) {
-
-                long begin = System.currentTimeMillis();
-                doProcessFrame(lastFrameLength);
-                mGameView.draw();
-
-                long end = System.currentTimeMillis();
-                long elapsed = end - begin;
-
-                long diff = (long) (mspf - elapsed);
-                if (diff > 0) {
-                    try {
-                        Thread.sleep(diff);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-                lastFrameLength = System.currentTimeMillis() - begin;
-                mCurrentGameMillis += lastFrameLength;
-                mCurrentFps = 1000 / lastFrameLength;
-                Log.v(LOG_SRC, "Game loop frame. Desired FPS: " + mFps + " Actual: " + mCurrentFps);
-                Thread.yield();
-
-                synchronized (mGameLoopThread) {
-                    if (mPaused) {
-                        Log.d(LOG_SRC, "Game loop paused.");
-                        onPaused();
-                        try {
-                            mGameLoopThread.wait();
-                            Log.v(LOG_SRC, "Game loop resumed.");
-                            onResumed();
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                }
-            }
-
-            dispose();
-
-            Log.i(LOG_SRC, "Game loop thread ended");
+    	    } catch (Throwable t) {
+    	    	Log.i(LOG_SRC, "Error happenend in the game loop", t);
+    	    } finally {
+	            dispose();
+	            Log.i(LOG_SRC, "Game loop thread ended");
+    	    }
         }
+
     }
 
 }
