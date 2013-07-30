@@ -14,18 +14,22 @@ public abstract class AsyncGameMessage extends GameMessage {
 
     @Override
     public final void onPosted(final GameWorld world) {
-        // TODO: do this in an executor to avoid creating threads
-        new Thread(new Runnable(){
+        Runnable runnable = new Runnable(){
             @Override
             public void run() {
-            	try {
-            		doInBackground();
-            		world.add(AsyncGameMessage.this);
-            	} catch (Throwable t) {
-            		Log.e(GameWorld.LOG_SRC, "Error happening in async message", t);
-            		world.onError(t);
+            	synchronized (world) { 
+	            	if (world.isRunning()) {
+		            	try {
+		            		doInBackground();
+		            		world.add(AsyncGameMessage.this);
+		            	} catch (Throwable t) {
+		            		Log.e(GameWorld.LOG_SRC, "Error happening in async message", t);
+		            		world.onError(t);
+		            	}
+	            	}
             	}
-            }}).start();
+            }};
+            world.executeAsynchronously(runnable);
     }
 
     public abstract void doInBackground();

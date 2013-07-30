@@ -3,6 +3,9 @@ package com.garrapeta.gameengine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.garrapeta.gameengine.module.BitmapManager;
 import com.garrapeta.gameengine.module.SoundManager;
@@ -80,6 +83,8 @@ public abstract class GameWorld {
 
     /** Sound manager user by the world */
     private SoundManager mSoundManager;
+    
+    private final ThreadPoolExecutor mAsyncMessagesExecutor;
 
     // --------------------------------------------------------------
     // Constructor
@@ -107,6 +112,7 @@ public abstract class GameWorld {
 
         mGameLoopThread = new Thread(new GameLoopRunnable(), LOOP_THREAD_NAME);
 
+        mAsyncMessagesExecutor = new ThreadPoolExecutor(1, 1, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
         mBitmapManager = new BitmapManager();
         mSoundManager = new SoundManager();
         mGameView = view;
@@ -210,7 +216,7 @@ public abstract class GameWorld {
     /**
      * If the game loop is running
      */
-    public final boolean isStarted() {
+    public final boolean isRunning() {
         return mRunning;
     }
 
@@ -266,10 +272,16 @@ public abstract class GameWorld {
     }
 
     public void post(GameMessage message, float delay) {
-        message.setDelay(delay);
-        message.onPosted(this);
+    	if (mRunning) {
+    		message.setDelay(delay);
+    		message.onPosted(this);
+    	}
     }
 
+    void executeAsynchronously(Runnable runnable) {
+    	mAsyncMessagesExecutor.execute(runnable);
+    }
+   
     void add(GameMessage message) {
         synchronized (mMessages) {
             int index = 0;
@@ -453,26 +465,23 @@ public abstract class GameWorld {
      * Stops the game loop and disposes the world. This method does not block
      * until the world is disposed.
      */
-    protected void dispose() {
+    protected  void dispose() {
         Log.i(LOG_SRC, "GameWorld.dispose()");
 
-        mGameView = null;
+        synchronized (this) {
+        	mAsyncMessagesExecutor.shutdownNow();
+        }
+
         mViewport.dispose();
-        mViewport = null;
         for (Actor<?> actor : mActors) {
             actor.dispose();
         }
         mActors.clear();
-        mActors = null;
-        mMessages = null;
-        mDebugPaint = null;
+        mMessages.clear();
         mBitmapManager.releaseAll();
-        mBitmapManager = null;
         mSoundManager.releaseAll();
-        mSoundManager = null;
         // TODO: code the same access to the vibrator manager thatn in the other managers
         VibratorManager.getInstance().dispose();
-        mGameLoopThread = null;
     }
 
     // ---------------------------------- métodos relativos a la interacci�n
@@ -518,6 +527,8 @@ public abstract class GameWorld {
     /**
      * Method that can be overriden to receive errors that can happen in the 
      * processing of the games
+     * </p>
+     * Remember to dispose the world after receiving this event.
      * 
      * @param Throwable error
      */
@@ -580,15 +591,15 @@ public abstract class GameWorld {
 	                    }
 	                }
 	            }
-	
-
-    	    } catch (Throwable t) {
-    	    	Log.i(LOG_SRC, "Error happenend in the game loop", t);
-    	    } finally {
+	            
 	            dispose();
 	            Log.i(LOG_SRC, "Game loop thread ended");
+	            
+    	    } catch (Throwable t) {
+    	    	Log.e(LOG_SRC, "Error happenend in the game loop", t);
+    	    	onError(t);
     	    }
-        }
+       }
 
     }
 
