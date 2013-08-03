@@ -93,10 +93,11 @@ public abstract class GameWorld {
      * Constructor
      * 
      * @param view
-     *            vista del juego
      * @param context 
+     * @param soundLevel 
+     * @param vibratorLevel 
      */
-    public GameWorld(GameView view, Context context) {
+    public GameWorld(GameView view, Context context, short soundLevel, short vibratorLevel) {
         mViewport = new Viewport(this, context.getResources().getDisplayMetrics());
 
         mCurrentGameMillis = 0;
@@ -114,8 +115,8 @@ public abstract class GameWorld {
 
         mAsyncMessagesExecutor = new ThreadPoolExecutor(1, 1, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
         mBitmapManager = new BitmapManager();
-        mSoundManager = new SoundManager();
-        mVibratorManager = new VibratorManager(context);
+        mSoundManager = new SoundManager(context, soundLevel);
+        mVibratorManager = new VibratorManager(context, vibratorLevel);
         mGameView = view;
         view.setGameWorld(this);
     }
@@ -487,8 +488,8 @@ public abstract class GameWorld {
         mActors.clear();
         mMessages.clear();
         mBitmapManager.releaseAll();
-        mSoundManager.releaseAll();
-        mVibratorManager.releaseAll();
+        mSoundManager.release();
+        mVibratorManager.release();
 
     }
 

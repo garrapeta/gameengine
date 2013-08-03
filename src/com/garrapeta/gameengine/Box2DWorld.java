@@ -55,8 +55,8 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     // -------------------------------------------------------------
     // Constructores
 
-    public Box2DWorld( GameView gameView, Context context) {
-        super(gameView, context);
+    public Box2DWorld( GameView gameView, Context context, short soundLevel, short vibratorLevel) {
+        super(gameView, context, soundLevel, vibratorLevel);
 
         // Step 1: Create Physics World Boundaries
         // worldAABB = new AABB();
