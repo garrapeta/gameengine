@@ -1,4 +1,4 @@
-package com.garrapeta.gameengine.module;
+package com.garrapeta.gameengine;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;

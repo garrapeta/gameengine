@@ -7,9 +7,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.garrapeta.gameengine.module.BitmapManager;
-import com.garrapeta.gameengine.module.SoundManager;
-import com.garrapeta.gameengine.module.VibratorManager;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -84,6 +81,9 @@ public abstract class GameWorld {
     /** Sound manager user by the world */
     private SoundManager mSoundManager;
     
+    /** Vibrator manager user by the world */
+    private VibratorManager mVibratorManager;
+    
     private final ThreadPoolExecutor mAsyncMessagesExecutor;
 
     // --------------------------------------------------------------
@@ -115,6 +115,7 @@ public abstract class GameWorld {
         mAsyncMessagesExecutor = new ThreadPoolExecutor(1, 1, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
         mBitmapManager = new BitmapManager();
         mSoundManager = new SoundManager();
+        mVibratorManager = new VibratorManager(context);
         mGameView = view;
         view.setGameWorld(this);
     }
@@ -136,6 +137,13 @@ public abstract class GameWorld {
         return mSoundManager;
     }
 
+    /**
+     * @return the VibratorManager
+     */
+    public final VibratorManager getVibratorManager() {
+        return mVibratorManager;
+    }
+    
     /**
      * @param fPS
      *            the fPS to set
@@ -391,7 +399,7 @@ public abstract class GameWorld {
     }
 
     /**
-     * Called from the GameLoop. Load your resources here.
+     * 
      */
     protected void loadResources() {
     }
@@ -480,8 +488,8 @@ public abstract class GameWorld {
         mMessages.clear();
         mBitmapManager.releaseAll();
         mSoundManager.releaseAll();
-        // TODO: code the same access to the vibrator manager thatn in the other managers
-        VibratorManager.getInstance().dispose();
+        mVibratorManager.releaseAll();
+
     }
 
     // ---------------------------------- métodos relativos a la interacci�n
