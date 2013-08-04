@@ -7,9 +7,9 @@ import java.util.Random;
 import android.util.SparseArray;
 
 
-public abstract class LoadedLeveledActionsModule<K, V, P> {
+public abstract class LoadedLevelActionsModule<K, V, P> {
 
-	private final SparseArray<ResourceData> mResourceData;
+	private final SparseArray<ResourceData> mResourceDatas;
 	private final short mMinimumLevel;
 	private Random mRandom;
 	
@@ -17,23 +17,23 @@ public abstract class LoadedLeveledActionsModule<K, V, P> {
 	 * Constructor
 	 * @param minimumLevel
 	 */
-	public LoadedLeveledActionsModule(short minimumLevel) {
-		mResourceData = new SparseArray<ResourceData>();
+	public LoadedLevelActionsModule(short minimumLevel) {
+		mResourceDatas = new SparseArray<ResourceData>();
 		mMinimumLevel = minimumLevel;
 	}
 	
 	public final ResourceData create(short level, short key) {
-		if (mResourceData.get(key) != null) {
-	        throw new IllegalArgumentException("Already exising: " + key);
+		if (mResourceDatas.get(key) != null) {
+	        throw new IllegalStateException("Already exising: " + key);
 	    }
 
 		ResourceData resourceData = new ResourceData(level);
-		mResourceData.put(key, resourceData);
+		mResourceDatas.put(key, resourceData);
 		return resourceData;
 	}
 	
 	protected final int getCount(short key) {
-		ResourceData resourceData = mResourceData.get(key);
+		ResourceData resourceData = mResourceDatas.get(key);
 		if (resourceData != null) {
 	        return resourceData.getCount();
 	    }
@@ -47,9 +47,9 @@ public abstract class LoadedLeveledActionsModule<K, V, P> {
 	}
 
 	public final boolean executeOverOneResourceForKey(short key, P... params) {
-		ResourceData resourceData = mResourceData.get(key);
+		ResourceData resourceData = mResourceDatas.get(key);
     	if (resourceData == null) {
-    		throw new IllegalArgumentException("No resource loaded for: " + key);
+    		throw new IllegalStateException("No resource loaded for: " + key);
     	}
     	return resourceData.executeOverOne(params);
 	}
@@ -59,11 +59,11 @@ public abstract class LoadedLeveledActionsModule<K, V, P> {
 	}
 
 	public final boolean executeOverAllResourcesForKey(short key, P... params) {
-		ResourceData resourceData = mResourceData.get(key);
-    	if (resourceData == null) {
-    		throw new IllegalArgumentException("No resource loaded for: " + key);
+		ResourceData data = mResourceDatas.get(key);
+    	if (data == null) {
+    		throw new IllegalStateException("No resource loaded for: " + key);
     	}
-    	return executeOverAllResources(resourceData, params);
+    	return executeOverAllResources(data, params);
 	}
 	
 	public final void executeOverAllResources() {
@@ -71,10 +71,11 @@ public abstract class LoadedLeveledActionsModule<K, V, P> {
 	}
 
 	public final void executeOverAllResources(P... params) {
-        if (mResourceData != null) {
-            for (int i = 0; i < mResourceData.size(); i++) {
-            	ResourceData resourceData = mResourceData.get(i);
-            	executeOverAllResources(resourceData, params);
+        if (mResourceDatas != null) {
+            for (int i = 0; i < mResourceDatas.size(); i++) {
+            	int key = mResourceDatas.keyAt(i);
+            	ResourceData data = mResourceDatas.get(key);
+            	executeOverAllResources(data, params);
             }
         }
 	}
@@ -91,12 +92,13 @@ public abstract class LoadedLeveledActionsModule<K, V, P> {
      * Frees resources
      */
 	public final void releaseAll() {
-        if (mResourceData != null) {
-            for (int i = 0; i < mResourceData.size(); i++) {
-            	ResourceData data = mResourceData.get(i);
+        if (mResourceDatas != null) {
+            for (int i = 0; i < mResourceDatas.size(); i++) {
+            	int key = mResourceDatas.keyAt(i);
+            	ResourceData data = mResourceDatas.get(key);
             	data.release();
             }
-            mResourceData.clear();
+            mResourceDatas.clear();
         }
     }
 	
@@ -182,12 +184,12 @@ public abstract class LoadedLeveledActionsModule<K, V, P> {
 		
 		private void release() {
             if (mResource != null) {
-            	LoadedLeveledActionsModule.this.onRelease(mResource);
+            	LoadedLevelActionsModule.this.onRelease(mResource);
             	mResource = null;
             }
             if (mResources != null) {
                 for (V resource : mResources) {
-                	LoadedLeveledActionsModule.this.onRelease(resource);
+                	LoadedLevelActionsModule.this.onRelease(resource);
                 }
                 mResources.clear();
                 mResources = null;

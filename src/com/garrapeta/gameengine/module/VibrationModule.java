@@ -13,15 +13,18 @@ public class VibrationModule {
 	private final VibrationModuleDelegate mDelegate;
 	private Vibrator mVibrator;
 
+    /**
+     * Constructor
+     * 
+     * @param context
+     * @param minimumLevel
+     */
     public VibrationModule(Context context, short minimumLevel) {
     	mDelegate = new VibrationModuleDelegate(minimumLevel);
 		mVibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
 	}
 
 	public void add(short level, short key, long[] pattern) {
-		if (mDelegate.getCount(key) > 0) {
-			throw new IllegalArgumentException("Already loaded: " + key);
-		}
 		mDelegate.create(level, key).add(pattern);
 	}
 	
@@ -32,8 +35,12 @@ public class VibrationModule {
 	public void release() {
 		mDelegate.releaseAll();
 	}
-
-	private class VibrationModuleDelegate extends LeveledActionsModule<long[], Integer>  {
+	
+	/**
+	 * Delegate used by the module
+	 * @author garrapeta
+	 */
+	private class VibrationModuleDelegate extends LevelActionsModule<long[], Integer>  {
 		
 		private VibrationModuleDelegate(short minimumLevel) {
 			super(minimumLevel);
@@ -50,5 +57,4 @@ public class VibrationModule {
 			mVibrator.vibrate(pattern, repeat);
 		}
 	}
-
 }

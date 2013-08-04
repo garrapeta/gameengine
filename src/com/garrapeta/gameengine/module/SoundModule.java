@@ -3,7 +3,6 @@ package com.garrapeta.gameengine.module;
 
 import java.io.IOException;
 
-
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -16,10 +15,7 @@ import android.util.Log;
  */
 public class SoundModule implements OnCompletionListener {
 
-    // -------------------------------- Variables est�ticas
-
-    /** Source trazas de log */
-    private static final String TAG = SoundModule.class.getSimpleName();
+    private final static String TAG = SoundModule.class.getSimpleName();
     
     private final SoundModuleDelegate mDelegate;
     
@@ -28,8 +24,11 @@ public class SoundModule implements OnCompletionListener {
     private final static short ACTION_RESUME = 2;
     private final static short ACTION_STOP = 3;
 
-    // ----------------------------------------------- Constructor
-
+    /**
+     * Constructor
+     * @param context
+     * @param minimumLevel
+     */
     public SoundModule(Context context, short minimumLevel) {
     	mDelegate = new SoundModuleDelegate(context, minimumLevel);
     }
@@ -42,21 +41,38 @@ public class SoundModule implements OnCompletionListener {
 		play(key, false);
 	}
 
-	public void play(short soundId, boolean repeat) {
-		short repeatShort = (short) ((repeat) ? 1 : 0);
-		mDelegate.executeOverOneResourceForKey(soundId, ACTION_PLAY, repeatShort);
+	public void play(short key, boolean repeat) {
+		try {
+			short repeatShort = (short) ((repeat) ? 1 : 0);
+			mDelegate.executeOverOneResourceForKey(key, ACTION_PLAY, repeatShort);
+        } catch (Exception e) {
+        	Log.e(TAG,"Error playing resource " + key, e);
+        }
 	}
 
 	public void stop(short key) {
-		mDelegate.executeOverAllResourcesForKey(key, ACTION_STOP);
+		try {
+			mDelegate.executeOverAllResourcesForKey(key, ACTION_STOP);
+        } catch (Exception e) {
+        	Log.e(TAG,"Error stoping resource " + key, e);
+        }
 	}
 
 	public void pauseAll() {
-		mDelegate.executeOverAllResources(ACTION_PAUSE);
+		try {
+			mDelegate.executeOverAllResources(ACTION_PAUSE);
+        } catch (Exception e) {
+        	Log.e(TAG,"Error pausing all the resources", e);
+        }
 	}
 
 	public void resumeAll() {
-		mDelegate.executeOverAllResources(ACTION_RESUME);
+		try {
+			mDelegate.executeOverAllResources(ACTION_RESUME);
+        } catch (Exception e) {
+        	Log.e(TAG,"Error resuming all the resources", e);
+        }
+
 	}
 	
 	public void release() {
@@ -84,16 +100,13 @@ public class SoundModule implements OnCompletionListener {
 	}
 	
 	private void onStop(MediaPlayer player) {
-        if (player.isPlaying()) {
-        	player.stop();
-            try {
-            	player.prepare();
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-                String msg = "Poblems stopping sampleId " + ioe.toString();
-                Log.e(TAG, msg);
-                throw new IllegalArgumentException(msg);
-            }
+        try {
+			if (player.isPlaying()) {
+	         	player.stop();
+	            player.prepare();
+	        }
+        } catch (IOException e) {
+        	throw new IllegalStateException("Error stopping the player", e);
         }
 	}
 	
@@ -102,7 +115,12 @@ public class SoundModule implements OnCompletionListener {
 		player.seekTo(0);
 	}
 
-	private class SoundModuleDelegate extends LoadedLeveledActionsModule<Integer, MediaPlayer, Short>  {
+	
+	/**
+	 * Delegate used by the module
+	 * @author garrapeta
+	 */
+	private class SoundModuleDelegate extends LoadedLevelActionsModule<Integer, MediaPlayer, Short>  {
 
 		private final Context mContext;
 		
@@ -117,16 +135,17 @@ public class SoundModule implements OnCompletionListener {
 	        if (player != null) {
 	            player.setOnCompletionListener(SoundModule.this);
 	        } else {
-	            Log.e(TAG, "Could not load player for sample id: " + resId);
+	        	Log.e(TAG,"Could not load player for sample id: " + resId);
 	        }
-	        
-	        Short n = 1;
-	        n.intValue();
 	        return player;
 		}
 
 		@Override
 		protected void onExecute(MediaPlayer player, Short... params) {
+			if (player == null) {
+				Log.e(TAG, "Audio player is null!!");
+				return;
+			}
 			switch (params[0]) {
 			case ACTION_PLAY:
 		        onPlay(player, params[1] > 0);
@@ -148,6 +167,5 @@ public class SoundModule implements OnCompletionListener {
 			player.release();
 		}
 	}
-
 
 }

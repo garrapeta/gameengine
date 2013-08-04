@@ -2,13 +2,13 @@ package com.garrapeta.gameengine.module;
 
 
 
-public abstract class LeveledActionsModule<V, P> extends LoadedLeveledActionsModule<V, V, P> {
+public abstract class LevelActionsModule<V, P> extends LoadedLevelActionsModule<V, V, P> {
 
 	/**
 	 * Constructor
 	 * @param minimumLevel
 	 */
-	public LeveledActionsModule(short minimumLevel) {
+	public LevelActionsModule(short minimumLevel) {
 		super(minimumLevel);
 	}
 	
