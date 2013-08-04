@@ -10,32 +10,32 @@ import android.os.Vibrator;
  */
 public class VibratorManager {
 
-	private final CustomLevelBasedResourcesModule mCustomLevelBasedResourcesModule;
+	private final CustomLevelBasedResourcesManager mCustomLevelBasedResourcesManager;
 	private Vibrator mVibrator;
 
     public VibratorManager(Context context, short minimumLevel) {
-    	mCustomLevelBasedResourcesModule = new CustomLevelBasedResourcesModule(minimumLevel);
+    	mCustomLevelBasedResourcesManager = new CustomLevelBasedResourcesManager(minimumLevel);
 		mVibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
 	}
 
 	public void add(short level, short key, long[] pattern) {
-		if (mCustomLevelBasedResourcesModule.getCount(key) > 0) {
+		if (mCustomLevelBasedResourcesManager.getCount(key) > 0) {
 			throw new IllegalArgumentException("Already loaded: " + key);
 		}
-		mCustomLevelBasedResourcesModule.create(level, key).add(pattern);
+		mCustomLevelBasedResourcesManager.create(level, key).add(pattern);
 	}
 	
 	public void vibrate(short key) {
-		mCustomLevelBasedResourcesModule.executeOverOne(key);
+		mCustomLevelBasedResourcesManager.executeOverOneResourceForKey(key);
 	}
 	
 	public void release() {
-		mCustomLevelBasedResourcesModule.releaseAll();
+		mCustomLevelBasedResourcesManager.releaseAll();
 	}
 
-	private class CustomLevelBasedResourcesModule extends LevelBasedResourcesModule<long[], long[], Integer>  {
+	private class CustomLevelBasedResourcesManager extends LevelBasedResourcesManager<long[], long[], Integer>  {
 		
-		private CustomLevelBasedResourcesModule(short minimumLevel) {
+		private CustomLevelBasedResourcesManager(short minimumLevel) {
 			super(minimumLevel);
 		}
 

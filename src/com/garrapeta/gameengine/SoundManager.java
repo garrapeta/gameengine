@@ -20,7 +20,7 @@ public class SoundManager implements OnCompletionListener {
     /** Source trazas de log */
     public static final String LOG_SRC = "sound";
     
-    private final CustomLevelBasedResourcesModule mCustomLevelBasedResourcesModule;
+    private final CustomLevelBasedResourcesManager mCustomLevelBasedResourcesManage;
     
     private final static short ACTION_PLAY = 0;
     private final static short ACTION_PAUSE = 1;
@@ -30,11 +30,11 @@ public class SoundManager implements OnCompletionListener {
     // ----------------------------------------------- Constructor
 
     public SoundManager(Context context, short minimumLevel) {
-    	mCustomLevelBasedResourcesModule = new CustomLevelBasedResourcesModule(context, minimumLevel);
+    	mCustomLevelBasedResourcesManage = new CustomLevelBasedResourcesManager(context, minimumLevel);
     }
 
-	public CustomLevelBasedResourcesModule.ResourceData createAction(short level, short key) {
-		return mCustomLevelBasedResourcesModule.create(level, key);
+	public CustomLevelBasedResourcesManager.ResourceData createAction(short level, short key) {
+		return mCustomLevelBasedResourcesManage.create(level, key);
 	}
 
 	public void play(short key) {
@@ -43,23 +43,23 @@ public class SoundManager implements OnCompletionListener {
 
 	public void play(short soundId, boolean repeat) {
 		short repeatShort = (short) ((repeat) ? 1 : 0);
-		mCustomLevelBasedResourcesModule.executeOverOne(soundId, ACTION_PLAY, repeatShort);
+		mCustomLevelBasedResourcesManage.executeOverOneResourceForKey(soundId, ACTION_PLAY, repeatShort);
 	}
 
 	public void stop(short key) {
-		mCustomLevelBasedResourcesModule.executeOverAllOf(key, ACTION_STOP);
+		mCustomLevelBasedResourcesManage.executeOverAllResourcesForKey(key, ACTION_STOP);
 	}
 
 	public void pauseAll() {
-		mCustomLevelBasedResourcesModule.executeOverAll(ACTION_PAUSE);
+		mCustomLevelBasedResourcesManage.executeOverAllResources(ACTION_PAUSE);
 	}
 
 	public void resumeAll() {
-		mCustomLevelBasedResourcesModule.executeOverAll(ACTION_RESUME);
+		mCustomLevelBasedResourcesManage.executeOverAllResources(ACTION_RESUME);
 	}
 	
 	public void release() {
-		mCustomLevelBasedResourcesModule.releaseAll();
+		mCustomLevelBasedResourcesManage.releaseAll();
 	}
 	
 	private void onPlay(MediaPlayer player, boolean repeat) {
@@ -101,11 +101,11 @@ public class SoundManager implements OnCompletionListener {
 		player.seekTo(0);
 	}
 
-	private class CustomLevelBasedResourcesModule extends LevelBasedResourcesModule<Integer, MediaPlayer, Short>  {
+	private class CustomLevelBasedResourcesManager extends LevelBasedResourcesManager<Integer, MediaPlayer, Short>  {
 
 		private final Context mContext;
 		
-		private CustomLevelBasedResourcesModule(Context context, short minimumLevel) {
+		private CustomLevelBasedResourcesManager(Context context, short minimumLevel) {
 			super(minimumLevel);
 			mContext = context;
 		}

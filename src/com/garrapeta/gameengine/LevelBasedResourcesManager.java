@@ -7,15 +7,19 @@ import java.util.Random;
 import android.util.SparseArray;
 
 
-public abstract class LevelBasedResourcesModule<K, V, P> {
+public abstract class LevelBasedResourcesManager<K, V, P> {
 
-	private final LevelBasedModule<V, P> mLevelBaseModule;
 	private final SparseArray<ResourceData> mResourceData;
+	private final short mMinimumLevel;
 	private Random mRandom;
 	
-	public LevelBasedResourcesModule(short minimumLevel) {
-		mLevelBaseModule = new CustomLevelBasedModule(minimumLevel);
+	/**
+	 * Constructor
+	 * @param minimumLevel
+	 */
+	public LevelBasedResourcesManager(short minimumLevel) {
 		mResourceData = new SparseArray<ResourceData>();
+		mMinimumLevel = minimumLevel;
 	}
 	
 	public final ResourceData create(short level, short key) {
@@ -38,53 +42,49 @@ public abstract class LevelBasedResourcesModule<K, V, P> {
 	
 	protected abstract V load(K key);
 
-	public final boolean executeOverOne(short key) {
-		return executeOverOne(key, (P[])null);
+	public final boolean executeOverOneResourceForKey(short key) {
+		return executeOverOneResourceForKey(key, (P[])null);
 	}
 
-	public final boolean executeOverOne(short key, P... params) {
+	public final boolean executeOverOneResourceForKey(short key, P... params) {
 		ResourceData resourceData = mResourceData.get(key);
     	if (resourceData == null) {
     		throw new IllegalArgumentException("No resource loaded for: " + key);
     	}
-    	if (mLevelBaseModule.shouldBeExecuted(resourceData.mLevel)) {
-    		resourceData.executeOverOne(params);
-    		return true;
-    	}
-        return false;
+    	return resourceData.executeOverOne(params);
 	}
 	
-	public final boolean executeOverAllOf(short key) {
-		return executeOverAllOf(key, (P[])null);
+	public final boolean executeOverAllResourcesForKey(short key) {
+		return executeOverAllResourcesForKey(key, (P[])null);
 	}
 
-	public final boolean executeOverAllOf(short key, P... params) {
+	public final boolean executeOverAllResourcesForKey(short key, P... params) {
 		ResourceData resourceData = mResourceData.get(key);
     	if (resourceData == null) {
     		throw new IllegalArgumentException("No resource loaded for: " + key);
     	}
-    	return executeOverAll(resourceData, params);
+    	return executeOverAllResources(resourceData, params);
 	}
 	
-	private final boolean executeOverAll(ResourceData data, P... params) {
-    	if (mLevelBaseModule.shouldBeExecuted(data.mLevel)) {
-    		data.executeOverAll(params);
-    		return true;
-    	}
-        return false;
-	}
-	
-	public final void executeOverAll() {
-		executeOverAll((P[])null);
+	public final void executeOverAllResources() {
+		executeOverAllResources((P[])null);
 	}
 
-	public final void executeOverAll(P... params) {
+	public final void executeOverAllResources(P... params) {
         if (mResourceData != null) {
             for (int i = 0; i < mResourceData.size(); i++) {
             	ResourceData resourceData = mResourceData.get(i);
-            	executeOverAll(resourceData, params);
+            	executeOverAllResources(resourceData, params);
             }
         }
+	}
+	
+	private final boolean executeOverAllResources(ResourceData data, P... params) {
+  		return data.executeOverAll(params);
+	}
+	
+	private final boolean shouldBeExecuted(short level) {
+		return level >= mMinimumLevel;
 	}
 	
 	/**
@@ -103,21 +103,7 @@ public abstract class LevelBasedResourcesModule<K, V, P> {
 	protected abstract void onExecute(V resource, P... params);
 	
 	protected abstract void onRelease(V mResource);
-
 	
-	
-	private class CustomLevelBasedModule extends LevelBasedModule<V, P> {
-
-		public CustomLevelBasedModule(short minimumLevel) {
-			super(minimumLevel);
-		}
-
-		@Override
-		protected void onExecute(V resource, P... params) {
-			LevelBasedResourcesModule.this.onExecute(resource, params);
-		}
-	}
-
 	public final class ResourceData {
     	private final short mLevel;
     	private V mResource;
@@ -130,7 +116,7 @@ public abstract class LevelBasedResourcesModule<K, V, P> {
 		
 		public final ResourceData add(K key) {
 			V resource = null;
-			if (mLevelBaseModule.shouldBeExecuted(mLevel)) {
+			if (shouldBeExecuted(mLevel)) {
 	    		resource = load(key);
 	    		addResource(resource);
 	    	} 
@@ -171,30 +157,37 @@ public abstract class LevelBasedResourcesModule<K, V, P> {
             }
 		}
 		
-		private void executeOverOne(P[] params) {
-    		V resource = getOneResource();
-    		onExecute(resource, params);
+		private boolean executeOverOne(P[] params) {
+			if (shouldBeExecuted(mLevel)) {
+				V resource = getOneResource();
+    			onExecute(resource, params);
+    			return true;
+			}
+			return false;
 		}
 	
-		private void executeOverAll(P[] params) {
-            if (mResource != null) {
-            	onExecute(mResource, params);
-            }
-            if (mResources != null) {
-                for (V resource : mResources) {
-                	onExecute(resource, params);
-                }
-            }
+		private boolean executeOverAll(P[] params) {
+			if (shouldBeExecuted(mLevel)) {
+				if (mResource != null) {
+	            	onExecute(mResource, params);
+	            } else if (mResources != null) {
+	                for (V resource : mResources) {
+	                	onExecute(resource, params);
+	                }
+	            }
+	            return true;
+			}
+			return false;
 		}
 		
 		private void release() {
             if (mResource != null) {
-            	LevelBasedResourcesModule.this.onRelease(mResource);
+            	LevelBasedResourcesManager.this.onRelease(mResource);
             	mResource = null;
             }
             if (mResources != null) {
                 for (V resource : mResources) {
-                	LevelBasedResourcesModule.this.onRelease(resource);
+                	LevelBasedResourcesManager.this.onRelease(resource);
                 }
                 mResources.clear();
                 mResources = null;
