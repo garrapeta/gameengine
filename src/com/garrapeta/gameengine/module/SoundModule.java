@@ -1,7 +1,8 @@
-package com.garrapeta.gameengine;
+package com.garrapeta.gameengine.module;
 
 
 import java.io.IOException;
+
 
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -13,14 +14,14 @@ import android.util.Log;
  * 
  * @author GaRRaPeTa
  */
-public class SoundManager implements OnCompletionListener {
+public class SoundModule implements OnCompletionListener {
 
     // -------------------------------- Variables est�ticas
 
     /** Source trazas de log */
-    public static final String LOG_SRC = "sound";
+    private static final String TAG = SoundModule.class.getSimpleName();
     
-    private final CustomLevelBasedResourcesManager mCustomLevelBasedResourcesManage;
+    private final SoundModuleDelegate mDelegate;
     
     private final static short ACTION_PLAY = 0;
     private final static short ACTION_PAUSE = 1;
@@ -29,12 +30,12 @@ public class SoundManager implements OnCompletionListener {
 
     // ----------------------------------------------- Constructor
 
-    public SoundManager(Context context, short minimumLevel) {
-    	mCustomLevelBasedResourcesManage = new CustomLevelBasedResourcesManager(context, minimumLevel);
+    public SoundModule(Context context, short minimumLevel) {
+    	mDelegate = new SoundModuleDelegate(context, minimumLevel);
     }
 
-	public CustomLevelBasedResourcesManager.ResourceData createAction(short level, short key) {
-		return mCustomLevelBasedResourcesManage.create(level, key);
+	public SoundModuleDelegate.ResourceData create(short level, short key) {
+		return mDelegate.create(level, key);
 	}
 
 	public void play(short key) {
@@ -43,23 +44,23 @@ public class SoundManager implements OnCompletionListener {
 
 	public void play(short soundId, boolean repeat) {
 		short repeatShort = (short) ((repeat) ? 1 : 0);
-		mCustomLevelBasedResourcesManage.executeOverOneResourceForKey(soundId, ACTION_PLAY, repeatShort);
+		mDelegate.executeOverOneResourceForKey(soundId, ACTION_PLAY, repeatShort);
 	}
 
 	public void stop(short key) {
-		mCustomLevelBasedResourcesManage.executeOverAllResourcesForKey(key, ACTION_STOP);
+		mDelegate.executeOverAllResourcesForKey(key, ACTION_STOP);
 	}
 
 	public void pauseAll() {
-		mCustomLevelBasedResourcesManage.executeOverAllResources(ACTION_PAUSE);
+		mDelegate.executeOverAllResources(ACTION_PAUSE);
 	}
 
 	public void resumeAll() {
-		mCustomLevelBasedResourcesManage.executeOverAllResources(ACTION_RESUME);
+		mDelegate.executeOverAllResources(ACTION_RESUME);
 	}
 	
 	public void release() {
-		mCustomLevelBasedResourcesManage.releaseAll();
+		mDelegate.releaseAll();
 	}
 	
 	private void onPlay(MediaPlayer player, boolean repeat) {
@@ -90,7 +91,7 @@ public class SoundManager implements OnCompletionListener {
             } catch (IOException ioe) {
                 ioe.printStackTrace();
                 String msg = "Poblems stopping sampleId " + ioe.toString();
-                Log.e(LOG_SRC, msg);
+                Log.e(TAG, msg);
                 throw new IllegalArgumentException(msg);
             }
         }
@@ -101,22 +102,22 @@ public class SoundManager implements OnCompletionListener {
 		player.seekTo(0);
 	}
 
-	private class CustomLevelBasedResourcesManager extends LevelBasedResourcesManager<Integer, MediaPlayer, Short>  {
+	private class SoundModuleDelegate extends LoadedLeveledActionsModule<Integer, MediaPlayer, Short>  {
 
 		private final Context mContext;
 		
-		private CustomLevelBasedResourcesManager(Context context, short minimumLevel) {
+		private SoundModuleDelegate(Context context, short minimumLevel) {
 			super(minimumLevel);
 			mContext = context;
 		}
 
 		@Override
-		protected MediaPlayer load(Integer resId) {
+		protected MediaPlayer obtain(Integer resId) {
 	        MediaPlayer player = MediaPlayer.create(mContext, resId);
 	        if (player != null) {
-	            player.setOnCompletionListener(SoundManager.this);
+	            player.setOnCompletionListener(SoundModule.this);
 	        } else {
-	            Log.e(LOG_SRC, "Could not load player for sample id: " + resId);
+	            Log.e(TAG, "Could not load player for sample id: " + resId);
 	        }
 	        
 	        Short n = 1;

@@ -7,6 +7,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.garrapeta.gameengine.module.SoundModule;
+import com.garrapeta.gameengine.module.VibrationModule;
+
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -79,10 +82,10 @@ public abstract class GameWorld {
     private BitmapManager mBitmapManager;
 
     /** Sound manager user by the world */
-    private SoundManager mSoundManager;
+    private SoundModule mSoundModule;
     
     /** Vibrator manager user by the world */
-    private VibratorManager mVibratorManager;
+    private VibrationModule mVibrationModule;
     
     private final ThreadPoolExecutor mAsyncMessagesExecutor;
 
@@ -115,8 +118,8 @@ public abstract class GameWorld {
 
         mAsyncMessagesExecutor = new ThreadPoolExecutor(1, 1, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
         mBitmapManager = new BitmapManager();
-        mSoundManager = new SoundManager(context, soundLevel);
-        mVibratorManager = new VibratorManager(context, vibratorLevel);
+        mSoundModule = new SoundModule(context, soundLevel);
+        mVibrationModule = new VibrationModule(context, vibratorLevel);
         mGameView = view;
         view.setGameWorld(this);
     }
@@ -134,15 +137,15 @@ public abstract class GameWorld {
     /**
      * @return the SoundManager
      */
-    public final SoundManager getSoundManager() {
-        return mSoundManager;
+    public final SoundModule getSoundManager() {
+        return mSoundModule;
     }
 
     /**
      * @return the VibratorManager
      */
-    public final VibratorManager getVibratorManager() {
-        return mVibratorManager;
+    public final VibrationModule getVibratorManager() {
+        return mVibrationModule;
     }
     
     /**
@@ -488,8 +491,8 @@ public abstract class GameWorld {
         mActors.clear();
         mMessages.clear();
         mBitmapManager.releaseAll();
-        mSoundManager.release();
-        mVibratorManager.release();
+        mSoundModule.release();
+        mVibrationModule.release();
 
     }
 

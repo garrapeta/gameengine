@@ -1,0 +1,54 @@
+package com.garrapeta.gameengine.module;
+
+import android.content.Context;
+import android.os.Vibrator;
+
+/**
+ * Manager of vibration patterns
+ * 
+ * @author GaRRaPeTa
+ */
+public class VibrationModule {
+
+	private final VibrationModuleDelegate mDelegate;
+	private Vibrator mVibrator;
+
+    public VibrationModule(Context context, short minimumLevel) {
+    	mDelegate = new VibrationModuleDelegate(minimumLevel);
+		mVibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
+	}
+
+	public void add(short level, short key, long[] pattern) {
+		if (mDelegate.getCount(key) > 0) {
+			throw new IllegalArgumentException("Already loaded: " + key);
+		}
+		mDelegate.create(level, key).add(pattern);
+	}
+	
+	public void vibrate(short key) {
+		mDelegate.executeOverOneResourceForKey(key);
+	}
+	
+	public void release() {
+		mDelegate.releaseAll();
+	}
+
+	private class VibrationModuleDelegate extends LeveledActionsModule<long[], Integer>  {
+		
+		private VibrationModuleDelegate(short minimumLevel) {
+			super(minimumLevel);
+		}
+
+		@Override
+		protected void onExecute(long[] pattern, Integer... params) {
+			final int repeat;
+			if (params != null) {
+				repeat = (params[0] != null) ? params[0] : -1;
+			} else {
+				repeat = -1;
+			}
+			mVibrator.vibrate(pattern, repeat);
+		}
+	}
+
+}

@@ -1,4 +1,4 @@
-package com.garrapeta.gameengine;
+package com.garrapeta.gameengine.module;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Random;
 import android.util.SparseArray;
 
 
-public abstract class LevelBasedResourcesManager<K, V, P> {
+public abstract class LoadedLeveledActionsModule<K, V, P> {
 
 	private final SparseArray<ResourceData> mResourceData;
 	private final short mMinimumLevel;
@@ -17,7 +17,7 @@ public abstract class LevelBasedResourcesManager<K, V, P> {
 	 * Constructor
 	 * @param minimumLevel
 	 */
-	public LevelBasedResourcesManager(short minimumLevel) {
+	public LoadedLeveledActionsModule(short minimumLevel) {
 		mResourceData = new SparseArray<ResourceData>();
 		mMinimumLevel = minimumLevel;
 	}
@@ -40,7 +40,7 @@ public abstract class LevelBasedResourcesManager<K, V, P> {
 		return 0;
 	}
 	
-	protected abstract V load(K key);
+	protected abstract V obtain(K key);
 
 	public final boolean executeOverOneResourceForKey(short key) {
 		return executeOverOneResourceForKey(key, (P[])null);
@@ -90,7 +90,7 @@ public abstract class LevelBasedResourcesManager<K, V, P> {
 	/**
      * Frees resources
      */
-	final void releaseAll() {
+	public final void releaseAll() {
         if (mResourceData != null) {
             for (int i = 0; i < mResourceData.size(); i++) {
             	ResourceData data = mResourceData.get(i);
@@ -117,7 +117,7 @@ public abstract class LevelBasedResourcesManager<K, V, P> {
 		public final ResourceData add(K key) {
 			V resource = null;
 			if (shouldBeExecuted(mLevel)) {
-	    		resource = load(key);
+	    		resource = obtain(key);
 	    		addResource(resource);
 	    	} 
 			return this;
@@ -182,12 +182,12 @@ public abstract class LevelBasedResourcesManager<K, V, P> {
 		
 		private void release() {
             if (mResource != null) {
-            	LevelBasedResourcesManager.this.onRelease(mResource);
+            	LoadedLeveledActionsModule.this.onRelease(mResource);
             	mResource = null;
             }
             if (mResources != null) {
                 for (V resource : mResources) {
-                	LevelBasedResourcesManager.this.onRelease(resource);
+                	LoadedLeveledActionsModule.this.onRelease(resource);
                 }
                 mResources.clear();
                 mResources = null;
