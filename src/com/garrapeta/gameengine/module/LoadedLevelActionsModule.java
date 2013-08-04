@@ -189,7 +189,9 @@ public abstract class LoadedLevelActionsModule<K, V, P> {
             }
             if (mResources != null) {
                 for (V resource : mResources) {
-                	LoadedLevelActionsModule.this.onRelease(resource);
+                	if (resource != null) {
+                		LoadedLevelActionsModule.this.onRelease(resource);
+                	}
                 }
                 mResources.clear();
                 mResources = null;
