@@ -188,7 +188,7 @@ public class Viewport {
                 prevWorldBoundaries.top != mWorldBoundaries.top ||
                 prevWorldBoundaries.bottom != mWorldBoundaries.bottom) {
                 
-                mWorld.onGameWorldSizeChanged();
+                mWorld.onGameWorldSizeChanged(mWorldBoundaries);
             }
         }
         

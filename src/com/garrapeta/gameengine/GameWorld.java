@@ -15,6 +15,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.Paint.Align;
 import android.util.Log;
 
@@ -507,17 +508,16 @@ public abstract class GameWorld {
     /**
      * Invoked when the size of game view changes
      * 
-     * @param width
-     *            , in pixels
-     * @param height
-     *            , in pixels
+     * @param width, in pixels
+     * @param height, in pixels
      */
     public abstract void onGameViewSizeChanged(int width, int height);
 
     /**
      * Invoked when the size of the viewport changes
+     * @param worldBoundaries
      */
-    public abstract void onGameWorldSizeChanged();
+    public abstract void onGameWorldSizeChanged(RectF worldBoundaries);
 
     void doProcessFrame(float lastFrameLength) {
         processMessages(lastFrameLength);
