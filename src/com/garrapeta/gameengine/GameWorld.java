@@ -53,7 +53,9 @@ public abstract class GameWorld {
     /** Actores del juego */
     public Vector<Actor<?>> mActors;
 
-    private List<GameMessage> mMessages;
+    private final List<GameMessage> mMessages;
+    
+    private final List<GameMessage> mMessagesAux;
 
     /** Frames por segundo que se intentan conseguir */
     private float mFps; //
@@ -109,6 +111,7 @@ public abstract class GameWorld {
         mActors = new Vector<Actor<?>>();
 
         mMessages = new ArrayList<GameMessage>();
+        mMessagesAux = new ArrayList<GameMessage>();
 
         setFPS(DEFAULT_FPS);
 
@@ -309,19 +312,28 @@ public abstract class GameWorld {
     }
 
     private void processMessages(float lastFrameLength) {
-        synchronized (mMessages) {
-            int index = 0;
-            GameMessage message;
+    	// collect the ones that are ready
+    	synchronized (mMessages) {
+    		int index = 0;
             while (index < mMessages.size()) {
-                message = mMessages.get(index);
-                if (message.isReadyToBeDispatched(lastFrameLength)) {
-                    mMessages.remove(index);
-                    message.doInGameLoop(this);
-                } else {
-                    index++;
-                }
+            	final GameMessage message = mMessages.get(index);
+	            if (message.isReadyToBeDispatched(lastFrameLength)) {
+	            	mMessagesAux.add(message);
+	            	mMessages.remove(message);
+	            } else {
+	            	index++;
+	            }
             }
         }
+    	
+    	// process the ones that are ready
+        if (!mMessagesAux.isEmpty()) {
+	    	for (GameMessage message : mMessagesAux) {
+	        	message.doInGameLoop(this);
+	        }
+	        mMessagesAux.clear();
+        }
+
     }
 
     /**
@@ -491,6 +503,7 @@ public abstract class GameWorld {
         }
         mActors.clear();
         mMessages.clear();
+        mMessagesAux.clear();
         mBitmapManager.releaseAll();
         mSoundModule.release();
         mVibrationModule.release();
