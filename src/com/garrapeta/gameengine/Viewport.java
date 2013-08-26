@@ -131,9 +131,35 @@ public class Viewport {
     }
     
     public void setWorldSizeGivenWorldUnitsPerInchX(float worldUnitsPerInchX) {
-        float inchesX =  mDisplayMetrics.widthPixels / mDisplayMetrics.xdpi;;
-        float  width = inchesX * worldUnitsPerInchX;
-        setWorldWidth(width);
+  	    // Due to bug in some devices (samsung) we cannot trust mDisplayMetrics.xdpi,
+    	// so we use mDisplayMetrics.densityDpi, which is more reliable albeit less accurate
+  	    // https://groups.google.com/forum/#!topic/android-developers/g56jV0Hora0
+    	
+  	    //final float xPixelsPerInch = mDisplayMetrics.xdpi;
+    	final float xPixelsPerInch = mDisplayMetrics.densityDpi;
+    	
+    	final float widthPixels = mDisplayMetrics.widthPixels;
+
+    	final float inchesX =  widthPixels / xPixelsPerInch;
+  	    final float  worldWidth = inchesX * worldUnitsPerInchX;
+        
+  	    setWorldWidth(worldWidth);
+    }
+    
+    public void setWorldSizeGivenWorldUnitsPerInchY(float worldUnitsPerInchY) {
+  	    // Due to bug in some devices (samsung) we cannot trust mDisplayMetrics.ydpi,
+    	// so we use mDisplayMetrics.densityDpi, which is more reliable albeit less accurate
+  	    // https://groups.google.com/forum/#!topic/android-developers/g56jV0Hora0    	
+
+  	    //final float xPixelsPerInch = mDisplayMetrics.ydpi;
+    	final float yPixelsPerInch = mDisplayMetrics.densityDpi;
+    	
+    	final float heightPixels = mDisplayMetrics.heightPixels;
+
+    	final float inchesY =  heightPixels / yPixelsPerInch;
+  	    final float  worldHeight = inchesY * worldUnitsPerInchY;
+        
+  	    setWorldHeight(worldHeight);
     }
     
     private void setWorldSize(float width, float height, float dpsInWorldUnit, ProjectionMode mode) {
