@@ -104,6 +104,7 @@ public class SoundModule implements OnCompletionListener {
 			if (player.isPlaying()) {
 	         	player.stop();
 	            player.prepare();
+	            player.seekTo(0);
 	        }
         } catch (IOException e) {
         	throw new IllegalStateException("Error stopping the player", e);
