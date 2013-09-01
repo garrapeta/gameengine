@@ -34,6 +34,7 @@ public class SoundModule implements OnCompletionListener {
     }
 
 	public SoundModuleDelegate.ResourceData create(short level, short key) {
+		Log.v(TAG, "Creating: " + key);
 		return mDelegate.create(level, key);
 	}
 
@@ -42,6 +43,7 @@ public class SoundModule implements OnCompletionListener {
 	}
 
 	public void play(short key, boolean repeat) {
+		Log.v(TAG, "Play: " + key);
 		try {
 			short repeatShort = (short) ((repeat) ? 1 : 0);
 			mDelegate.executeOverOneResourceForKey(key, ACTION_PLAY, repeatShort);
@@ -51,6 +53,7 @@ public class SoundModule implements OnCompletionListener {
 	}
 
 	public void stop(short key) {
+		Log.v(TAG, "Stopping: " + key);
 		try {
 			mDelegate.executeOverAllResourcesForKey(key, ACTION_STOP);
         } catch (Exception e) {
@@ -59,6 +62,7 @@ public class SoundModule implements OnCompletionListener {
 	}
 
 	public void pauseAll() {
+		Log.i(TAG, "Pausing all...");
 		try {
 			mDelegate.executeOverAllResources(ACTION_PAUSE);
         } catch (Exception e) {
@@ -67,6 +71,7 @@ public class SoundModule implements OnCompletionListener {
 	}
 
 	public void resumeAll() {
+		Log.i(TAG, "Resuming all...");
 		try {
 			mDelegate.executeOverAllResources(ACTION_RESUME);
         } catch (Exception e) {
@@ -75,7 +80,8 @@ public class SoundModule implements OnCompletionListener {
 
 	}
 	
-	public void release() {
+	public void releaseAll() {
+		Log.i(TAG, "Releasing all...");
 		mDelegate.releaseAll();
 	}
 	
@@ -165,6 +171,7 @@ public class SoundModule implements OnCompletionListener {
 
 		@Override
 		protected void onRelease(MediaPlayer player) {
+			Log.v(TAG, "Releasing: " + player);
 			player.release();
 		}
 	}

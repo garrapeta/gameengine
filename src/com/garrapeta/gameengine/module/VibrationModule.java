@@ -32,7 +32,7 @@ public class VibrationModule {
 		mDelegate.executeOverOneResourceForKey(key);
 	}
 	
-	public void release() {
+	public void releaseAll() {
 		mDelegate.releaseAll();
 	}
 	

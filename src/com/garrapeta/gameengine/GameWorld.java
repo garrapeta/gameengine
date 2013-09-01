@@ -220,13 +220,6 @@ public abstract class GameWorld {
         mRunning = false;
         // Interrupt the thread, in case it was paused
         mGameLoopThread.interrupt();
-        // synchronized (mGameLoopThread) {
-        // if (mGameLoopThread.isAlive()) {
-        // try {
-        // mGameLoopThread.wait();
-        // } catch (InterruptedException ie) {}
-        // }
-        // }
     }
 
     /**
@@ -263,14 +256,14 @@ public abstract class GameWorld {
      */
     private final void onPaused() {
         // TODO: not only pause, but release the resources of the soundManager
-        getSoundManager().pauseAll();
+    	mSoundModule.pauseAll();
     }
 
     /**
      * Notified when the game is resumed.
      */
     private final void onResumed() {
-        getSoundManager().resumeAll();
+        mSoundModule.resumeAll();
     }
 
     /**
@@ -280,8 +273,7 @@ public abstract class GameWorld {
         return mPaused;
     }
 
-    // ----------------------------------- métodos relativos a la l�gica del
-    // juego
+    // ----------------------------------- Game logic
 
     public void post(GameMessage message) {
         post(message, 0);
@@ -505,8 +497,8 @@ public abstract class GameWorld {
         mMessages.clear();
         mMessagesAux.clear();
         mBitmapManager.releaseAll();
-        mSoundModule.release();
-        mVibrationModule.release();
+        mSoundModule.releaseAll();
+        mVibrationModule.releaseAll();
 
     }
 
@@ -625,7 +617,6 @@ public abstract class GameWorld {
     	    	onError(t);
     	    }
        }
-
     }
 
 }
