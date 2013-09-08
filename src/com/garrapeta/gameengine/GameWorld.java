@@ -7,17 +7,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.garrapeta.gameengine.module.SoundModule;
-import com.garrapeta.gameengine.module.VibrationModule;
-
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.graphics.Paint.Align;
+import android.graphics.RectF;
 import android.util.Log;
+
+import com.garrapeta.gameengine.module.SoundModule;
+import com.garrapeta.gameengine.module.VibrationModule;
+import com.garrapeta.gameengine.utils.L;
 
 /**
  * Clase que representa un universo de juego.
@@ -31,10 +31,10 @@ public abstract class GameWorld {
     private static final float DEFAULT_FPS = 36f;
 
     /** Source trazas de log */
-    public static final String LOG_SRC_GAME_ENGINE = "game";
+    public static final String TAG_GAME_ENGINE = "game";
 
     /** Source trazas de log */
-    public static final String LOG_SRC = LOG_SRC_GAME_ENGINE + ".world";
+    public static final String TAG = TAG_GAME_ENGINE + ".world";
 
     /** Nombre del thread del game loop */
     public static final String LOOP_THREAD_NAME = "gameLoop";
@@ -79,7 +79,7 @@ public abstract class GameWorld {
     private long mCurrentGameMillis;
 
     /** Si pintar la info de FPS, etc **/
-    private boolean drawDebugInfo = false;
+    private boolean mDrawDebugInfo = false;
 
     /** Bitmap manager user by the world */
     private BitmapManager mBitmapManager;
@@ -186,7 +186,7 @@ public abstract class GameWorld {
      * @return the printDebugInfo
      */
     public boolean isDrawDebugInfo() {
-        return drawDebugInfo;
+        return mDrawDebugInfo;
     }
 
     /**
@@ -194,7 +194,7 @@ public abstract class GameWorld {
      *            the printDebugInfo to set
      */
     public void setDrawDebugInfo(boolean printDebugInfo) {
-        this.drawDebugInfo = printDebugInfo;
+        mDrawDebugInfo = printDebugInfo;
     }
 
     // ---------------------------------------- métodos relativos al ciclo de
@@ -204,7 +204,7 @@ public abstract class GameWorld {
      * Starts running the game loop
      */
     public void start() {
-        Log.i(LOG_SRC, "Start running...");
+        if (L.sEnabled) Log.i(TAG, "Start running...");
         mRunning = true;
         if (!mGameLoopThread.isAlive()) {
             mGameLoopThread.start();
@@ -216,7 +216,7 @@ public abstract class GameWorld {
      * finished.
      */
     public final void finish() {
-        Log.i(LOG_SRC, "Stop running...");
+        if (L.sEnabled) Log.i(TAG, "Stop running...");
         mRunning = false;
         // Interrupt the thread, in case it was paused
         mGameLoopThread.interrupt();
@@ -233,7 +233,7 @@ public abstract class GameWorld {
      * Pauses the game loop
      */
     public final void pause() {
-        Log.i(LOG_SRC, "Pausing...");
+        if (L.sEnabled) Log.i(TAG, "Pausing...");
         synchronized (mGameLoopThread) {
             mPaused = true;
         }
@@ -244,7 +244,7 @@ public abstract class GameWorld {
      */
     public final void resume() {
         // TODO: IllegalState is if not paused
-        Log.i(LOG_SRC, "Resuming...");
+        if (L.sEnabled) Log.i(TAG, "Resuming...");
         synchronized (mGameLoopThread) {
             mPaused = false;
             mGameLoopThread.notify();
@@ -336,7 +336,7 @@ public abstract class GameWorld {
      * @throws IllegalStateException if the actor is not initilialised
      */
     public final void addActor(final Actor<?> actor) {
-        Log.d(LOG_SRC, "GameWorld.addActor(" + actor + "). Thread: " + Thread.currentThread().getName());
+        if (L.sEnabled) Log.d(TAG, "GameWorld.addActor(" + actor + "). Thread: " + Thread.currentThread().getName());
 
         actor.assertInnited();
 
@@ -369,7 +369,7 @@ public abstract class GameWorld {
     }
 
     public final void removeActor(final Actor<?> actor) {
-        Log.d(LOG_SRC, "GameWorld.removeActor(" + actor + "). Thread: " + Thread.currentThread().getName());
+        if (L.sEnabled) Log.d(TAG, "GameWorld.removeActor(" + actor + "). Thread: " + Thread.currentThread().getName());
         post(new SyncGameMessage(GameMessage.MESSAGE_PRIORITY_MAX) {
             @Override
             public void doInGameLoop(GameWorld world) {
@@ -423,13 +423,13 @@ public abstract class GameWorld {
     // pintado
 
     final void doDrawWorld(Canvas canvas) {
-        Log.v(LOG_SRC, "Drawing frame");
+        if (L.sEnabled) Log.v(TAG, "Drawing frame");
 
         // pintado del mundo
         drawWorld(canvas);
 
         // pintado de debug
-        if (drawDebugInfo) {
+        if (mDrawDebugInfo) {
             drawDebugInfo(canvas, mDebugPaint);
         }
     }
@@ -483,7 +483,7 @@ public abstract class GameWorld {
      * until the world is disposed.
      */
     protected  void dispose() {
-        Log.i(LOG_SRC, "GameWorld.dispose()");
+        if (L.sEnabled) Log.i(TAG, "GameWorld.dispose()");
 
         synchronized (this) {
         	mAsyncMessagesExecutor.shutdownNow();
@@ -505,7 +505,7 @@ public abstract class GameWorld {
     // ---------------------------------- métodos relativos a la interacci�n
 
     final void gameViewSizeChanged(GameView gameView, int width, int height) {
-        Log.i(LOG_SRC, "surfaceChanged (" + width + ", " + height + ")");
+        if (L.sEnabled) Log.i(TAG, "surfaceChanged (" + width + ", " + height + ")");
         onGameViewSizeChanged(width, height);
         mViewport.gameViewSizeChanged(gameView, width, height);
     }
@@ -564,7 +564,7 @@ public abstract class GameWorld {
         @Override
         public void run() {
         	try {
-	            Log.i(LOG_SRC, "Game loop thread started. Thread: " + Thread.currentThread().getName());
+	            if (L.sEnabled) Log.i(TAG, "Game loop thread started. Thread: " + Thread.currentThread().getName());
 	
 	            float lastFrameLength = 0;
 	
@@ -592,16 +592,16 @@ public abstract class GameWorld {
 	                lastFrameLength = System.currentTimeMillis() - begin;
 	                mCurrentGameMillis += lastFrameLength;
 	                mCurrentFps = 1000 / lastFrameLength;
-	                Log.v(LOG_SRC, "Game loop frame. Desired FPS: " + mFps + " Actual: " + mCurrentFps);
+	                if (L.sEnabled) Log.v(TAG, "Game loop frame. Desired FPS: " + mFps + " Actual: " + mCurrentFps);
 	                Thread.yield();
 	
 	                synchronized (mGameLoopThread) {
 	                    if (mPaused) {
-	                        Log.d(LOG_SRC, "Game loop paused.");
+	                        if (L.sEnabled) Log.d(TAG, "Game loop paused.");
 	                        onPaused();
 	                        try {
 	                            mGameLoopThread.wait();
-	                            Log.v(LOG_SRC, "Game loop resumed.");
+	                            if (L.sEnabled) Log.v(TAG, "Game loop resumed.");
 	                            onResumed();
 	                        } catch (InterruptedException e) {
 	                        }
@@ -610,10 +610,10 @@ public abstract class GameWorld {
 	            }
 	            
 	            dispose();
-	            Log.i(LOG_SRC, "Game loop thread ended");
+	            if (L.sEnabled) Log.i(TAG, "Game loop thread ended");
 	            
     	    } catch (Throwable t) {
-    	    	Log.e(LOG_SRC, "Error happenend in the game loop", t);
+    	    	if (L.sEnabled) Log.e(TAG, "Error happenend in the game loop", t);
     	    	onError(t);
     	    }
        }

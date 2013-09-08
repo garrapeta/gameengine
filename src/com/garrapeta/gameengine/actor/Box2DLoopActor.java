@@ -1,12 +1,12 @@
 package com.garrapeta.gameengine.actor;
 
-import com.garrapeta.gameengine.Box2DWorld;
-import com.garrapeta.gameengine.Viewport;
 import android.graphics.PointF;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.ChainShape;
+import com.garrapeta.gameengine.Box2DWorld;
+import com.garrapeta.gameengine.Viewport;
 
 public class Box2DLoopActor<T extends Box2DWorld> extends Box2DAtomicActor<T> {
 

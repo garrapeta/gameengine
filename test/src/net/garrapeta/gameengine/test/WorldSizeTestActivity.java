@@ -19,7 +19,7 @@ import android.widget.Button;
 
 public class WorldSizeTestActivity extends Activity {
 
-    private static final String LOG_SRC = GameWorld.LOG_SRC_GAME_ENGINE + ".Test";
+    private static final String TAG = GameWorld.TAG_GAME_ENGINE + ".Test";
     private WorldSizeBox2DWorld mWorld;
     private GameView mGameView;
 
@@ -28,7 +28,7 @@ public class WorldSizeTestActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.i(WorldSizeTestActivity.LOG_SRC, "onCreate " + this);
+        if (L.sEnabled) Log.i(WorldSizeTestActivity.TAG, "onCreate " + this);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -172,13 +172,13 @@ public class WorldSizeTestActivity extends Activity {
 
         @Override
         public void onGameViewSizeChanged(int width, int height) {
-            Log.i(WorldSizeTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
+            if (L.sEnabled) Log.i(WorldSizeTestActivity.TAG, "onGameViewSizeChanged " + this);
             mWorld.start();
         }
  
         @Override
         public void onGameWorldSizeChanged() {
-            Log.i(WorldSizeTestActivity.LOG_SRC, "onGameWorldSizeChanged " + this);
+            if (L.sEnabled) Log.i(WorldSizeTestActivity.TAG, "onGameWorldSizeChanged " + this);
             create();
         }
 

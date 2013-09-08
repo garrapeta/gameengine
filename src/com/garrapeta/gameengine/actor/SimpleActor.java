@@ -1,8 +1,9 @@
 package com.garrapeta.gameengine.actor;
 
+import android.graphics.PointF;
+
 import com.garrapeta.gameengine.Actor;
 import com.garrapeta.gameengine.GameWorld;
-import android.graphics.PointF;
 
 /**
  * Actor del juego

@@ -1,10 +1,10 @@
 package com.garrapeta.gameengine.actor;
 
-import com.garrapeta.gameengine.Box2DWorld;
 import android.graphics.PointF;
 
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.garrapeta.gameengine.Box2DWorld;
 
 /**
  * Actor basado en un círculo

@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.garrapeta.gameengine.utils.L;
+
 /**
  * Vista sobre la que se renderiza el juego
  * 
@@ -17,7 +19,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     // -----------------------------------------------------------------
     // Constants
 
-    public static final String LOG_SRC = GameWorld.LOG_SRC_GAME_ENGINE + ".gameView";
+    public static final String TAG = GameWorld.TAG_GAME_ENGINE + ".gameView";
 
     // -----------------------------------------------------------------
     // Variables
@@ -87,14 +89,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public final void surfaceCreated(SurfaceHolder holder) {
-        Log.i(LOG_SRC, "surfaceCreated (" + getWidth() + ", " + getHeight() + ")");
+        if (L.sEnabled) Log.i(TAG, "surfaceCreated (" + getWidth() + ", " + getHeight() + ")");
         // Draw the view when it's been created, to avoid a black screen
         draw();
     }
 
     @Override
     public final void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.i(LOG_SRC, "surfaceChanged (" + width + ", " + height + ")");
+        if (L.sEnabled) Log.i(TAG, "surfaceChanged (" + width + ", " + height + ")");
         if (mWorld != null) {
             mWorld.gameViewSizeChanged(this, width, height);
         }
@@ -102,7 +104,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public final void surfaceDestroyed(SurfaceHolder holder) {
-        Log.i(LOG_SRC, "surfaceDestroyed");
+        if (L.sEnabled) Log.i(TAG, "surfaceDestroyed");
     }
 
 }

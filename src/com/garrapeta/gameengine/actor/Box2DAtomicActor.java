@@ -1,12 +1,13 @@
 package com.garrapeta.gameengine.actor;
 
-import com.garrapeta.gameengine.Box2DActor;
-import com.garrapeta.gameengine.Box2DWorld;
-import com.garrapeta.gameengine.Viewport;
 import android.graphics.PointF;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
+import com.garrapeta.gameengine.Box2DActor;
+import com.garrapeta.gameengine.Box2DWorld;
+import com.garrapeta.gameengine.Viewport;
+import com.garrapeta.gameengine.utils.L;
 
 
 /**
@@ -49,7 +50,7 @@ public abstract class Box2DAtomicActor<T extends Box2DWorld> extends Box2DActor<
 	
 	@Override
 	public void setWorldPos(float x, float y) {
-		Log.e("world", "setWorldPos");
+		if (L.sEnabled) Log.e("world", "setWorldPos");
 	}
 	
 	// ------------------------------------------------- métodos propios

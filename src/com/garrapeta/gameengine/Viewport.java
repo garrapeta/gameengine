@@ -10,12 +10,13 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
+import com.garrapeta.gameengine.utils.L;
 
 public class Viewport {
 
     // -------------------------------------------------------- Constants
 
-    public static final String LOG_SRC = GameWorld.LOG_SRC_GAME_ENGINE + ".viewport";
+    public static final String TAG = GameWorld.TAG_GAME_ENGINE + ".viewport";
     
     
     // ------------------------------------------------------------ Types
@@ -95,7 +96,7 @@ public class Viewport {
     // ------------------------------------------------ Instance methods
 
     public void gameViewSizeChanged(GameView gameView, int viewWidth, int viewHeight) {
-        Log.i(LOG_SRC, "onGameViewSizeChanged(" + viewWidth + ", " + + viewHeight + ")");
+        if (L.sEnabled) Log.i(TAG, "onGameViewSizeChanged(" + viewWidth + ", " + + viewHeight + ")");
 
         mViewWidth  = viewWidth;
         mViewHeight = viewHeight;

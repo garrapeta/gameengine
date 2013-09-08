@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory.Options;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.garrapeta.gameengine.utils.L;
+
 /**
  * Module / helper to deal with bitmaps
  */
@@ -15,7 +17,7 @@ public class BitmapManager {
     // -------------------------------- Static vars
 
     /** Source trazas de log */
-    public static final String LOG_SRC = "bitmap";
+    public static final String TAG = "bitmap";
     
     // ------------------------------ Instance vars
 
@@ -40,7 +42,7 @@ public class BitmapManager {
      * @return the loaded bitmap
      */
     public Bitmap loadBitmap(Resources resources, int resourceId) {
-        Log.d(LOG_SRC, "Loading bitmap: " + resourceId);
+        if (L.sEnabled) Log.d(TAG, "Loading bitmap: " + resourceId);
 
         if (mBitmaps == null) {
             mBitmaps = new SparseArray<Bitmap>();
@@ -48,7 +50,7 @@ public class BitmapManager {
         Options o = new Options();
         Bitmap bmp = BitmapFactory.decodeResource(resources, resourceId, o);
         mBitmaps.append(resourceId, bmp);
-        Log.v(LOG_SRC, "Loaded " + resourceId + ". "+  mBitmaps.size() + " bitmaps in memory");
+        if (L.sEnabled) Log.v(TAG, "Loaded " + resourceId + ". "+  mBitmaps.size() + " bitmaps in memory");
         return bmp;
     }
 
@@ -58,21 +60,21 @@ public class BitmapManager {
      * @param resourceId
      */
     public void releaseBitmap(int resourceId) {
-        Log.d(LOG_SRC, "Releasing bitmap: " + resourceId);
+        if (L.sEnabled) Log.d(TAG, "Releasing bitmap: " + resourceId);
         Bitmap bmp = getBitmap(resourceId);
         mBitmaps.delete(resourceId);
         if (bmp != null) {
             bmp.recycle();
             mBitmaps.delete(resourceId);
         }
-        Log.v(LOG_SRC, "Released " + resourceId + ". "+  mBitmaps.size() + " bitmaps in memory");
+        if (L.sEnabled) Log.v(TAG, "Released " + resourceId + ". "+  mBitmaps.size() + " bitmaps in memory");
     }
 
     /**
      * Releases of the resources
      */
     public void releaseAll() {
-        Log.i(LOG_SRC, "Releasing all the bitmaps");
+        if (L.sEnabled) Log.i(TAG, "Releasing all the bitmaps");
         if (mBitmaps != null) {
             int key = 0;
             int size = mBitmaps.size();

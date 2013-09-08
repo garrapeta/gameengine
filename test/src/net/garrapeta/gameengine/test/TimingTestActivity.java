@@ -25,7 +25,7 @@ import android.widget.Button;
 
 public class TimingTestActivity extends Activity {
 
-    private static final String LOG_SRC = GameWorld.LOG_SRC_GAME_ENGINE + ".Test";
+    private static final String TAG = GameWorld.TAG_GAME_ENGINE + ".Test";
 
     private TimingBox2DWorld mWorld;
     private GameView mGameView;
@@ -35,7 +35,7 @@ public class TimingTestActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.i(TimingTestActivity.LOG_SRC, "onCreate " + this);
+        if (L.sEnabled) Log.i(TimingTestActivity.TAG, "onCreate " + this);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -109,14 +109,14 @@ public class TimingTestActivity extends Activity {
 
         @Override
         public void onGameViewSizeChanged(int width, int height) {
-            Log.i(TimingTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
+            if (L.sEnabled) Log.i(TimingTestActivity.TAG, "onGameViewSizeChanged " + this);
             mViewport.setWorldWidth(10);
             start();
         }
  
         @Override
         public void onGameWorldSizeChanged() {
-            Log.i(TimingTestActivity.LOG_SRC, "onGameWorldSizeChanged " + this);
+            if (L.sEnabled) Log.i(TimingTestActivity.TAG, "onGameWorldSizeChanged " + this);
             create();
          }
 

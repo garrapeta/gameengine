@@ -2,6 +2,8 @@ package com.garrapeta.gameengine;
 
 import android.util.Log;
 
+import com.garrapeta.gameengine.utils.L;
+
 public abstract class AsyncGameMessage extends GameMessage {
 
     public AsyncGameMessage() {
@@ -23,7 +25,7 @@ public abstract class AsyncGameMessage extends GameMessage {
 		            		doInBackground();
 		            		world.add(AsyncGameMessage.this);
 		            	} catch (Throwable t) {
-		            		Log.e(GameWorld.LOG_SRC, "Error happening in async message", t);
+		            		if (L.sEnabled) Log.e(GameWorld.TAG, "Error happening in async message", t);
 		            		world.onError(t);
 		            	}
 	            	}

@@ -24,7 +24,7 @@ import android.view.WindowManager;
 
 public class BasicTestActivity extends Activity implements OnTouchListener {
 
-    private static final String LOG_SRC = GameWorld.LOG_SRC_GAME_ENGINE + ".Test";
+    private static final String TAG = GameWorld.TAG_GAME_ENGINE + ".Test";
 
     private BasicTestBox2DWorld mWorld;
     private GameView mGameView;
@@ -68,13 +68,13 @@ public class BasicTestActivity extends Activity implements OnTouchListener {
 
         @Override
         public void onGameViewSizeChanged(int width, int height) {
-            Log.i(BasicTestActivity.LOG_SRC, "onGameViewSizeChanged " + this);
+            if (L.sEnabled) Log.i(BasicTestActivity.TAG, "onGameViewSizeChanged " + this);
             mWorld.start();
         }
  
         @Override
         public void onGameWorldSizeChanged() {
-            Log.i(BasicTestActivity.LOG_SRC, "onGameWorldSizeChanged " + this);
+            if (L.sEnabled) Log.i(BasicTestActivity.TAG, "onGameWorldSizeChanged " + this);
 
             
             post(new SyncGameMessage() {
