@@ -53,6 +53,7 @@ public class Viewport {
     
     /** Display metrics  */
     private DisplayMetrics mDisplayMetrics;
+    
     // -------------------------------------------------- Static methods
 
     public static Vector2 pointFToVector2(PointF pf) {
@@ -248,23 +249,21 @@ public class Viewport {
 
     // Coordinate conversion methods
 
-    public PointF worldToScreen(PointF worldPos) {
-        return worldToScreen(worldPos.x, worldPos.y);
+    public float screenToWorldX(float screenX) {
+        return pixelsToWorldUnits(screenX);
+    }
+    
+    public float screenToWorldY(float screenY) {
+        return pixelsToWorldUnits(mViewHeight - screenY);
     }
 
-    public PointF screenToWorld(PointF screenPos) {
-        return screenToWorld(screenPos.x, screenPos.y);
+    public float worldToScreenX(float worldX) {
+    	return worldUnitsToPixels(worldX);
     }
-
-    public PointF worldToScreen(float worldX, float worldY) {
-        return new PointF(worldUnitsToPixels(worldX), mViewHeight - worldUnitsToPixels(worldY));
+    
+    public float worldToScreenY(float worldY) {
+    	return mViewHeight - worldUnitsToPixels(worldY);
     }
-
-    public PointF screenToWorld(float screenX, float screenY) {
-        return new PointF(pixelsToWorldUnits(screenX), pixelsToWorldUnits(mViewHeight - screenY));
-    }
-
-        
     // ----------------------------------------------------------------------------------
 
     /**
@@ -283,13 +282,10 @@ public class Viewport {
         paint.setStyle(Style.STROKE);
         paint.setColor(Color.DKGRAY);
 
-        PointF v0 = worldToScreen(mWorldBoundaries.left, mWorldBoundaries.bottom);
-        PointF v1 = worldToScreen(mWorldBoundaries.right, mWorldBoundaries.top);
-
-        float top = v0.y;
-        float left = v0.x;
-        float bottom = v1.y;
-        float right = v1.x;
+        float left = worldToScreenX(mWorldBoundaries.left);
+        float top = worldToScreenY(mWorldBoundaries.bottom);
+        float right = worldToScreenX(mWorldBoundaries.right);
+        float bottom = worldToScreenY(mWorldBoundaries.top);
 
         // rayas verticales
         for (float i = left; i < right; i += screenSpacing) {

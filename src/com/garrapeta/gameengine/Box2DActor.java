@@ -3,7 +3,6 @@ package com.garrapeta.gameengine;
 import java.util.ArrayList;
 
 import android.graphics.Canvas;
-import android.graphics.PointF;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -131,9 +130,10 @@ public abstract class Box2DActor<T extends Box2DWorld> extends Actor<T> {
                 Body body = mBodies.get(i);
                 for (Fixture fixture : body.getFixtureList()) {
                     Vector2 worldPos = body.getWorldCenter();
-                    PointF screenPos = getWorld().mViewport.worldToScreen(worldPos.x, worldPos.y);
                     canvas.save();
-                    canvas.translate(screenPos.x, screenPos.y);
+                    float screenPositionX = getWorld().mViewport.worldToScreenX(worldPos.x);
+                    float screenPositionY = getWorld().mViewport.worldToScreenY(worldPos.y);
+                    canvas.translate(screenPositionX, screenPositionY);
                     canvas.rotate(-(float) Math.toDegrees(body.getAngle()));
                     ShapeDrawer.draw(canvas, getWorld().mViewport, fixture.getShape());
                     canvas.restore();

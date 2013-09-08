@@ -293,8 +293,9 @@ public abstract class GameWorld {
     void add(GameMessage message) {
         synchronized (mMessages) {
             int index = 0;
-            for (GameMessage aux : mMessages) {
-                if (aux.getPriority() > message.getPriority()) {
+            final int size = mMessages.size();
+            for (int i = 0; i< size; i++) {
+                if (mMessages.get(i).getPriority() > message.getPriority()) {
                     break;
                 }
                 index++;
@@ -320,8 +321,9 @@ public abstract class GameWorld {
     	
     	// process the ones that are ready
         if (!mMessagesAux.isEmpty()) {
-	    	for (GameMessage message : mMessagesAux) {
-	        	message.doInGameLoop(this);
+        	final int size = mMessagesAux.size(); 
+        	for (int i = 0; i< size; i++) {
+	    		mMessagesAux.get(i).doInGameLoop(this);
 	        }
 	        mMessagesAux.clear();
         }
