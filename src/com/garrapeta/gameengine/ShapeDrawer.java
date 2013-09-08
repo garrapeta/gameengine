@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
-import android.graphics.PointF;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ChainShape;
@@ -98,28 +97,28 @@ public class ShapeDrawer {
     private static void drawCircleShape(Canvas canvas, Viewport viewport, Paint paint, CircleShape circleShape, int strokeColor, int fillColor, int lineColor) {
         float screenRadius = viewport.worldUnitsToPixels(circleShape.getRadius());
         Vector2 worldPosition = circleShape.getPosition();
-        PointF screenPosition = viewport.worldToScreen(worldPosition.x, worldPosition.y);
-        screenPosition = new PointF(0, 0);
+        float screenPositionX = viewport.worldUnitsToPixels(worldPosition.x);
+        float screenPositionY = viewport.worldUnitsToPixels(worldPosition.y);
         // circulo
-        drawCircle(canvas, paint, screenPosition, screenRadius, strokeColor, fillColor);
+        drawCircle(canvas, paint, screenPositionX, screenPositionY, screenRadius, strokeColor, fillColor);
 
         // linea
         if (lineColor != Color.TRANSPARENT) {
             paint.setStyle(Style.STROKE);
             paint.setColor(lineColor);
-            canvas.drawLine(screenPosition.x, screenPosition.y, screenPosition.x + screenRadius, screenPosition.y, paint);
+            canvas.drawLine(screenPositionX, screenPositionY, screenPositionX + screenRadius, screenPositionY, paint);
         }
 
     }
 
-    private static void drawCircle(Canvas canvas, Paint paint, PointF screenPosition, float screenRadius, int strokeColor, int fillColor) {
+    private static void drawCircle(Canvas canvas, Paint paint, float screenPositionX, float screenPositionY, float screenRadius, int strokeColor, int fillColor) {
 
         // circulo
         if (fillColor != Color.TRANSPARENT) {
             paint.setStyle(Style.FILL);
             paint.setColor(fillColor);
 
-            canvas.drawCircle(screenPosition.x, screenPosition.y, screenRadius, paint);
+            canvas.drawCircle(screenPositionX, screenPositionY, screenRadius, paint);
         }
 
         // circunferencia
@@ -127,7 +126,7 @@ public class ShapeDrawer {
             paint.setStyle(Style.STROKE);
             paint.setColor(strokeColor);
 
-            canvas.drawCircle(screenPosition.x, screenPosition.y, screenRadius, paint);
+            canvas.drawCircle(screenPositionX, screenPositionY, screenRadius, paint);
         }
 
     }
