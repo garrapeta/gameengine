@@ -54,6 +54,8 @@ public class Viewport {
     /** Display metrics  */
     private DisplayMetrics mDisplayMetrics;
     
+    private boolean mReverseYAxis = false;
+    
     // -------------------------------------------------- Static methods
 
     public static Vector2 pointFToVector2(PointF pf) {
@@ -104,6 +106,10 @@ public class Viewport {
         updateWorldBoundaries();
     }
 
+    void setReverseYAxis(boolean reverse) {
+        mReverseYAxis = reverse;
+    }
+    
     public void setWorldSize(float width, float height, float dpsInWorldUnit) {
         setWorldSize(width, height, dpsInWorldUnit, ProjectionMode.EXPLICIT);
     }
@@ -130,6 +136,12 @@ public class Viewport {
     
     public void setWorldHeight(float height) {
         setWorldSize(Float.MIN_VALUE, height, Float.MIN_VALUE, ProjectionMode.FIT_HEIGHT);
+    }
+    
+    public void setWorldSizeDpsPerWorldUnit(float dpsPerWorldUnit) {
+        final float worldWidth = mDisplayMetrics.widthPixels / mDisplayMetrics.density / dpsPerWorldUnit;
+        final float worldHeight = mDisplayMetrics.heightPixels / mDisplayMetrics.density / dpsPerWorldUnit;
+        setWorldSize(worldWidth, worldHeight, dpsPerWorldUnit);
     }
     
     public void setWorldSizeGivenWorldUnitsPerInchX(float worldUnitsPerInchX) {
@@ -208,9 +220,15 @@ public class Viewport {
 
             mWorldBoundaries.left   = 0;
             mWorldBoundaries.right  = mWorldWidth;
-            mWorldBoundaries.bottom = 0;
-            mWorldBoundaries.top    = mWorldHeight;
             
+            if (!mReverseYAxis) {
+                mWorldBoundaries.top    = 0;
+                mWorldBoundaries.bottom = mWorldHeight;
+            } else {
+                mWorldBoundaries.top    = mWorldHeight;
+                mWorldBoundaries.bottom = 0;
+            }
+
             if (prevWorldBoundaries.left != mWorldBoundaries.left ||
                 prevWorldBoundaries.right != mWorldBoundaries.right ||
                 prevWorldBoundaries.top != mWorldBoundaries.top ||
@@ -254,7 +272,11 @@ public class Viewport {
     }
     
     public float screenToWorldY(float screenY) {
-        return pixelsToWorldUnits(mViewHeight - screenY);
+        if (!mReverseYAxis) {
+            return pixelsToWorldUnits(screenY);
+        } else {
+            return pixelsToWorldUnits(mViewHeight - screenY);
+        }
     }
 
     public float worldToScreenX(float worldX) {
@@ -262,7 +284,11 @@ public class Viewport {
     }
     
     public float worldToScreenY(float worldY) {
-    	return mViewHeight - worldUnitsToPixels(worldY);
+        if (!mReverseYAxis) {
+            return worldUnitsToPixels(worldY);
+        } else {
+            return mViewHeight - worldUnitsToPixels(worldY);
+        }
     }
     // ----------------------------------------------------------------------------------
 

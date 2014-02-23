@@ -58,7 +58,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
     public Box2DWorld( GameView gameView, Context context, short soundLevel, short vibratorLevel) {
         super(gameView, context, soundLevel, vibratorLevel);
-
+        mViewport.setReverseYAxis(true);
         // Step 1: Create Physics World Boundaries
         // worldAABB = new AABB();
         // worldAABB.lowerBound.set(new Vector2((float) 0, (float) 0));

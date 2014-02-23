@@ -453,7 +453,6 @@ public abstract class GameWorld {
      */
     protected void drawBackground(Canvas canvas) {
         canvas.drawColor(Color.BLACK);
-        mViewport.drawBoundaries(canvas, mDebugPaint);
     }
 
     protected void drawActors(Canvas canvas) {
