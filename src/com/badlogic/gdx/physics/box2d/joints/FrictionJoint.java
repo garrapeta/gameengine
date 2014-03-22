@@ -19,53 +19,70 @@ package com.badlogic.gdx.physics.box2d.joints;
 import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.World;
 
-/** Friction joint. This is used for top-down friction. It provides 2D translational friction and angular friction. */
+/**
+ * Friction joint. This is used for top-down friction. It provides 2D
+ * translational friction and angular friction.
+ */
 public class FrictionJoint extends Joint {
-	/*JNI
-#include <Box2D/Box2D.h> 
-	 */
-	
-	public FrictionJoint (World world, long addr) {
-		super(world, addr);
-	}
+    /*
+     * JNI #include <Box2D/Box2D.h>
+     */
 
-	/** Set the maximum friction force in N. */
-	public void setMaxForce (float force) {
-		jniSetMaxForce(addr, force);
-	}
+    public FrictionJoint(World world, long addr) {
+        super(world, addr);
+    }
 
-	private native void jniSetMaxForce (long addr, float force); /*
-		b2FrictionJoint* joint = (b2FrictionJoint*)addr;
-		joint->SetMaxForce( force );
-	*/
+    /** Set the maximum friction force in N. */
+    public void setMaxForce(float force) {
+        jniSetMaxForce(addr, force);
+    }
 
-	/** Get the maximum friction force in N. */
-	public float getMaxForce () {
-		return jniGetMaxForce(addr);
-	}
+    private native void jniSetMaxForce(long addr, float force); /*
+                                                                 * b2FrictionJoint*
+                                                                 * joint =
+                                                                 * (b2FrictionJoint
+                                                                 * *)addr;
+                                                                 * joint-
+                                                                 * >SetMaxForce(
+                                                                 * force );
+                                                                 */
 
-	private native float jniGetMaxForce (long addr); /*
-		b2FrictionJoint* joint = (b2FrictionJoint*)addr;
-		return joint->GetMaxForce();
-	*/
+    /** Get the maximum friction force in N. */
+    public float getMaxForce() {
+        return jniGetMaxForce(addr);
+    }
 
-	/** Set the maximum friction torque in N*m. */
-	public void setMaxTorque (float torque) {
-		jniSetMaxTorque(addr, torque);
-	}
+    private native float jniGetMaxForce(long addr); /*
+                                                     * b2FrictionJoint* joint =
+                                                     * (b2FrictionJoint*)addr;
+                                                     * return
+                                                     * joint->GetMaxForce();
+                                                     */
 
-	private native void jniSetMaxTorque (long addr, float torque); /*
-		b2FrictionJoint* joint = (b2FrictionJoint*)addr;
-		joint->SetMaxTorque( torque );
-	*/
+    /** Set the maximum friction torque in N*m. */
+    public void setMaxTorque(float torque) {
+        jniSetMaxTorque(addr, torque);
+    }
 
-	/** Get the maximum friction torque in N*m. */
-	public float getMaxTorque () {
-		return jniGetMaxTorque(addr);
-	}
+    private native void jniSetMaxTorque(long addr, float torque); /*
+                                                                   * b2FrictionJoint
+                                                                   * * joint = (
+                                                                   * b2FrictionJoint
+                                                                   * *)addr;
+                                                                   * joint
+                                                                   * ->SetMaxTorque
+                                                                   * ( torque );
+                                                                   */
 
-	private native float jniGetMaxTorque (long addr); /*
-		b2FrictionJoint* joint = (b2FrictionJoint*)addr;
-		return joint->GetMaxTorque();
-	*/
+    /** Get the maximum friction torque in N*m. */
+    public float getMaxTorque() {
+        return jniGetMaxTorque(addr);
+    }
+
+    private native float jniGetMaxTorque(long addr); /*
+                                                      * b2FrictionJoint* joint =
+                                                      * (b2FrictionJoint*)addr;
+                                                      * return
+                                                      * joint->GetMaxTorque();
+                                                      */
 }

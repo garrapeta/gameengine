@@ -19,106 +19,191 @@ package com.badlogic.gdx.physics.box2d;
 import com.badlogic.gdx.math.Vector2;
 
 public class Manifold {
-	/*JNI
-#include <Box2D/Box2D.h>
-	 */
-	
-	long addr;
-	final ManifoldPoint[] points = new ManifoldPoint[] {new ManifoldPoint(), new ManifoldPoint()};
-	final Vector2 localNormal = new Vector2();
-	final Vector2 localPoint = new Vector2();
+    /*
+     * JNI #include <Box2D/Box2D.h>
+     */
 
-	final int[] tmpInt = new int[2];
-	final float[] tmpFloat = new float[4];
+    long addr;
+    final ManifoldPoint[] points = new ManifoldPoint[] {
+            new ManifoldPoint(),
+            new ManifoldPoint() };
+    final Vector2 localNormal = new Vector2();
+    final Vector2 localPoint = new Vector2();
 
-	protected Manifold (long addr) {
-		this.addr = addr;
-	}
+    final int[] tmpInt = new int[2];
+    final float[] tmpFloat = new float[4];
 
-	public ManifoldType getType () {
-		int type = jniGetType(addr);
-		if (type == 0) return ManifoldType.Circle;
-		if (type == 1) return ManifoldType.FaceA;
-		if (type == 2) return ManifoldType.FaceB;
-		return ManifoldType.Circle;
-	}
+    protected Manifold(long addr) {
+        this.addr = addr;
+    }
 
-	private native int jniGetType (long addr); /*
-		b2Manifold* manifold = (b2Manifold*)addr;
-		return manifold->type;
-	*/
+    public ManifoldType getType() {
+        int type = jniGetType(addr);
+        if (type == 0)
+            return ManifoldType.Circle;
+        if (type == 1)
+            return ManifoldType.FaceA;
+        if (type == 2)
+            return ManifoldType.FaceB;
+        return ManifoldType.Circle;
+    }
 
-	public int getPointCount () {
-		return jniGetPointCount(addr);
-	}
+    private native int jniGetType(long addr); /*
+                                               * b2Manifold* manifold =
+                                               * (b2Manifold*)addr; return
+                                               * manifold->type;
+                                               */
 
-	private native int jniGetPointCount (long addr); /*
-	  	b2Manifold* manifold = (b2Manifold*)addr;
-		return manifold->pointCount;
-	*/
+    public int getPointCount() {
+        return jniGetPointCount(addr);
+    }
 
-	public Vector2 getLocalNormal () {
-		jniGetLocalNormal(addr, tmpFloat);
-		localNormal.set(tmpFloat[0], tmpFloat[1]);
-		return localNormal;
-	}
+    private native int jniGetPointCount(long addr); /*
+                                                     * b2Manifold* manifold =
+                                                     * (b2Manifold*)addr; return
+                                                     * manifold->pointCount;
+                                                     */
 
-	private native void jniGetLocalNormal (long addr, float[] values); /*
-		b2Manifold* manifold = (b2Manifold*)addr;
-		values[0] = manifold->localNormal.x;
-		values[1] = manifold->localNormal.y;
-	*/
+    public Vector2 getLocalNormal() {
+        jniGetLocalNormal(addr, tmpFloat);
+        localNormal.set(tmpFloat[0], tmpFloat[1]);
+        return localNormal;
+    }
 
-	public Vector2 getLocalPoint () {
-		jniGetLocalPoint(addr, tmpFloat);
-		localPoint.set(tmpFloat[0], tmpFloat[1]);
-		return localPoint;
-	}
+    private native void jniGetLocalNormal(long addr, float[] values); /*
+                                                                       * b2Manifold*
+                                                                       * manifold
+                                                                       * =
+                                                                       * (b2Manifold
+                                                                       * *)addr;
+                                                                       * values
+                                                                       * [0] =
+                                                                       * manifold
+                                                                       * ->
+                                                                       * localNormal
+                                                                       * .x;
+                                                                       * values
+                                                                       * [1] =
+                                                                       * manifold
+                                                                       * ->
+                                                                       * localNormal
+                                                                       * .y;
+                                                                       */
 
-	private native void jniGetLocalPoint (long addr, float[] values); /*
-		b2Manifold* manifold = (b2Manifold*)addr;
-		values[0] = manifold->localPoint.x;
-		values[1] = manifold->localPoint.y;
-	*/
+    public Vector2 getLocalPoint() {
+        jniGetLocalPoint(addr, tmpFloat);
+        localPoint.set(tmpFloat[0], tmpFloat[1]);
+        return localPoint;
+    }
 
-	public ManifoldPoint[] getPoints () {
-		int count = jniGetPointCount(addr);
+    private native void jniGetLocalPoint(long addr, float[] values); /*
+                                                                      * b2Manifold*
+                                                                      * manifold
+                                                                      * =
+                                                                      * (b2Manifold
+                                                                      * *)addr;
+                                                                      * values
+                                                                      * [0] =
+                                                                      * manifold
+                                                                      * -
+                                                                      * >localPoint
+                                                                      * .x;
+                                                                      * values
+                                                                      * [1] =
+                                                                      * manifold
+                                                                      * -
+                                                                      * >localPoint
+                                                                      * .y;
+                                                                      */
 
-		for (int i = 0; i < count; i++) {
-			int contactID = jniGetPoint(addr, tmpFloat, i);
-			ManifoldPoint point = points[i];
-			point.contactID = contactID;
-			point.localPoint.set(tmpFloat[0], tmpFloat[1]);
-			point.normalImpulse = tmpFloat[2];
-			point.tangentImpulse = tmpFloat[3];
-		}
+    public ManifoldPoint[] getPoints() {
+        int count = jniGetPointCount(addr);
 
-		return points;
-	}
+        for (int i = 0; i < count; i++) {
+            int contactID = jniGetPoint(addr, tmpFloat, i);
+            ManifoldPoint point = points[i];
+            point.contactID = contactID;
+            point.localPoint.set(tmpFloat[0], tmpFloat[1]);
+            point.normalImpulse = tmpFloat[2];
+            point.tangentImpulse = tmpFloat[3];
+        }
 
-	private native int jniGetPoint (long addr, float[] values, int idx); /*
-		b2Manifold* manifold = (b2Manifold*)addr;
-		  
-		values[0] = manifold->points[idx].localPoint.x;
-		values[1] = manifold->points[idx].localPoint.y;
-		values[2] = manifold->points[idx].normalImpulse;
-		values[3] = manifold->points[idx].tangentImpulse;  
-		  
-		return (jint)manifold->points[idx].id.key;
-	*/
+        return points;
+    }
 
-	public class ManifoldPoint {
-		public final Vector2 localPoint = new Vector2();
-		public float normalImpulse;
-		public float tangentImpulse;
-		public int contactID = 0;
+    private native int jniGetPoint(long addr, float[] values, int idx); /*
+                                                                         * b2Manifold
+                                                                         * *
+                                                                         * manifold
+                                                                         * = (
+                                                                         * b2Manifold
+                                                                         * *
+                                                                         * )addr
+                                                                         * ;
+                                                                         * 
+                                                                         * values[
+                                                                         * 0] =
+                                                                         * manifold
+                                                                         * -
+                                                                         * >points
+                                                                         * [
+                                                                         * idx].
+                                                                         * localPoint
+                                                                         * .x;
+                                                                         * values
+                                                                         * [1] =
+                                                                         * manifold
+                                                                         * -
+                                                                         * >points
+                                                                         * [
+                                                                         * idx].
+                                                                         * localPoint
+                                                                         * .y;
+                                                                         * values
+                                                                         * [2] =
+                                                                         * manifold
+                                                                         * -
+                                                                         * >points
+                                                                         * [
+                                                                         * idx].
+                                                                         * normalImpulse
+                                                                         * ;
+                                                                         * values
+                                                                         * [3] =
+                                                                         * manifold
+                                                                         * -
+                                                                         * >points
+                                                                         * [
+                                                                         * idx].
+                                                                         * tangentImpulse
+                                                                         * ;
+                                                                         * 
+                                                                         * return
+                                                                         * (
+                                                                         * jint)
+                                                                         * manifold
+                                                                         * -
+                                                                         * >points
+                                                                         * [
+                                                                         * idx].
+                                                                         * id
+                                                                         * .key;
+                                                                         */
 
-		public String toString () {
-			return "id: " + contactID + ", " + localPoint + ", " + normalImpulse + ", " + tangentImpulse;
-		}
-	}
+    public class ManifoldPoint {
+        public final Vector2 localPoint = new Vector2();
+        public float normalImpulse;
+        public float tangentImpulse;
+        public int contactID = 0;
 
-	public enum ManifoldType {
-		Circle, FaceA, FaceB
-	}
+        public String toString() {
+            return "id: " + contactID + ", " + localPoint + ", " + normalImpulse + ", " + tangentImpulse;
+        }
+    }
+
+    public enum ManifoldType {
+        Circle,
+        FaceA,
+        FaceB
+    }
 }

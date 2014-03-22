@@ -54,7 +54,7 @@ public abstract class GameWorld {
     public Vector<Actor<?>> mActors;
 
     private final List<GameMessage> mMessages;
-    
+
     private final List<GameMessage> mMessagesAux;
 
     /** Frames por segundo que se intentan conseguir */
@@ -86,10 +86,10 @@ public abstract class GameWorld {
 
     /** Sound manager user by the world */
     private SoundModule mSoundModule;
-    
+
     /** Vibrator manager user by the world */
     private VibrationModule mVibrationModule;
-    
+
     private final ThreadPoolExecutor mAsyncMessagesExecutor;
 
     // --------------------------------------------------------------
@@ -99,12 +99,13 @@ public abstract class GameWorld {
      * Constructor
      * 
      * @param view
-     * @param context 
-     * @param soundLevel 
-     * @param vibratorLevel 
+     * @param context
+     * @param soundLevel
+     * @param vibratorLevel
      */
     public GameWorld(GameView view, Context context, short soundLevel, short vibratorLevel) {
-        mViewport = new Viewport(this, context.getResources().getDisplayMetrics());
+        mViewport = new Viewport(this, context.getResources()
+                                              .getDisplayMetrics());
 
         mCurrentGameMillis = 0;
 
@@ -151,7 +152,7 @@ public abstract class GameWorld {
     public final VibrationModule getVibratorManager() {
         return mVibrationModule;
     }
-    
+
     /**
      * @param fPS
      *            the fPS to set
@@ -204,7 +205,8 @@ public abstract class GameWorld {
      * Starts running the game loop
      */
     public void start() {
-        if (L.sEnabled) Log.i(TAG, "Start running...");
+        if (L.sEnabled)
+            Log.i(TAG, "Start running...");
         mRunning = true;
         if (!mGameLoopThread.isAlive()) {
             mGameLoopThread.start();
@@ -216,7 +218,8 @@ public abstract class GameWorld {
      * finished.
      */
     public final void finish() {
-        if (L.sEnabled) Log.i(TAG, "Stop running...");
+        if (L.sEnabled)
+            Log.i(TAG, "Stop running...");
         mRunning = false;
         // Interrupt the thread, in case it was paused
         mGameLoopThread.interrupt();
@@ -233,7 +236,8 @@ public abstract class GameWorld {
      * Pauses the game loop
      */
     public final void pause() {
-        if (L.sEnabled) Log.i(TAG, "Pausing...");
+        if (L.sEnabled)
+            Log.i(TAG, "Pausing...");
         synchronized (mGameLoopThread) {
             mPaused = true;
         }
@@ -244,7 +248,8 @@ public abstract class GameWorld {
      */
     public final void resume() {
         // TODO: IllegalState is if not paused
-        if (L.sEnabled) Log.i(TAG, "Resuming...");
+        if (L.sEnabled)
+            Log.i(TAG, "Resuming...");
         synchronized (mGameLoopThread) {
             mPaused = false;
             mGameLoopThread.notify();
@@ -256,7 +261,7 @@ public abstract class GameWorld {
      */
     private final void onPaused() {
         // TODO: not only pause, but release the resources of the soundManager
-    	mSoundModule.pauseAll();
+        mSoundModule.pauseAll();
     }
 
     /**
@@ -280,22 +285,23 @@ public abstract class GameWorld {
     }
 
     public void post(GameMessage message, float delay) {
-    	if (mRunning) {
-    		message.setDelay(delay);
-    		message.onPosted(this);
-    	}
+        if (mRunning) {
+            message.setDelay(delay);
+            message.onPosted(this);
+        }
     }
 
     void executeAsynchronously(Runnable runnable) {
-    	mAsyncMessagesExecutor.execute(runnable);
+        mAsyncMessagesExecutor.execute(runnable);
     }
-   
+
     void add(GameMessage message) {
         synchronized (mMessages) {
             int index = 0;
             final int size = mMessages.size();
-            for (int i = 0; i< size; i++) {
-                if (mMessages.get(i).getPriority() > message.getPriority()) {
+            for (int i = 0; i < size; i++) {
+                if (mMessages.get(i)
+                             .getPriority() > message.getPriority()) {
                     break;
                 }
                 index++;
@@ -305,27 +311,28 @@ public abstract class GameWorld {
     }
 
     private void processMessages(float lastFrameLength) {
-    	// collect the ones that are ready
-    	synchronized (mMessages) {
-    		int index = 0;
+        // collect the ones that are ready
+        synchronized (mMessages) {
+            int index = 0;
             while (index < mMessages.size()) {
-            	final GameMessage message = mMessages.get(index);
-	            if (message.isReadyToBeDispatched(lastFrameLength)) {
-	            	mMessagesAux.add(message);
-	            	mMessages.remove(message);
-	            } else {
-	            	index++;
-	            }
+                final GameMessage message = mMessages.get(index);
+                if (message.isReadyToBeDispatched(lastFrameLength)) {
+                    mMessagesAux.add(message);
+                    mMessages.remove(message);
+                } else {
+                    index++;
+                }
             }
         }
-    	
-    	// process the ones that are ready
+
+        // process the ones that are ready
         if (!mMessagesAux.isEmpty()) {
-        	final int size = mMessagesAux.size(); 
-        	for (int i = 0; i< size; i++) {
-	    		mMessagesAux.get(i).doInGameLoop(this);
-	        }
-	        mMessagesAux.clear();
+            final int size = mMessagesAux.size();
+            for (int i = 0; i < size; i++) {
+                mMessagesAux.get(i)
+                            .doInGameLoop(this);
+            }
+            mMessagesAux.clear();
         }
 
     }
@@ -335,10 +342,13 @@ public abstract class GameWorld {
      * 
      * @param actor
      * 
-     * @throws IllegalStateException if the actor is not initilialised
+     * @throws IllegalStateException
+     *             if the actor is not initilialised
      */
     public final void addActor(final Actor<?> actor) {
-        if (L.sEnabled) Log.d(TAG, "GameWorld.addActor(" + actor + "). Thread: " + Thread.currentThread().getName());
+        if (L.sEnabled)
+            Log.d(TAG, "GameWorld.addActor(" + actor + "). Thread: " + Thread.currentThread()
+                                                                             .getName());
 
         actor.assertInnited();
 
@@ -371,7 +381,9 @@ public abstract class GameWorld {
     }
 
     public final void removeActor(final Actor<?> actor) {
-        if (L.sEnabled) Log.d(TAG, "GameWorld.removeActor(" + actor + "). Thread: " + Thread.currentThread().getName());
+        if (L.sEnabled)
+            Log.d(TAG, "GameWorld.removeActor(" + actor + "). Thread: " + Thread.currentThread()
+                                                                                .getName());
         post(new SyncGameMessage(GameMessage.MESSAGE_PRIORITY_MAX) {
             @Override
             public void doInGameLoop(GameWorld world) {
@@ -394,7 +406,7 @@ public abstract class GameWorld {
      */
     // TODO message for this?
     public void removeAllActors() {
-        for (Actor<?>actor : mActors) {
+        for (Actor<?> actor : mActors) {
             removeActor(actor);
         }
     }
@@ -425,7 +437,8 @@ public abstract class GameWorld {
     // pintado
 
     final void doDrawWorld(Canvas canvas) {
-        if (L.sEnabled) Log.v(TAG, "Drawing frame");
+        if (L.sEnabled)
+            Log.v(TAG, "Drawing frame");
 
         // pintado del mundo
         drawWorld(canvas);
@@ -483,11 +496,12 @@ public abstract class GameWorld {
      * Stops the game loop and disposes the world. This method does not block
      * until the world is disposed.
      */
-    protected  void dispose() {
-        if (L.sEnabled) Log.i(TAG, "GameWorld.dispose()");
+    protected void dispose() {
+        if (L.sEnabled)
+            Log.i(TAG, "GameWorld.dispose()");
 
         synchronized (this) {
-        	mAsyncMessagesExecutor.shutdownNow();
+            mAsyncMessagesExecutor.shutdownNow();
         }
 
         mViewport.dispose();
@@ -506,7 +520,8 @@ public abstract class GameWorld {
     // ---------------------------------- métodos relativos a la interacci�n
 
     final void gameViewSizeChanged(GameView gameView, int width, int height) {
-        if (L.sEnabled) Log.i(TAG, "surfaceChanged (" + width + ", " + height + ")");
+        if (L.sEnabled)
+            Log.i(TAG, "surfaceChanged (" + width + ", " + height + ")");
         onGameViewSizeChanged(width, height);
         mViewport.gameViewSizeChanged(gameView, width, height);
     }
@@ -514,13 +529,16 @@ public abstract class GameWorld {
     /**
      * Invoked when the size of game view changes
      * 
-     * @param width, in pixels
-     * @param height, in pixels
+     * @param width
+     *            , in pixels
+     * @param height
+     *            , in pixels
      */
     public abstract void onGameViewSizeChanged(int width, int height);
 
     /**
      * Invoked when the size of the viewport changes
+     * 
      * @param worldBoundaries
      */
     public abstract void onGameWorldSizeChanged(RectF worldBoundaries);
@@ -531,7 +549,8 @@ public abstract class GameWorld {
             // TODO: do this with iterator
             int size = mActors.size();
             for (int i = 0; i < size; i++) {
-                mActors.get(i).processFrame(mspf);
+                mActors.get(i)
+                       .processFrame(mspf);
             }
         }
     }
@@ -541,14 +560,14 @@ public abstract class GameWorld {
             throw new IllegalStateException("This operation needs to be executed in the game loop thread");
         }
     }
-    
+
     /**
-     * Method that can be overriden to receive errors that can happen in the 
-     * processing of the games
-     * </p>
-     * Remember to dispose the world after receiving this event.
+     * Method that can be overriden to receive errors that can happen in the
+     * processing of the games </p> Remember to dispose the world after
+     * receiving this event.
      * 
-     * @param Throwable error
+     * @param Throwable
+     *            error
      */
     public void onError(Throwable error) {
     }
@@ -564,60 +583,67 @@ public abstract class GameWorld {
 
         @Override
         public void run() {
-        	try {
-	            if (L.sEnabled) Log.i(TAG, "Game loop thread started. Thread: " + Thread.currentThread().getName());
-	
-	            float lastFrameLength = 0;
-	
-	            loadResources();
-	            onBeforeRunning();
-	
-	            while (mRunning) {
-	
-	                long begin = System.currentTimeMillis();
-	                doProcessFrame(lastFrameLength);
-	                mGameView.draw();
-	
-	                long end = System.currentTimeMillis();
-	                long elapsed = end - begin;
-	
-	                long diff = (long) (mspf - elapsed);
-	                if (diff > 0) {
-	                    try {
-	                        Thread.sleep(diff);
-	                    } catch (InterruptedException e) {
-	                        e.printStackTrace();
-	                    }
-	
-	                }
-	                lastFrameLength = System.currentTimeMillis() - begin;
-	                mCurrentGameMillis += lastFrameLength;
-	                mCurrentFps = 1000 / lastFrameLength;
-	                if (L.sEnabled) Log.v(TAG, "Game loop frame. Desired FPS: " + mFps + " Actual: " + mCurrentFps);
-	                Thread.yield();
-	
-	                synchronized (mGameLoopThread) {
-	                    if (mPaused) {
-	                        if (L.sEnabled) Log.d(TAG, "Game loop paused.");
-	                        onPaused();
-	                        try {
-	                            mGameLoopThread.wait();
-	                            if (L.sEnabled) Log.v(TAG, "Game loop resumed.");
-	                            onResumed();
-	                        } catch (InterruptedException e) {
-	                        }
-	                    }
-	                }
-	            }
-	            
-	            dispose();
-	            if (L.sEnabled) Log.i(TAG, "Game loop thread ended");
-	            
-    	    } catch (Throwable t) {
-    	    	if (L.sEnabled) Log.e(TAG, "Error happenend in the game loop", t);
-    	    	onError(t);
-    	    }
-       }
+            try {
+                if (L.sEnabled)
+                    Log.i(TAG, "Game loop thread started. Thread: " + Thread.currentThread()
+                                                                            .getName());
+
+                float lastFrameLength = 0;
+
+                loadResources();
+                onBeforeRunning();
+
+                while (mRunning) {
+
+                    long begin = System.currentTimeMillis();
+                    doProcessFrame(lastFrameLength);
+                    mGameView.draw();
+
+                    long end = System.currentTimeMillis();
+                    long elapsed = end - begin;
+
+                    long diff = (long) (mspf - elapsed);
+                    if (diff > 0) {
+                        try {
+                            Thread.sleep(diff);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                    lastFrameLength = System.currentTimeMillis() - begin;
+                    mCurrentGameMillis += lastFrameLength;
+                    mCurrentFps = 1000 / lastFrameLength;
+                    if (L.sEnabled)
+                        Log.v(TAG, "Game loop frame. Desired FPS: " + mFps + " Actual: " + mCurrentFps);
+                    Thread.yield();
+
+                    synchronized (mGameLoopThread) {
+                        if (mPaused) {
+                            if (L.sEnabled)
+                                Log.d(TAG, "Game loop paused.");
+                            onPaused();
+                            try {
+                                mGameLoopThread.wait();
+                                if (L.sEnabled)
+                                    Log.v(TAG, "Game loop resumed.");
+                                onResumed();
+                            } catch (InterruptedException e) {
+                            }
+                        }
+                    }
+                }
+
+                dispose();
+                if (L.sEnabled)
+                    Log.i(TAG, "Game loop thread ended");
+
+            } catch (Throwable t) {
+                if (L.sEnabled)
+                    Log.e(TAG, "Error happenend in the game loop", t);
+                onError(t);
+            }
+        }
     }
 
 }

@@ -7,6 +7,7 @@ public abstract class GameMessage {
     protected static final int MESSAGE_PRIORITY_MAX = Integer.MIN_VALUE;
 
     private float mDelay;
+
     public GameMessage() {
         super();
         mDelay = 0;
@@ -20,7 +21,7 @@ public abstract class GameMessage {
         }
         return mDelay <= 0;
     }
- 
+
     public abstract void doInGameLoop(GameWorld world);
 
     protected final int getPriority() {

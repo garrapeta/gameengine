@@ -31,7 +31,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
      */
     private SurfaceHolder mHolder;
 
-
     // private boolean waitingForDrawingDispatched = false;
 
     // ---------------------------------------------------------------
@@ -89,14 +88,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public final void surfaceCreated(SurfaceHolder holder) {
-        if (L.sEnabled) Log.i(TAG, "surfaceCreated (" + getWidth() + ", " + getHeight() + ")");
+        if (L.sEnabled)
+            Log.i(TAG, "surfaceCreated (" + getWidth() + ", " + getHeight() + ")");
         // Draw the view when it's been created, to avoid a black screen
         draw();
     }
 
     @Override
     public final void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        if (L.sEnabled) Log.i(TAG, "surfaceChanged (" + width + ", " + height + ")");
+        if (L.sEnabled)
+            Log.i(TAG, "surfaceChanged (" + width + ", " + height + ")");
         if (mWorld != null) {
             mWorld.gameViewSizeChanged(this, width, height);
         }
@@ -104,7 +105,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public final void surfaceDestroyed(SurfaceHolder holder) {
-        if (L.sEnabled) Log.i(TAG, "surfaceDestroyed");
+        if (L.sEnabled)
+            Log.i(TAG, "surfaceDestroyed");
     }
 
 }

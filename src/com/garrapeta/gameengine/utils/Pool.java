@@ -2,20 +2,20 @@ package com.garrapeta.gameengine.utils;
 
 import com.badlogic.gdx.utils.Array;
 
-
 /**
  * 
- * Wrapper of {@link com.badlogic.gdx.utils.Pool} to add debug methods and
- * to force all the clients object to be {@link com.badlogic.gdx.utils.Pool.Poolable}
- *
+ * Wrapper of {@link com.badlogic.gdx.utils.Pool} to add debug methods and to
+ * force all the clients object to be
+ * {@link com.badlogic.gdx.utils.Pool.Poolable}
+ * 
  * @param <T>
  */
-public abstract class Pool<T extends  com.badlogic.gdx.utils.Pool.Poolable> {
+public abstract class Pool<T extends com.badlogic.gdx.utils.Pool.Poolable> {
 
     private final com.badlogic.gdx.utils.Pool<T> mPool;
 
     private int mAllocations = 0;
-    
+
     private int mObtainings = 0;
 
     /**
@@ -25,7 +25,7 @@ public abstract class Pool<T extends  com.badlogic.gdx.utils.Pool.Poolable> {
         mPool = new PoolWrapper();
     }
 
-    /**
+/**
      * {@link com.badlogic.gdx.utils.Pool#Pool()
      * 
      * @param initialCapacity
@@ -34,7 +34,7 @@ public abstract class Pool<T extends  com.badlogic.gdx.utils.Pool.Poolable> {
         mPool = new PoolWrapper(initialCapacity);
     }
 
-    /**
+/**
      * {@link com.badlogic.gdx.utils.Pool#Pool()
      * 
      * @param initialCapacity
@@ -44,13 +44,13 @@ public abstract class Pool<T extends  com.badlogic.gdx.utils.Pool.Poolable> {
         mPool = new PoolWrapper(initialCapacity, max);
     }
 
-    /**
+/**
      * {@link com.badlogic.gdx.utils.Pool#newObject()
      * @return
      */
     protected abstract T newObject();
 
-    /**
+/**
      * {@link com.badlogic.gdx.utils.Pool#obtain()
      * @return
      */
@@ -58,7 +58,7 @@ public abstract class Pool<T extends  com.badlogic.gdx.utils.Pool.Poolable> {
         return mPool.obtain();
     }
 
-    /**
+/**
      * {@link com.badlogic.gdx.utils.Pool#free(Object)
      * @param object
      */
@@ -66,7 +66,7 @@ public abstract class Pool<T extends  com.badlogic.gdx.utils.Pool.Poolable> {
         mPool.free(object);
     }
 
-    /**
+/**
      * {@link com.badlogic.gdx.utils.Pool#free(Array)
      * @param objects
      */
@@ -76,6 +76,7 @@ public abstract class Pool<T extends  com.badlogic.gdx.utils.Pool.Poolable> {
 
     /**
      * {@link com.badlogic.gdx.utils.Pool#clear()
+
      */
     public void clear() {
         mPool.clear();
@@ -99,13 +100,13 @@ public abstract class Pool<T extends  com.badlogic.gdx.utils.Pool.Poolable> {
      * @return info String
      */
     public String getDebugString() {
-        return("Obtainings/Allocations: " + getObtainings() + "/" + getAllocations());
+        return ("Obtainings/Allocations: " + getObtainings() + "/" + getAllocations());
     }
- 
+
     /**
-     *  Extension of {@link com.badlogic.gdx.utils.Pool}
+     * Extension of {@link com.badlogic.gdx.utils.Pool}
      */
-    private class PoolWrapper extends com.badlogic.gdx.utils.Pool<T>{
+    private class PoolWrapper extends com.badlogic.gdx.utils.Pool<T> {
 
         public PoolWrapper() {
             super();

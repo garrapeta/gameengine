@@ -25,8 +25,9 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     public static final String TAG = GameWorld.TAG + ".physics";
 
     /** Default phisical steps per second */
-    private static final float DEFAULT_PHYSICAL_PERIOD = 60f; // (recomendado: 60Hertz)
-    
+    private static final float DEFAULT_PHYSICAL_PERIOD = 60f; // (recomendado:
+                                                              // 60Hertz)
+
     private static final int MAX_PHYSICAL_TIMESTEPS_PER_FRAME = 5;
     // ------------------------------------------------ Variables
 
@@ -42,12 +43,15 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     // est�tica
 
     static {
-        if (L.sEnabled) Log.i(TAG, "Attempting to load gdx native library");
+        if (L.sEnabled)
+            Log.i(TAG, "Attempting to load gdx native library");
         try {
             System.loadLibrary("gdx");
-            if (L.sEnabled) Log.i(TAG, "gdx native library loaded");
+            if (L.sEnabled)
+                Log.i(TAG, "gdx native library loaded");
         } catch (Throwable t) {
-            if (L.sEnabled) Log.e(TAG, "Could not load gdx native library: " + t.toString());
+            if (L.sEnabled)
+                Log.e(TAG, "Could not load gdx native library: " + t.toString());
             System.exit(1);
         }
 
@@ -56,7 +60,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     // -------------------------------------------------------------
     // Constructores
 
-    public Box2DWorld( GameView gameView, Context context, short soundLevel, short vibratorLevel) {
+    public Box2DWorld(GameView gameView, Context context, short soundLevel, short vibratorLevel) {
         super(gameView, context, soundLevel, vibratorLevel);
         mViewport.setReverseYAxis(true);
         // Step 1: Create Physics World Boundaries
@@ -78,7 +82,6 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
         mFrequency = frequency;
         mTimeStep = 1f / mFrequency;
     }
-
 
     // ------------------------------------------------------ métodos de
     // GameWorld
@@ -103,7 +106,8 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     /**
      * Triggers physical simulation
      * 
-     * @param time to emulate, in ms
+     * @param time
+     *            to emulate, in ms
      */
     private void doPhysicalStep(float time) {
         int steps = 0;
@@ -111,17 +115,18 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
         float step = mTimeStep;
         if (time < step) {
-            if (L.sEnabled) Log.w(TAG, "Physical timestep higher than game timestep. Physical simulation can be unestable.");
+            if (L.sEnabled)
+                Log.w(TAG, "Physical timestep higher than game timestep. Physical simulation can be unestable.");
             step = time;
         }
         while (time > 0 && steps < MAX_PHYSICAL_TIMESTEPS_PER_FRAME) {
             mBox2dWorld.step(step, 2, 1);
             time -= step;
-            steps ++;
+            steps++;
         }
         mBox2dWorld.clearForces();
     }
-    
+
     // métodos relativos a unidades l�gicas / pantalla
 
     @Override
@@ -135,7 +140,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
     public Body createBody(Box2DActor<?> actor, PointF worldPos, boolean dynamic) {
         checkExecutedInGameLoopThread();
-        
+
         BodyDef bodyDef = new BodyDef();
 
         bodyDef.position.set(worldPos.x, worldPos.y);
@@ -144,7 +149,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
         actor.addBody(body);
         body.setUserData(actor);
-        
+
         if (dynamic) {
             body.setType(BodyType.DynamicBody);
         }
@@ -170,7 +175,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     }
 
     public float getGravityX() {
-       return mBox2dWorld.getGravity().x;
+        return mBox2dWorld.getGravity().x;
     }
 
     public float getGravityY() {
@@ -196,7 +201,8 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
      * @param force
      */
     public void applyBlast(Vector2 origin, Body target, float radius, float force) {
-        Vector2 aux = target.getWorldCenter().cpy();
+        Vector2 aux = target.getWorldCenter()
+                            .cpy();
         aux.sub(origin);
 
         float dist = aux.len();
@@ -216,16 +222,18 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     @SuppressWarnings("unchecked")
     @Override
     public void beginContact(Contact contact) {
-        Body bodyA = contact.getFixtureA().getBody();
-        Body bodyB = contact.getFixtureB().getBody();
+        Body bodyA = contact.getFixtureA()
+                            .getBody();
+        Body bodyB = contact.getFixtureB()
+                            .getBody();
 
         Box2DActor<Box2DWorld> actorA = (Box2DActor<Box2DWorld>) bodyA.getUserData();
 
         if (actorA != null) {
             Box2DActor<Box2DWorld> actorB = (Box2DActor<Box2DWorld>) bodyB.getUserData();
             if (actorB != null) {
-               actorA.onBeginContact(bodyA, actorB, bodyB, contact);
-               actorB.onBeginContact(bodyB, actorA, bodyA, contact);
+                actorA.onBeginContact(bodyA, actorB, bodyB, contact);
+                actorB.onBeginContact(bodyB, actorA, bodyA, contact);
             }
         }
     }
@@ -233,8 +241,10 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     @SuppressWarnings("unchecked")
     @Override
     public void endContact(Contact contact) {
-        Body bodyA = contact.getFixtureA().getBody();
-        Body bodyB = contact.getFixtureB().getBody();
+        Body bodyA = contact.getFixtureA()
+                            .getBody();
+        Body bodyB = contact.getFixtureB()
+                            .getBody();
 
         Box2DActor<Box2DWorld> actorA = (Box2DActor<Box2DWorld>) bodyA.getUserData();
 
@@ -250,8 +260,10 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     @SuppressWarnings("unchecked")
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
-        Body bodyA = contact.getFixtureA().getBody();
-        Body bodyB = contact.getFixtureB().getBody();
+        Body bodyA = contact.getFixtureA()
+                            .getBody();
+        Body bodyB = contact.getFixtureB()
+                            .getBody();
 
         Box2DActor<Box2DWorld> actorA = (Box2DActor<Box2DWorld>) bodyA.getUserData();
         if (actorA != null) {
@@ -266,8 +278,10 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     @SuppressWarnings("unchecked")
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
-        Body bodyA = contact.getFixtureA().getBody();
-        Body bodyB = contact.getFixtureB().getBody();
+        Body bodyA = contact.getFixtureA()
+                            .getBody();
+        Body bodyB = contact.getFixtureB()
+                            .getBody();
 
         Box2DActor<Box2DWorld> actorA = (Box2DActor<Box2DWorld>) bodyA.getUserData();
         if (actorA != null) {
@@ -278,7 +292,5 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
             }
         }
     }
-
- 
 
 }

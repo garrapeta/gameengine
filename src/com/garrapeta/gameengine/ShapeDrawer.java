@@ -14,35 +14,34 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 
 public class ShapeDrawer {
-    
+
     // -------------------------------------------------- Static vars
-    
+
     static final Paint sPaint = new Paint();
-    
+
     // -------------------------------------------------- Constantes
 
-   
     private final static int DEFAULT_CIRCLE_STROKE_COLOR = Color.argb(0xFF, 0xFF, 0, 0);
-    private final static int DEFAULT_CIRCLE_FILL_COLOR   = Color.argb(0x40, 0xFF, 0, 0);
-    private final static int DEFAULT_CIRCLE_LINE_COLOR   = Color.GRAY;
-    
+    private final static int DEFAULT_CIRCLE_FILL_COLOR = Color.argb(0x40, 0xFF, 0, 0);
+    private final static int DEFAULT_CIRCLE_LINE_COLOR = Color.GRAY;
+
     private final static int DEFAULT_EDGE_STROKE_COLOR = Color.YELLOW;
     private final static int DEFAULT_EDGE_FILL_COLOR = Color.TRANSPARENT;
     private final static int DEFAULT_EDGE_LINE_COLOR = Color.TRANSPARENT;
-    
+
     private final static int DEFAULT_POLYGON_STROKE_COLOR = Color.argb(0xFF, 0, 0, 0xFF);
     private final static int DEFAULT_POLYGON_FILL_COLOR = Color.argb(0x40, 0, 0, 0xFF);
     private final static int DEFAULT_POLYGON_LINE_COLOR = Color.GRAY;
-    
+
     private final static int DEFAULT_CHAIN_STROKE_COLOR = Color.GREEN;
-    private final static int DEFAULT_CHAIN_FILL_COLOR   = Color.TRANSPARENT;
-    private final static int DEFAULT_CHAIN_LINE_COLOR   = Color.GRAY;
-    
+    private final static int DEFAULT_CHAIN_FILL_COLOR = Color.TRANSPARENT;
+    private final static int DEFAULT_CHAIN_LINE_COLOR = Color.GRAY;
+
     public static void draw(Canvas canvas, Viewport viewport, Shape shape) {
         int strokeColor;
         int fillColor;
         int lineColor;
-        
+
         switch (shape.getType()) {
         case Circle:
             strokeColor = DEFAULT_CIRCLE_STROKE_COLOR;
@@ -55,31 +54,31 @@ public class ShapeDrawer {
             fillColor = DEFAULT_POLYGON_FILL_COLOR;
             lineColor = DEFAULT_POLYGON_LINE_COLOR;
             break;
-            
+
         case Edge:
             strokeColor = DEFAULT_EDGE_STROKE_COLOR;
             fillColor = DEFAULT_EDGE_FILL_COLOR;
             lineColor = DEFAULT_EDGE_LINE_COLOR;
             break;
-            
+
         case Chain:
             strokeColor = DEFAULT_CHAIN_STROKE_COLOR;
             fillColor = DEFAULT_CHAIN_FILL_COLOR;
             lineColor = DEFAULT_CHAIN_LINE_COLOR;
             break;
-            
+
         default:
             throw new IllegalArgumentException("Can not get default color for shape: " + shape);
         }
 
         draw(canvas, sPaint, viewport, shape, strokeColor, fillColor, lineColor);
     }
-    
+
     public static void draw(Canvas canvas, Paint paint, Viewport viewport, Shape shape, int strokeColor, int fillColor, int lineColor) {
         switch (shape.getType()) {
         case Circle:
             drawCircleShape(canvas, viewport, paint, (CircleShape) shape, strokeColor, fillColor, lineColor);
-            break;        
+            break;
         case Polygon:
             drawPolygonShape(canvas, viewport, paint, (PolygonShape) shape, strokeColor, fillColor, lineColor);
             break;

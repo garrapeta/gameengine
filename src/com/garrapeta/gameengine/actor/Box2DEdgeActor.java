@@ -10,7 +10,6 @@ import com.garrapeta.gameengine.Viewport;
 
 public class Box2DEdgeActor<T extends Box2DWorld> extends Box2DAtomicActor<T> {
 
-
     // -------------------------------------------------- Constructor
 
     /**
@@ -40,7 +39,7 @@ public class Box2DEdgeActor<T extends Box2DWorld> extends Box2DAtomicActor<T> {
         this(world);
 
         Body body = world.createBody(this, worldPos, dynamic);
-        setEdges(body, Viewport.pointFToVector2(p0), Viewport.pointFToVector2(p1) );
+        setEdges(body, Viewport.pointFToVector2(p0), Viewport.pointFToVector2(p1));
     }
 
     private void setEdges(Body body, Vector2 p0, Vector2 p1) {

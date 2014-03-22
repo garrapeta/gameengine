@@ -13,7 +13,6 @@ import com.garrapeta.gameengine.Box2DWorld;
  */
 public class Box2DCircleActor<T extends Box2DWorld> extends Box2DAtomicActor<T> {
 
-
     // -------------------------------------------------- Constructor
 
     /**

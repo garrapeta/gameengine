@@ -57,7 +57,8 @@ public abstract class Box2DActor<T extends Box2DWorld> extends Actor<T> {
         float mass = 0;
 
         for (int i = 0; i < mBodies.size(); i++) {
-            mass += mBodies.get(i).getMass();
+            mass += mBodies.get(i)
+                           .getMass();
         }
 
         return mass;
@@ -193,7 +194,8 @@ public abstract class Box2DActor<T extends Box2DWorld> extends Actor<T> {
 
             int l1 = fixtures.size();
             for (int j = 0; j < l1; j++) {
-                shapes.add(fixtures.get(j).getShape());
+                shapes.add(fixtures.get(j)
+                                   .getShape());
             }
         }
 

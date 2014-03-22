@@ -16,53 +16,99 @@
 
 package com.badlogic.gdx.physics.box2d;
 
-/** Contact impulses for reporting. Impulses are used instead of forces because sub-step forces may approach infinity for rigid
- * body collisions. These match up one-to-one with the contact points in b2Manifold.
- * @author mzechner */
+/**
+ * Contact impulses for reporting. Impulses are used instead of forces because
+ * sub-step forces may approach infinity for rigid body collisions. These match
+ * up one-to-one with the contact points in b2Manifold.
+ * 
+ * @author mzechner
+ */
 public class ContactImpulse {
-	/*JNI
-#include <Box2D/Box2D.h>
-	 */
-	
-	final World world;
-	long addr;
-	float[] tmp = new float[2];
-	final float[] normalImpulses = new float[2];
-	final float[] tangentImpulses = new float[2];
+    /*
+     * JNI #include <Box2D/Box2D.h>
+     */
 
-	protected ContactImpulse (World world, long addr) {
-		this.world = world;
-		this.addr = addr;
-	}
+    final World world;
+    long addr;
+    float[] tmp = new float[2];
+    final float[] normalImpulses = new float[2];
+    final float[] tangentImpulses = new float[2];
 
-	public float[] getNormalImpulses () {
-		jniGetNormalImpulses(addr, normalImpulses);
-		return normalImpulses;
-	}
+    protected ContactImpulse(World world, long addr) {
+        this.world = world;
+        this.addr = addr;
+    }
 
-	private native void jniGetNormalImpulses (long addr, float[] values); /*
-		b2ContactImpulse* contactImpulse = (b2ContactImpulse*)addr;	
-		values[0] = contactImpulse->normalImpulses[0];
-		values[1] = contactImpulse->normalImpulses[1];
-	*/
+    public float[] getNormalImpulses() {
+        jniGetNormalImpulses(addr, normalImpulses);
+        return normalImpulses;
+    }
 
-	public float[] getTangentImpulses () {
-		jniGetTangentImpulses(addr, tangentImpulses);
-		return tangentImpulses;
-	}
+    private native void jniGetNormalImpulses(long addr, float[] values); /*
+                                                                          * b2ContactImpulse
+                                                                          * *
+                                                                          * contactImpulse
+                                                                          * = (
+                                                                          * b2ContactImpulse
+                                                                          * *
+                                                                          * )addr
+                                                                          * ;
+                                                                          * values
+                                                                          * [0]
+                                                                          * =
+                                                                          * contactImpulse
+                                                                          * ->
+                                                                          * normalImpulses
+                                                                          * [0];
+                                                                          * values
+                                                                          * [1]
+                                                                          * =
+                                                                          * contactImpulse
+                                                                          * ->
+                                                                          * normalImpulses
+                                                                          * [1];
+                                                                          */
 
-	private native void jniGetTangentImpulses (long addr, float[] values); /*
-	  	b2ContactImpulse* contactImpulse = (b2ContactImpulse*)addr;	
-		values[0] = contactImpulse->tangentImpulses[0];
-		values[1] = contactImpulse->tangentImpulses[1];
-	*/
+    public float[] getTangentImpulses() {
+        jniGetTangentImpulses(addr, tangentImpulses);
+        return tangentImpulses;
+    }
 
-	public int getCount () {
-		return jniGetCount(addr);
-	}
+    private native void jniGetTangentImpulses(long addr, float[] values); /*
+                                                                           * b2ContactImpulse
+                                                                           * *
+                                                                           * contactImpulse
+                                                                           * = (
+                                                                           * b2ContactImpulse
+                                                                           * *
+                                                                           * )addr
+                                                                           * ;
+                                                                           * values
+                                                                           * [0]
+                                                                           * =
+                                                                           * contactImpulse
+                                                                           * ->
+                                                                           * tangentImpulses
+                                                                           * [
+                                                                           * 0];
+                                                                           * values
+                                                                           * [1]
+                                                                           * =
+                                                                           * contactImpulse
+                                                                           * ->
+                                                                           * tangentImpulses
+                                                                           * [
+                                                                           * 1];
+                                                                           */
 
-	private native int jniGetCount (long addr); /*
-		b2ContactImpulse* contactImpulse = (b2ContactImpulse*)addr;
-		return contactImpulse->count;
-	*/
+    public int getCount() {
+        return jniGetCount(addr);
+    }
+
+    private native int jniGetCount(long addr); /*
+                                                * b2ContactImpulse*
+                                                * contactImpulse =
+                                                * (b2ContactImpulse*)addr;
+                                                * return contactImpulse->count;
+                                                */
 }

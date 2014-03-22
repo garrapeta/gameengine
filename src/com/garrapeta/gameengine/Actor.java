@@ -1,9 +1,6 @@
 package com.garrapeta.gameengine;
 
-
-
 import android.graphics.Canvas;
-
 
 /**
  * Actor del juego
@@ -23,7 +20,8 @@ public abstract class Actor<T extends GameWorld> {
     private int mZIndex = 0;
 
     /**
-     * If the actor is initialised. EveryActor needs to be initialised before being added to the world. 
+     * If the actor is initialised. EveryActor needs to be initialised before
+     * being added to the world.
      */
     private boolean mIsInitted = false;
 
@@ -57,11 +55,13 @@ public abstract class Actor<T extends GameWorld> {
 
     /**
      * Sets the actor as initialised, so it is ready to be added to the world.
-     * This method has to be called before the actor is added to the world.
-     * This should be called from any method used to initialise the actor in a custom way.
+     * This method has to be called before the actor is added to the world. This
+     * should be called from any method used to initialise the actor in a custom
+     * way.
      * 
      * @return this actor
-     * @throws IllegalStateException if the actor was already initialised
+     * @throws IllegalStateException
+     *             if the actor was already initialised
      */
     public final Actor<T> setInitted() {
         assertNotInnited();
@@ -73,7 +73,8 @@ public abstract class Actor<T extends GameWorld> {
      * Sets the actor as not initialised, so it is ready to be reused.
      * 
      * @return this actor
-     * @throws IllegalStateException if the actor was not initialised
+     * @throws IllegalStateException
+     *             if the actor was not initialised
      */
     public final Actor<T> setNotInitted() {
         assertInnited();
@@ -83,7 +84,9 @@ public abstract class Actor<T extends GameWorld> {
 
     /**
      * Asserts the actor is initted.
-     * @throws IllegalStateException if the actor was not initialised
+     * 
+     * @throws IllegalStateException
+     *             if the actor was not initialised
      */
     public final void assertInnited() {
         if (!mIsInitted) {
@@ -93,13 +96,16 @@ public abstract class Actor<T extends GameWorld> {
 
     /**
      * Asserts the actor is not initted.
-     * @throws IllegalStateException if the actor was initialised
+     * 
+     * @throws IllegalStateException
+     *             if the actor was initialised
      */
     public final void assertNotInnited() {
         if (mIsInitted) {
             throw new IllegalStateException(this + " was already initialised");
         }
     }
+
     /**
      * Pinta el actor
      * 
@@ -122,10 +128,9 @@ public abstract class Actor<T extends GameWorld> {
     void doOnRemovedFromWorld() {
         onRemovedFromWorld();
         // Do not call dispose here, as the pool may recycle it.
-        //  dispose();
+        // dispose();
     }
 
-    
     /**
      * método dispose, ejecutado cuando el actor se quita del mundo
      */

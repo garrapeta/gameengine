@@ -17,11 +17,14 @@ public class Viewport {
     // -------------------------------------------------------- Constants
 
     public static final String TAG = GameWorld.TAG_GAME_ENGINE + ".viewport";
-    
-    
+
     // ------------------------------------------------------------ Types
-    
-    private enum ProjectionMode {EXPLICIT, FIT_WIDTH,FIT_HEIGHT};
+
+    private enum ProjectionMode {
+        EXPLICIT,
+        FIT_WIDTH,
+        FIT_HEIGHT
+    };
 
     // ----------------------------------------------- Instance variables
 
@@ -50,12 +53,12 @@ public class Viewport {
 
     /** Current projection mode */
     private ProjectionMode mProjectionMode;
-    
-    /** Display metrics  */
+
+    /** Display metrics */
     private DisplayMetrics mDisplayMetrics;
-    
+
     private boolean mReverseYAxis = false;
-    
+
     // -------------------------------------------------- Static methods
 
     public static Vector2 pointFToVector2(PointF pf) {
@@ -99,9 +102,10 @@ public class Viewport {
     // ------------------------------------------------ Instance methods
 
     public void gameViewSizeChanged(GameView gameView, int viewWidth, int viewHeight) {
-        if (L.sEnabled) Log.i(TAG, "onGameViewSizeChanged(" + viewWidth + ", " + + viewHeight + ")");
+        if (L.sEnabled)
+            Log.i(TAG, "onGameViewSizeChanged(" + viewWidth + ", " + +viewHeight + ")");
 
-        mViewWidth  = viewWidth;
+        mViewWidth = viewWidth;
         mViewHeight = viewHeight;
         updateWorldBoundaries();
     }
@@ -109,7 +113,7 @@ public class Viewport {
     void setReverseYAxis(boolean reverse) {
         mReverseYAxis = reverse;
     }
-    
+
     public void setWorldSize(float width, float height, float dpsInWorldUnit) {
         setWorldSize(width, height, dpsInWorldUnit, ProjectionMode.EXPLICIT);
     }
@@ -133,60 +137,64 @@ public class Viewport {
     public void setWorldWidth(float width) {
         setWorldSize(width, Float.MIN_VALUE, Float.MIN_VALUE, ProjectionMode.FIT_WIDTH);
     }
-    
+
     public void setWorldHeight(float height) {
         setWorldSize(Float.MIN_VALUE, height, Float.MIN_VALUE, ProjectionMode.FIT_HEIGHT);
     }
-    
+
     public void setWorldSizeDpsPerWorldUnit(float dpsPerWorldUnit) {
         final float worldWidth = mDisplayMetrics.widthPixels / mDisplayMetrics.density / dpsPerWorldUnit;
         final float worldHeight = mDisplayMetrics.heightPixels / mDisplayMetrics.density / dpsPerWorldUnit;
         setWorldSize(worldWidth, worldHeight, dpsPerWorldUnit);
     }
-    
+
     public void setWorldSizeGivenWorldUnitsPerInchX(float worldUnitsPerInchX) {
-  	    // Due to bug in some devices (samsung) we cannot trust mDisplayMetrics.xdpi,
-    	// so we use mDisplayMetrics.densityDpi, which is more reliable albeit less accurate
-  	    // https://groups.google.com/forum/#!topic/android-developers/g56jV0Hora0
-    	
-  	    //final float xPixelsPerInch = mDisplayMetrics.xdpi;
-    	final float xPixelsPerInch = mDisplayMetrics.densityDpi;
-    	
-    	final float widthPixels = mDisplayMetrics.widthPixels;
+        // Due to bug in some devices (samsung) we cannot trust
+        // mDisplayMetrics.xdpi,
+        // so we use mDisplayMetrics.densityDpi, which is more reliable albeit
+        // less accurate
+        // https://groups.google.com/forum/#!topic/android-developers/g56jV0Hora0
 
-    	final float inchesX =  widthPixels / xPixelsPerInch;
-  	    final float  worldWidth = inchesX * worldUnitsPerInchX;
-        
-  	    setWorldWidth(worldWidth);
+        // final float xPixelsPerInch = mDisplayMetrics.xdpi;
+        final float xPixelsPerInch = mDisplayMetrics.densityDpi;
+
+        final float widthPixels = mDisplayMetrics.widthPixels;
+
+        final float inchesX = widthPixels / xPixelsPerInch;
+        final float worldWidth = inchesX * worldUnitsPerInchX;
+
+        setWorldWidth(worldWidth);
     }
-    
+
     public void setWorldSizeGivenWorldUnitsPerInchY(float worldUnitsPerInchY) {
-  	    // Due to bug in some devices (samsung) we cannot trust mDisplayMetrics.ydpi,
-    	// so we use mDisplayMetrics.densityDpi, which is more reliable albeit less accurate
-  	    // https://groups.google.com/forum/#!topic/android-developers/g56jV0Hora0    	
+        // Due to bug in some devices (samsung) we cannot trust
+        // mDisplayMetrics.ydpi,
+        // so we use mDisplayMetrics.densityDpi, which is more reliable albeit
+        // less accurate
+        // https://groups.google.com/forum/#!topic/android-developers/g56jV0Hora0
 
-  	    //final float xPixelsPerInch = mDisplayMetrics.ydpi;
-    	final float yPixelsPerInch = mDisplayMetrics.densityDpi;
-    	
-    	final float heightPixels = mDisplayMetrics.heightPixels;
+        // final float xPixelsPerInch = mDisplayMetrics.ydpi;
+        final float yPixelsPerInch = mDisplayMetrics.densityDpi;
 
-    	final float inchesY =  heightPixels / yPixelsPerInch;
-  	    final float  worldHeight = inchesY * worldUnitsPerInchY;
-        
-  	    setWorldHeight(worldHeight);
+        final float heightPixels = mDisplayMetrics.heightPixels;
+
+        final float inchesY = heightPixels / yPixelsPerInch;
+        final float worldHeight = inchesY * worldUnitsPerInchY;
+
+        setWorldHeight(worldHeight);
     }
-    
+
     private void setWorldSize(float width, float height, float dpsInWorldUnit, ProjectionMode mode) {
-        mWorldWidth  = width;
+        mWorldWidth = width;
         mWorldHeight = height;
         mDpsInWorldUnits = dpsInWorldUnit;
-        mProjectionMode  = mode;
+        mProjectionMode = mode;
         updateWorldBoundaries();
     }
 
     private void updateWorldBoundaries() {
-        
-        if (mViewWidth   != Integer.MIN_VALUE && mViewHeight != Integer.MIN_VALUE && mProjectionMode != null) {
+
+        if (mViewWidth != Integer.MIN_VALUE && mViewHeight != Integer.MIN_VALUE && mProjectionMode != null) {
 
             switch (mProjectionMode) {
             case FIT_WIDTH:
@@ -218,26 +226,24 @@ public class Viewport {
         if (mWorldWidth != Float.MIN_VALUE && mWorldHeight != Float.MIN_VALUE) {
             RectF prevWorldBoundaries = new RectF(mWorldBoundaries);
 
-            mWorldBoundaries.left   = 0;
-            mWorldBoundaries.right  = mWorldWidth;
-            
+            mWorldBoundaries.left = 0;
+            mWorldBoundaries.right = mWorldWidth;
+
             if (!mReverseYAxis) {
-                mWorldBoundaries.top    = 0;
+                mWorldBoundaries.top = 0;
                 mWorldBoundaries.bottom = mWorldHeight;
             } else {
-                mWorldBoundaries.top    = mWorldHeight;
+                mWorldBoundaries.top = mWorldHeight;
                 mWorldBoundaries.bottom = 0;
             }
 
-            if (prevWorldBoundaries.left != mWorldBoundaries.left ||
-                prevWorldBoundaries.right != mWorldBoundaries.right ||
-                prevWorldBoundaries.top != mWorldBoundaries.top ||
-                prevWorldBoundaries.bottom != mWorldBoundaries.bottom) {
-                
+            if (prevWorldBoundaries.left != mWorldBoundaries.left || prevWorldBoundaries.right != mWorldBoundaries.right
+                    || prevWorldBoundaries.top != mWorldBoundaries.top || prevWorldBoundaries.bottom != mWorldBoundaries.bottom) {
+
                 mWorld.onGameWorldSizeChanged(mWorldBoundaries);
             }
         }
-        
+
     }
 
     /**
@@ -270,7 +276,7 @@ public class Viewport {
     public float screenToWorldX(float screenX) {
         return pixelsToWorldUnits(screenX);
     }
-    
+
     public float screenToWorldY(float screenY) {
         if (!mReverseYAxis) {
             return pixelsToWorldUnits(screenY);
@@ -280,9 +286,9 @@ public class Viewport {
     }
 
     public float worldToScreenX(float worldX) {
-    	return worldUnitsToPixels(worldX);
+        return worldUnitsToPixels(worldX);
     }
-    
+
     public float worldToScreenY(float worldY) {
         if (!mReverseYAxis) {
             return worldUnitsToPixels(worldY);
@@ -290,6 +296,7 @@ public class Viewport {
             return mViewHeight - worldUnitsToPixels(worldY);
         }
     }
+
     // ----------------------------------------------------------------------------------
 
     /**
