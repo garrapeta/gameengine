@@ -5,14 +5,14 @@ import java.io.IOException;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
-import android.util.Log;
+import android.media.SoundPool;
 
-import com.garrapeta.gameengine.utils.L;
+import com.garrapeta.gameengine.utils.LogX;
 
 /**
  * Sound samples manager
  * 
- * @author GaRRaPeTa
+ * TODO: Use {@link SoundPool}
  */
 public class SoundModule implements OnCompletionListener {
 
@@ -36,8 +36,7 @@ public class SoundModule implements OnCompletionListener {
     }
 
     public SoundModuleDelegate.ResourceData create(short level, short key) {
-        if (L.sEnabled)
-            Log.v(TAG, "Creating: " + key);
+        LogX.v(TAG, "Creating: " + key);
         return mDelegate.create(level, key);
     }
 
@@ -46,54 +45,45 @@ public class SoundModule implements OnCompletionListener {
     }
 
     public void play(short key, boolean repeat) {
-        if (L.sEnabled)
-            Log.v(TAG, "Play: " + key);
+        LogX.v(TAG, "Play: " + key);
         try {
             short repeatShort = (short) ((repeat) ? 1 : 0);
             mDelegate.executeOverOneResourceForKey(key, ACTION_PLAY, repeatShort);
         } catch (Exception e) {
-            if (L.sEnabled)
-                Log.e(TAG, "Error playing resource " + key, e);
+            LogX.e(TAG, "Error playing resource " + key, e);
         }
     }
 
     public void stop(short key) {
-        if (L.sEnabled)
-            Log.v(TAG, "Stopping: " + key);
+        LogX.v(TAG, "Stopping: " + key);
         try {
             mDelegate.executeOverAllResourcesForKey(key, ACTION_STOP);
         } catch (Exception e) {
-            if (L.sEnabled)
-                Log.e(TAG, "Error stoping resource " + key, e);
+            LogX.e(TAG, "Error stoping resource " + key, e);
         }
     }
 
     public void pauseAll() {
-        if (L.sEnabled)
-            Log.i(TAG, "Pausing all...");
+        LogX.i(TAG, "Pausing all...");
         try {
             mDelegate.executeOverAllResources(ACTION_PAUSE);
         } catch (Exception e) {
-            if (L.sEnabled)
-                Log.e(TAG, "Error pausing all the resources", e);
+            LogX.e(TAG, "Error pausing all the resources", e);
         }
     }
 
     public void resumeAll() {
-        if (L.sEnabled)
-            Log.i(TAG, "Resuming all...");
+        LogX.i(TAG, "Resuming all...");
         try {
             mDelegate.executeOverAllResources(ACTION_RESUME);
         } catch (Exception e) {
-            if (L.sEnabled)
-                Log.e(TAG, "Error resuming all the resources", e);
+            LogX.e(TAG, "Error resuming all the resources", e);
         }
 
     }
 
     public void releaseAll() {
-        if (L.sEnabled)
-            Log.i(TAG, "Releasing all...");
+        LogX.i(TAG, "Releasing all...");
         mDelegate.releaseAll();
     }
 
@@ -154,8 +144,7 @@ public class SoundModule implements OnCompletionListener {
             if (player != null) {
                 player.setOnCompletionListener(SoundModule.this);
             } else {
-                if (L.sEnabled)
-                    Log.e(TAG, "Could not load player for sample id: " + resId);
+                LogX.e(TAG, "Could not load player for sample id: " + resId);
             }
             return player;
         }
@@ -163,8 +152,7 @@ public class SoundModule implements OnCompletionListener {
         @Override
         protected void onExecute(MediaPlayer player, Short... params) {
             if (player == null) {
-                if (L.sEnabled)
-                    Log.e(TAG, "Audio player is null!!");
+                LogX.e(TAG, "Audio player is null!!");
                 return;
             }
             switch (params[0]) {
@@ -185,8 +173,7 @@ public class SoundModule implements OnCompletionListener {
 
         @Override
         protected void onRelease(MediaPlayer player) {
-            if (L.sEnabled)
-                Log.v(TAG, "Releasing: " + player);
+            LogX.v(TAG, "Releasing: " + player);
             player.release();
         }
     }

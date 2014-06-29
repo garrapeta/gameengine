@@ -2,7 +2,6 @@ package com.garrapeta.gameengine;
 
 import android.content.Context;
 import android.graphics.PointF;
-import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -15,7 +14,7 @@ import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.JointDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
-import com.garrapeta.gameengine.utils.L;
+import com.garrapeta.gameengine.utils.LogX;
 
 public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
@@ -43,15 +42,12 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
     // est�tica
 
     static {
-        if (L.sEnabled)
-            Log.i(TAG, "Attempting to load gdx native library");
+        LogX.i(TAG, "Attempting to load gdx native library");
         try {
             System.loadLibrary("gdx");
-            if (L.sEnabled)
-                Log.i(TAG, "gdx native library loaded");
+            LogX.i(TAG, "gdx native library loaded");
         } catch (Throwable t) {
-            if (L.sEnabled)
-                Log.e(TAG, "Could not load gdx native library: " + t.toString());
+            LogX.e(TAG, "Could not load gdx native library: " + t.toString());
             System.exit(1);
         }
 
@@ -115,8 +111,7 @@ public abstract class Box2DWorld extends GameWorld implements ContactListener {
 
         float step = mTimeStep;
         if (time < step) {
-            if (L.sEnabled)
-                Log.w(TAG, "Physical timestep higher than game timestep. Physical simulation can be unestable.");
+            LogX.w(TAG, "Physical timestep higher than game timestep. Physical simulation can be unestable.");
             step = time;
         }
         while (time > 0 && steps < MAX_PHYSICAL_TIMESTEPS_PER_FRAME) {

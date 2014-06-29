@@ -4,10 +4,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
-import android.util.Log;
 import android.util.SparseArray;
 
-import com.garrapeta.gameengine.utils.L;
+import com.garrapeta.gameengine.utils.LogX;
 
 /**
  * Module / helper to deal with bitmaps
@@ -44,17 +43,14 @@ public class BitmapManager {
      * @return the loaded bitmap
      */
     public Bitmap loadBitmap(Resources resources, int resourceId) {
-        if (L.sEnabled)
-            Log.d(TAG, "Loading bitmap: " + resourceId);
-
+        LogX.d(TAG, "Loading bitmap: " + resourceId);
         if (mBitmaps == null) {
             mBitmaps = new SparseArray<Bitmap>();
         }
         Options o = new Options();
         Bitmap bmp = BitmapFactory.decodeResource(resources, resourceId, o);
         mBitmaps.append(resourceId, bmp);
-        if (L.sEnabled)
-            Log.v(TAG, "Loaded " + resourceId + ". " + mBitmaps.size() + " bitmaps in memory");
+        LogX.v(TAG, "Loaded " + resourceId + ". " + mBitmaps.size() + " bitmaps in memory");
         return bmp;
     }
 
@@ -64,24 +60,21 @@ public class BitmapManager {
      * @param resourceId
      */
     public void releaseBitmap(int resourceId) {
-        if (L.sEnabled)
-            Log.d(TAG, "Releasing bitmap: " + resourceId);
+        LogX.d(TAG, "Releasing bitmap: " + resourceId);
         Bitmap bmp = getBitmap(resourceId);
         mBitmaps.delete(resourceId);
         if (bmp != null) {
             bmp.recycle();
             mBitmaps.delete(resourceId);
         }
-        if (L.sEnabled)
-            Log.v(TAG, "Released " + resourceId + ". " + mBitmaps.size() + " bitmaps in memory");
+        LogX.v(TAG, "Released " + resourceId + ". " + mBitmaps.size() + " bitmaps in memory");
     }
 
     /**
      * Releases of the resources
      */
     public void releaseAll() {
-        if (L.sEnabled)
-            Log.i(TAG, "Releasing all the bitmaps");
+        LogX.i(TAG, "Releasing all the bitmaps");
         if (mBitmaps != null) {
             int key = 0;
             int size = mBitmaps.size();

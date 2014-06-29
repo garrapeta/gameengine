@@ -7,10 +7,9 @@ import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
-import com.garrapeta.gameengine.utils.L;
+import com.garrapeta.gameengine.utils.LogX;
 
 public class Viewport {
 
@@ -102,8 +101,7 @@ public class Viewport {
     // ------------------------------------------------ Instance methods
 
     public void gameViewSizeChanged(GameView gameView, int viewWidth, int viewHeight) {
-        if (L.sEnabled)
-            Log.i(TAG, "onGameViewSizeChanged(" + viewWidth + ", " + +viewHeight + ")");
+        LogX.i(TAG, "onGameViewSizeChanged(" + viewWidth + ", " + +viewHeight + ")");
 
         mViewWidth = viewWidth;
         mViewHeight = viewHeight;

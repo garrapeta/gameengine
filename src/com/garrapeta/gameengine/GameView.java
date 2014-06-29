@@ -1,13 +1,13 @@
 package com.garrapeta.gameengine;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.garrapeta.gameengine.utils.L;
+import com.garrapeta.gameengine.utils.LogX;
 
 /**
  * Vista sobre la que se renderiza el juego
@@ -65,11 +65,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     /**
      * Pinta el mundo sobre la pantalla
      */
+    @SuppressLint("WrongCall")
     final void draw() {
         if (mHolder != null) {
             Canvas canvas = mHolder.lockCanvas();
             if (canvas != null) {
-                // pintado del frame
                 onDraw(canvas);
                 mHolder.unlockCanvasAndPost(canvas);
             }
@@ -83,21 +83,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    // ------------------------------------------ métodos de
-    // SurfaceHolder.Callback
-
     @Override
     public final void surfaceCreated(SurfaceHolder holder) {
-        if (L.sEnabled)
-            Log.i(TAG, "surfaceCreated (" + getWidth() + ", " + getHeight() + ")");
+        LogX.i(TAG, "surfaceCreated (" + getWidth() + ", " + getHeight() + ")");
         // Draw the view when it's been created, to avoid a black screen
         draw();
     }
 
     @Override
     public final void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        if (L.sEnabled)
-            Log.i(TAG, "surfaceChanged (" + width + ", " + height + ")");
+        LogX.i(TAG, "surfaceChanged (" + width + ", " + height + ")");
         if (mWorld != null) {
             mWorld.gameViewSizeChanged(this, width, height);
         }
@@ -105,8 +100,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public final void surfaceDestroyed(SurfaceHolder holder) {
-        if (L.sEnabled)
-            Log.i(TAG, "surfaceDestroyed");
+        LogX.i(TAG, "surfaceDestroyed");
     }
 
 }
